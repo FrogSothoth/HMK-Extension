@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Gear Tab
+		Encumbrance, Armour/Clothing, Possessions, Notes
+	-->
+
+	<!-- Template for possession/item entry -->
+	<windowclass name="harn_possession_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="name">
+				<anchored to="leftanchor" width="200" height="20">
+					<top />
+					<left offset="5" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="quantity">
+				<anchored to="name" width="40" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<numberfield name="weight">
+				<anchored to="quantity" width="40" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Template for armour entry -->
+	<windowclass name="harn_armour_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="name">
+				<anchored to="leftanchor" width="120" height="20">
+					<top />
+					<left offset="5" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="location">
+				<anchored to="name" width="60" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="protection">
+				<anchored to="location" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<numberfield name="weight">
+				<anchored to="protection" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_tab_gear">
+		<sheetdata>
+			<!-- ENCUMBRANCE Section -->
+			<frame_char name="enc_frame">
+				<anchored position="insidetopleft" offset="0,0" width="280" height="180" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="enc_frame" />
+				<static textres="harn_encumbrance" />
+			</label_frametop>
+
+			<label name="armour_enc_label">
+				<anchored to="enc_frame" position="insidetopleft" offset="15,35" width="80" height="20" />
+				<static textres="harn_armour" />
+			</label>
+			<numberfield name="armour_enc">
+				<anchored to="armour_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="gear_enc_label">
+				<anchored to="armour_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_gear" />
+			</label>
+			<numberfield name="gear_enc">
+				<anchored to="gear_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="strmod_label">
+				<anchored to="gear_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_strmod" />
+			</label>
+			<numberfield name="strmod">
+				<anchored to="strmod_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="enc_label">
+				<anchored to="strmod_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_enc" />
+			</label>
+			<numberfield name="enc_total">
+				<anchored to="enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="bulk_label">
+				<anchored to="enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_bulk" />
+			</label>
+			<numberfield name="bulk">
+				<anchored to="bulk_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- ARMOUR / CLOTHING Section -->
+			<frame_char name="armour_frame">
+				<anchored position="insidetopleft" offset="290,0" width="300" height="180" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="armour_frame" />
+				<static textres="harn_armour_clothing" />
+			</label_frametop>
+
+			<!-- Armour list headers -->
+			<label name="armour_name_header">
+				<anchored to="armour_frame" position="insidetopleft" offset="10,28" width="120" height="15" />
+				<static>Item</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_loc_header">
+				<anchored to="armour_name_header" position="righthigh" offset="5,0" width="60" height="15" />
+				<static>Loc</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_prot_header">
+				<anchored to="armour_loc_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>Prot</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_wt_header">
+				<anchored to="armour_prot_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>Wt</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="armourlist">
+				<anchored to="armour_frame">
+					<top offset="45" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-25" />
+				</anchored>
+				<datasource>.armourlist</datasource>
+				<class>harn_armour_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="armour_iadd">
+				<anchored to="armourlist" position="aboveright" offset="0,8" />
+				<target>armourlist</target>
+			</button_iadd>
+
+			<!-- POSSESSIONS Section -->
+			<frame_char name="poss_frame">
+				<anchored position="insidetopleft" offset="0,185" width="300" height="220" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="poss_frame" />
+				<static textres="harn_possessions" />
+			</label_frametop>
+
+			<!-- Possessions list headers -->
+			<label name="poss_name_header">
+				<anchored to="poss_frame" position="insidetopleft" offset="10,28" width="200" height="15" />
+				<static>Item</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_qty_header">
+				<anchored to="poss_name_header" position="righthigh" offset="5,0" width="40" height="15" />
+				<static>Qty</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_wt_header">
+				<anchored to="poss_qty_header" position="righthigh" offset="5,0" width="40" height="15" />
+				<static>Wt</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="possessions">
+				<anchored to="poss_frame">
+					<top offset="45" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-25" />
+				</anchored>
+				<datasource>.possessions</datasource>
+				<class>harn_possession_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="poss_iadd">
+				<anchored to="possessions" position="aboveright" offset="0,8" />
+				<target>possessions</target>
+			</button_iadd>
+
+			<!-- NOTES Section -->
+			<frame_char name="notes_frame">
+				<anchored position="insidetopleft" offset="305,185" width="285" height="220" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="notes_frame" />
+				<static textres="harn_notes" />
+			</label_frametop>
+
+			<stringfield name="notes">
+				<anchored to="notes_frame">
+					<top offset="30" />
+					<left offset="10" />
+					<right offset="-15" />
+					<bottom offset="-10" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<multilinespacing>20</multilinespacing>
+			</stringfield>
+			<scrollbar_list>
+				<anchored to="notes" />
+				<target>notes</target>
+			</scrollbar_list>
+		</sheetdata>
+	</windowclass>
+</root>

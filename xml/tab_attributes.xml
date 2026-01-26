@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Attributes Tab
+		Physical: STR, END, DEX, AGL, PER, CML
+		Mental: AUR, WIL, REA, CRE, EMP, ELO
+		Each attribute has Score and ML (auto-calculated as Score × 5)
+	-->
+
+	<windowclass name="harn_tab_attributes">
+		<sheetdata>
+			<!-- PHYSICAL ATTRIBUTES -->
+			<frame_char name="physical_frame">
+				<anchored position="insidetopleft" offset="0,0" width="280" height="220" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="physical_frame" />
+				<static textres="harn_attr_physical" />
+			</label_frametop>
+
+			<!-- Physical header row -->
+			<label name="phys_score_header">
+				<anchored to="physical_frame" position="insidetopleft" offset="180,30" width="40" height="20" />
+				<static textres="harn_score" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="phys_ml_header">
+				<anchored to="phys_score_header" position="righthigh" offset="5,0" width="30" height="20" />
+				<static textres="harn_ml" />
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- STR -->
+			<label name="str_label">
+				<anchored to="physical_frame" position="insidetopleft" offset="15,55" width="100" height="20" />
+				<static textres="harn_attr_str" />
+			</label>
+			<label name="str_abbr">
+				<anchored to="str_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_str_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="str_score">
+				<anchored to="str_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.str_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="str_ml">
+				<anchored to="str_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- END -->
+			<label name="end_label">
+				<anchored to="str_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_end" />
+			</label>
+			<label name="end_abbr">
+				<anchored to="end_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_end_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="end_score">
+				<anchored to="end_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.end_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="end_ml">
+				<anchored to="end_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- DEX -->
+			<label name="dex_label">
+				<anchored to="end_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_dex" />
+			</label>
+			<label name="dex_abbr">
+				<anchored to="dex_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_dex_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="dex_score">
+				<anchored to="dex_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.dex_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="dex_ml">
+				<anchored to="dex_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- AGL -->
+			<label name="agl_label">
+				<anchored to="dex_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_agl" />
+			</label>
+			<label name="agl_abbr">
+				<anchored to="agl_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_agl_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="agl_score">
+				<anchored to="agl_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.agl_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="agl_ml">
+				<anchored to="agl_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- PER -->
+			<label name="per_label">
+				<anchored to="agl_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_per" />
+			</label>
+			<label name="per_abbr">
+				<anchored to="per_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_per_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="per_score">
+				<anchored to="per_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.per_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="per_ml">
+				<anchored to="per_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- CML -->
+			<label name="cml_label">
+				<anchored to="per_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_cml" />
+			</label>
+			<label name="cml_abbr">
+				<anchored to="cml_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_cml_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="cml_score">
+				<anchored to="cml_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.cml_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="cml_ml">
+				<anchored to="cml_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- MENTAL ATTRIBUTES -->
+			<frame_char name="mental_frame">
+				<anchored position="insidetopleft" offset="300,0" width="280" height="220" />
+			</frame_char>
+			<label_frametop name="mental_title">
+				<anchored to="mental_frame" />
+				<static textres="harn_attr_mental" />
+			</label_frametop>
+
+			<!-- Mental header row -->
+			<label name="ment_score_header">
+				<anchored to="mental_frame" position="insidetopleft" offset="180,30" width="40" height="20" />
+				<static textres="harn_score" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="ment_ml_header">
+				<anchored to="ment_score_header" position="righthigh" offset="5,0" width="30" height="20" />
+				<static textres="harn_ml" />
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- AUR -->
+			<label name="aur_label">
+				<anchored to="mental_frame" position="insidetopleft" offset="15,55" width="100" height="20" />
+				<static textres="harn_attr_aur" />
+			</label>
+			<label name="aur_abbr">
+				<anchored to="aur_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_aur_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="aur_score">
+				<anchored to="aur_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.aur_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="aur_ml">
+				<anchored to="aur_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- WIL -->
+			<label name="wil_label">
+				<anchored to="aur_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_wil" />
+			</label>
+			<label name="wil_abbr">
+				<anchored to="wil_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_wil_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="wil_score">
+				<anchored to="wil_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.wil_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="wil_ml">
+				<anchored to="wil_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- REA -->
+			<label name="rea_label">
+				<anchored to="wil_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_rea" />
+			</label>
+			<label name="rea_abbr">
+				<anchored to="rea_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_rea_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="rea_score">
+				<anchored to="rea_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.rea_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="rea_ml">
+				<anchored to="rea_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- CRE -->
+			<label name="cre_label">
+				<anchored to="rea_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_cre" />
+			</label>
+			<label name="cre_abbr">
+				<anchored to="cre_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_cre_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="cre_score">
+				<anchored to="cre_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.cre_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="cre_ml">
+				<anchored to="cre_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- EMP -->
+			<label name="emp_label">
+				<anchored to="cre_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_emp" />
+			</label>
+			<label name="emp_abbr">
+				<anchored to="emp_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_emp_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="emp_score">
+				<anchored to="emp_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.emp_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="emp_ml">
+				<anchored to="emp_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- ELO -->
+			<label name="elo_label">
+				<anchored to="emp_label" position="below" offset="0,5" width="100" height="20" />
+				<static textres="harn_attr_elo" />
+			</label>
+			<label name="elo_abbr">
+				<anchored to="elo_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<static textres="harn_attr_elo_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="elo_score">
+				<anchored to="elo_label" position="righthigh" offset="60,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.elo_ml.setValue(nScore * 5);
+					end
+				</script>
+			</numberfield>
+			<numberfield name="elo_ml">
+				<anchored to="elo_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+</root>

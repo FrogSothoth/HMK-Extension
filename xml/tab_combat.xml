@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Combat Tab - Responsive Layout
+		Movement, Shock, Fatigue, Stress in top row
+		Melee/Missile weapons on left, Body Location on right
+	-->
+
+	<!-- Template for melee weapon entry -->
+	<windowclass name="harn_melee_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="name">
+				<anchored to="leftanchor" width="80" height="20">
+					<top />
+					<left offset="5" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="wq">
+				<anchored to="name" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="hft">
+				<anchored to="wq" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="rch">
+				<anchored to="hft" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<numberfield name="atk">
+				<anchored to="rch" width="32" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<numberfield name="def">
+				<anchored to="atk" width="32" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="zd">
+				<anchored to="def" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="imp">
+				<anchored to="zd" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="ta">
+				<anchored to="imp" width="40" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Template for missile weapon entry -->
+	<windowclass name="harn_missile_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="name">
+				<anchored to="leftanchor" width="80" height="20">
+					<top />
+					<left offset="5" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="wq">
+				<anchored to="name" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<numberfield name="drw">
+				<anchored to="wq" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="br">
+				<anchored to="drw" width="45" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="atk">
+				<anchored to="br" width="32" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="prj">
+				<anchored to="atk" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="zd">
+				<anchored to="prj" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="imp">
+				<anchored to="zd" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="ta">
+				<anchored to="imp" width="40" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Template for body location entry -->
+	<windowclass name="harn_bodyloc_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="location">
+				<anchored to="leftanchor" width="70" height="20">
+					<top />
+					<left offset="5" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="armor">
+				<anchored to="location" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_tab_combat">
+		<script>
+			function onInit()
+				-- Initialize body locations if empty
+				local nodeChar = getDatabaseNode();
+				if not nodeChar then return; end
+
+				local nodeList = DB.createChild(nodeChar, "bodylocations");
+				if DB.getChildCount(nodeList) == 0 then
+					local locations = {
+						"Skull", "Face", "Neck", "Shoulder", "Upper Arm",
+						"Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
+						"Hip", "Groin", "Thigh", "Knee", "Calf", "Foot"
+					};
+					for _, loc in ipairs(locations) do
+						local node = DB.createChild(nodeList);
+						DB.setValue(node, "location", "string", loc);
+						DB.setValue(node, "armor", "number", 0);
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<!-- ============================================ -->
+			<!-- TOP ROW: Movement, Shock, Fatigue, Stress    -->
+			<!-- ============================================ -->
+
+			<!-- MOVEMENT Section - anchored left -->
+			<frame_char name="movement_frame">
+				<anchored position="insidetopleft" offset="0,0" width="140" height="115" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="movement_frame" />
+				<static textres="harn_movement" />
+			</label_frametop>
+
+			<label name="move_label">
+				<anchored to="movement_frame" position="insidetopleft" offset="10,28" width="60" height="20" />
+				<static textres="harn_move" />
+			</label>
+			<numberfield name="move">
+				<anchored to="move_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="effective_label">
+				<anchored to="move_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_effective" />
+			</label>
+			<numberfield name="move_effective">
+				<anchored to="effective_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="half_label">
+				<anchored to="effective_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_half" />
+			</label>
+			<numberfield name="move_half">
+				<anchored to="half_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- SHOCK STATE Section - to right of Movement -->
+			<frame_char name="shock_frame">
+				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="115" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="shock_frame" />
+				<static textres="harn_shockstate" />
+			</label_frametop>
+
+			<label name="stunned_label">
+				<anchored to="shock_frame" position="insidetopleft" offset="10,28" width="55" height="20" />
+				<static textres="harn_stunned" />
+			</label>
+			<numberfield name="stunned">
+				<anchored to="stunned_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="incap_label">
+				<anchored to="stunned_label" position="below" offset="0,3" width="55" height="20" />
+				<static textres="harn_incapacitated" />
+			</label>
+			<numberfield name="incapacitated">
+				<anchored to="incap_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="dead_label">
+				<anchored to="incap_label" position="below" offset="0,3" width="55" height="20" />
+				<static textres="harn_deceased" />
+			</label>
+			<numberfield name="deceased">
+				<anchored to="dead_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- FATIGUE Section - to right of Shock -->
+			<frame_char name="fatigue_frame">
+				<anchored to="shock_frame" position="righthigh" offset="5,0" width="140" height="115" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="fatigue_frame" />
+				<static textres="harn_fatigue" />
+			</label_frametop>
+
+			<label name="winded_label">
+				<anchored to="fatigue_frame" position="insidetopleft" offset="10,28" width="50" height="20" />
+				<static textres="harn_winded" />
+			</label>
+			<numberfield name="winded">
+				<anchored to="winded_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<label name="pf_label">
+				<anchored to="winded" position="righthigh" offset="3,0" width="20" height="20" />
+				<static textres="harn_pf" />
+			</label>
+			<numberfield name="pf">
+				<anchored to="pf_label" position="righthigh" offset="0,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weary_label">
+				<anchored to="winded_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_weary" />
+			</label>
+			<numberfield name="weary">
+				<anchored to="weary_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weak_label">
+				<anchored to="weary_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_weak" />
+			</label>
+			<numberfield name="weak">
+				<anchored to="weak_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- STRESS Section - anchored to right edge, responsive -->
+			<frame_char name="stress_frame">
+				<anchored position="insidetopright" offset="0,0" height="115">
+					<left parent="fatigue_frame" anchor="right" offset="5" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="stress_frame" />
+				<static textres="harn_stress" />
+			</label_frametop>
+
+			<label name="psyche_label">
+				<anchored to="stress_frame" position="insidetopleft" offset="10,28" width="65" height="20" />
+				<static textres="harn_psyche" />
+			</label>
+			<numberfield name="psyche_stress">
+				<anchored to="psyche_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="auralshock_label">
+				<anchored to="psyche_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_auralshock" />
+			</label>
+			<numberfield name="auralshock">
+				<anchored to="auralshock_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="shadow_label">
+				<anchored to="auralshock_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_shadow" />
+			</label>
+			<numberfield name="shadow">
+				<anchored to="shadow_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- ============================================ -->
+			<!-- BOTTOM AREA: Weapons (left) + Body Loc (right) -->
+			<!-- ============================================ -->
+
+			<!-- BODY LOCATION - Right side, fixed width, responsive height -->
+			<frame_char name="bodyloc_frame">
+				<anchored position="insidetopright" offset="0,120" width="130">
+					<bottom offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="bodyloc_frame" />
+				<static textres="harn_body_location" />
+			</label_frametop>
+
+			<label name="loc_h">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="65" height="15" />
+				<static textres="harn_location" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="armor_h">
+				<anchored to="loc_h" position="righthigh" offset="3,0" width="25" height="15" />
+				<static>AR</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="bodylocations">
+				<anchored to="bodyloc_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.bodylocations</datasource>
+				<class>harn_bodyloc_entry</class>
+			</windowlist>
+			<scrollbar>
+				<anchored to="bodylocations" />
+				<target>bodylocations</target>
+			</scrollbar>
+
+			<!-- MELEE WEAPONS - Left side, responsive width -->
+			<frame_char name="melee_frame">
+				<anchored position="insidetopleft" offset="0,120" height="140">
+					<right offset="-135" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="melee_frame" />
+				<static textres="harn_melee_weapons" />
+			</label_frametop>
+
+			<!-- Melee headers -->
+			<label name="melee_name_h">
+				<anchored to="melee_frame" position="insidetopleft" offset="8,25" width="80" height="15" />
+				<static>Weapon</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_wq_h">
+				<anchored to="melee_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<static textres="harn_wq" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_hft_h">
+				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="35" height="15" />
+				<static textres="harn_hft" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_rch_h">
+				<anchored to="melee_hft_h" position="righthigh" offset="4,0" width="28" height="15" />
+				<static textres="harn_rch" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_atk_h">
+				<anchored to="melee_rch_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<static textres="harn_atk" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_def_h">
+				<anchored to="melee_atk_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<static textres="harn_def" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_zd_h">
+				<anchored to="melee_def_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_zd" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_imp_h">
+				<anchored to="melee_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_imp" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_ta_h">
+				<anchored to="melee_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<static textres="harn_ta" />
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="meleeweapons">
+				<anchored to="melee_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.meleeweapons</datasource>
+				<class>harn_melee_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<!-- Add button with explicit script -->
+			<button_iadd name="melee_iadd">
+				<anchored to="meleeweapons" position="aboveright" offset="0,8" />
+				<target>meleeweapons</target>
+				<script>
+					function onButtonPress()
+						local list = window.meleeweapons;
+						if list then
+							list.createWindow();
+						else
+							Debug.console("ERROR: meleeweapons list not found");
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<!-- MISSILE WEAPONS - Below melee, responsive width -->
+			<frame_char name="missile_frame">
+				<anchored to="melee_frame" position="below" offset="0,5">
+					<right offset="-135" />
+					<bottom offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="missile_frame" />
+				<static textres="harn_missile_weapons" />
+			</label_frametop>
+
+			<!-- Missile headers -->
+			<label name="missile_name_h">
+				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="80" height="15" />
+				<static>Weapon</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_wq_h">
+				<anchored to="missile_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<static textres="harn_wq" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_drw_h">
+				<anchored to="missile_wq_h" position="righthigh" offset="4,0" width="28" height="15" />
+				<static textres="harn_drw" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_br_h">
+				<anchored to="missile_drw_h" position="righthigh" offset="4,0" width="45" height="15" />
+				<static textres="harn_br" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_atk_h">
+				<anchored to="missile_br_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<static textres="harn_atk" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_prj_h">
+				<anchored to="missile_atk_h" position="righthigh" offset="4,0" width="35" height="15" />
+				<static textres="harn_prj" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_zd_h">
+				<anchored to="missile_prj_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_zd" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_imp_h">
+				<anchored to="missile_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_imp" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_ta_h">
+				<anchored to="missile_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<static textres="harn_ta" />
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="missileweapons">
+				<anchored to="missile_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.missileweapons</datasource>
+				<class>harn_missile_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<!-- Add button with explicit script -->
+			<button_iadd name="missile_iadd">
+				<anchored to="missileweapons" position="aboveright" offset="0,8" />
+				<target>missileweapons</target>
+				<script>
+					function onButtonPress()
+						local list = window.missileweapons;
+						if list then
+							list.createWindow();
+						else
+							Debug.console("ERROR: missileweapons list not found");
+						end
+					end
+				</script>
+			</button_iadd>
+		</sheetdata>
+	</windowclass>
+</root>

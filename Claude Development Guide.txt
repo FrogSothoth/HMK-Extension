@@ -1,0 +1,93 @@
+HarnMaster Extension Development Notes
+Architecture Overview
+The extension is built on CoreRPG and consists of:
+
+extension.xml - Main manifest, includes all XML files and scripts
+xml/ - UI definitions (charsheet, tabs, strings)
+scripts/ - Lua modules (HarnManager, SkillsData, SkillsManager)
+Key Discovery: FG Script Scoping Limitations
+Problem: XML-embedded scripts (inside <script> tags in XML files) have a severely restricted execution environment.
+
+What XML scripts CANNOT access:
+
+Named script modules (e.g., SkillsData.getSkill() returns nil)
+Global registry functions (setGlobal/getGlobal don't exist)
+Module-level Lua tables defined in .lua files
+Complex table literals at module level (don't initialize properly)
+What XML scripts CAN access:
+
+FG Database API (DB.findNode, DB.getValue, DB.getChildren, DB.setValue, DB.createNode, DB.createChild)
+Debug.console() for logging
+window object and control methods (getValue, setValue)
+Basic Lua functions
+The Database Solution
+Since XML scripts can't access Lua module tables, we store reference data in the FG database:
+
+In skills_data.lua onInit():
+
+
+-- Build skills in onInit (NOT at module level - that doesn't work)
+SkillsData.skills = {};
+table.insert(SkillsData.skills, {name="Charm", group="Social", att1="CML", att2="EMP", sm=3});
+-- ... more skills ...
+
+-- Store to database for cross-script access
+local nodeSkillsRef = DB.createNode("harnmaster.skills");
+for _, skill in ipairs(SkillsData.skills) do
+    local nodeSkill = DB.createChild(nodeSkillsRef);
+    DB.setValue(nodeSkill, "name", "string", skill.name);
+    DB.setValue(nodeSkill, "group", "string", skill.group);
+    DB.setValue(nodeSkill, "att1", "string", skill.att1);
+    DB.setValue(nodeSkill, "att2", "string", skill.att2);
+    DB.setValue(nodeSkill, "sm", "number", skill.sm);
+end
+In XML scripts, access via DB:
+
+
+local nodeSkillsRef = DB.findNode("harnmaster.skills");
+if nodeSkillsRef then
+    for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+        if DB.getValue(nodeSkill, "name", "") == sSkillName then
+            local sAtt1 = DB.getValue(nodeSkill, "att1", "");
+            -- use the data...
+        end
+    end
+end
+Script Initialization
+Global function onInit() is auto-called by FG when scripts load
+SkillsData.onInit() does NOT get called - must be plain onInit()
+All table building must happen inside onInit(), not at module level
+Use table.insert() inside onInit() rather than table literals at module level
+Skill Entry Template Pattern
+The harn_skill_entry windowclass uses:
+
+<stringfield name="name"> with onLoseFocus script to trigger skill lookup
+<stringfield name="att1/att2"> with <readonly /> and <source> for display
+<numberfield name="sm/sb/ml"> with <source> for database binding
+<allowcreate /> and <allowdelete /> on windowlists for entry management
+Skill lookup flow:
+
+User types skill name, clicks away
+onLoseFocus fires, looks up skill in harnmaster.skills database
+If found, sets att1, att2, sm on the character's skill node via DB.setValue()
+Fields with <source> bindings automatically display the values
+Debug Technique
+Created test display on Esoterica tab using onFirstLayout:
+
+
+<stringcontrol name="debug_name">
+    <script>
+        function onFirstLayout()
+            -- DB lookup code here
+            setValue(sResult);
+        end
+    </script>
+</stringcontrol>
+This confirmed the DB approach works when direct module access fails.
+
+Important Patterns
+Always use DB for cross-script data sharing in FG extensions
+Use onLoseFocus not onValueChanged for text input to avoid per-keystroke firing
+Add explicit <source> tags to fields for reliable database binding
+Use pairs() not ipairs() for DB.getChildren() iteration (returns unordered nodes)
+Debug.console() works everywhere for troubleshooting

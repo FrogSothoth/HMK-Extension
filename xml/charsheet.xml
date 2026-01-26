@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Character Sheet Definition
+		Completely redefines the charsheet windowclass to use HarnMaster tabs
+		(No merge attribute = full override)
+	-->
+
+	<windowclass name="charsheet">
+		<frame>charsheet</frame>
+		<sizelimits>
+			<minimum width="650" height="600" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_npc</minimize>
+		<tooltip field="name" />
+		<softclose />
+		<script>
+			function onInit()
+				WindowTabManager.populate(self);
+			end
+		</script>
+		<sheetdata>
+			<windowmenubar_charsheet name="menubar" />
+
+			<anchor_content_charsheet_tabbed_top />
+			<anchor_content_charsheet_bottom />
+
+			<!-- Character name and portrait header -->
+			<sub_content_top name="overview">
+				<class>harn_charsheet_overview</class>
+			</sub_content_top>
+
+			<resize_charsheet />
+		</sheetdata>
+
+		<!-- Define our 5 HarnMaster tabs -->
+		<tab>
+			<name>main</name>
+			<text>Main</text>
+			<class>harn_tab_main</class>
+		</tab>
+		<tab merge="add">
+			<name>attributes</name>
+			<text>Attributes</text>
+			<class>harn_tab_attributes</class>
+		</tab>
+		<tab merge="add">
+			<name>skills</name>
+			<text>Skills</text>
+			<class>harn_tab_skills</class>
+		</tab>
+		<tab merge="add">
+			<name>esoterica</name>
+			<text>Esoterica</text>
+			<class>harn_tab_esoterica</class>
+		</tab>
+		<tab merge="add">
+			<name>combat</name>
+			<text>Combat</text>
+			<class>harn_tab_combat</class>
+		</tab>
+		<tab merge="add">
+			<name>gear</name>
+			<text>Gear</text>
+			<class>harn_tab_gear</class>
+		</tab>
+	</windowclass>
+
+	<!-- Character header/overview (name + portrait) -->
+	<windowclass name="harn_charsheet_overview">
+		<frame>groupbox</frame>
+		<margins control="0,0,0,15" />
+		<sheetdata>
+			<anchor_content_charsheet_header_top />
+			<anchor_content_charsheet_header_left />
+			<anchor_content_charsheet_header_right />
+
+			<!-- Portrait -->
+			<picture_charsheet_v2 name="portrait" />
+
+			<!-- Character Name -->
+			<string_labeled name="name">
+				<anchored to="rightanchor" height="30">
+					<top offset="5" />
+					<right relation="current" offset="-5" />
+					<left parent="leftanchor" relation="current" offset="5" />
+				</anchored>
+				<labelres>harn_name</labelres>
+				<font>charsheet_header</font>
+			</string_labeled>
+		</sheetdata>
+	</windowclass>
+</root>

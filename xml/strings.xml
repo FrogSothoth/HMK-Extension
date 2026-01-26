@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<string name="harn_tab_main">Main</string>
+	<string name="harn_tab_attributes">Attributes</string>
+	<string name="harn_tab_skills">Skills</string>
+	<string name="harn_tab_esoterica">Esoterica</string>
+	<string name="harn_tab_combat">Combat</string>
+	<string name="harn_tab_gear">Gear</string>
+
+	<!-- Attributes - Physical -->
+	<string name="harn_attr_physical">PHYSICAL</string>
+	<string name="harn_attr_str">Strength</string>
+	<string name="harn_attr_str_abbr">STR</string>
+	<string name="harn_attr_end">Endurance</string>
+	<string name="harn_attr_end_abbr">END</string>
+	<string name="harn_attr_dex">Dexterity</string>
+	<string name="harn_attr_dex_abbr">DEX</string>
+	<string name="harn_attr_agl">Agility</string>
+	<string name="harn_attr_agl_abbr">AGL</string>
+	<string name="harn_attr_per">Perception</string>
+	<string name="harn_attr_per_abbr">PER</string>
+	<string name="harn_attr_cml">Comeliness</string>
+	<string name="harn_attr_cml_abbr">CML</string>
+
+	<!-- Attributes - Mental -->
+	<string name="harn_attr_mental">MENTAL</string>
+	<string name="harn_attr_aur">Aura</string>
+	<string name="harn_attr_aur_abbr">AUR</string>
+	<string name="harn_attr_wil">Will</string>
+	<string name="harn_attr_wil_abbr">WIL</string>
+	<string name="harn_attr_rea">Reasoning</string>
+	<string name="harn_attr_rea_abbr">REA</string>
+	<string name="harn_attr_cre">Creativity</string>
+	<string name="harn_attr_cre_abbr">CRE</string>
+	<string name="harn_attr_emp">Empathy</string>
+	<string name="harn_attr_emp_abbr">EMP</string>
+	<string name="harn_attr_elo">Eloquence</string>
+	<string name="harn_attr_elo_abbr">ELO</string>
+
+	<string name="harn_score">Score</string>
+	<string name="harn_ml">ML</string>
+
+	<!-- Main tab - Birth -->
+	<string name="harn_birth">BIRTH</string>
+	<string name="harn_name">Name</string>
+	<string name="harn_folk">Folk</string>
+	<string name="harn_agegroup">Age Group</string>
+	<string name="harn_birthdate">Birthdate</string>
+	<string name="harn_sunsign">Sunsign</string>
+	<string name="harn_birthplace">Birthplace</string>
+
+	<!-- Main tab - Family -->
+	<string name="harn_family">FAMILY</string>
+	<string name="harn_society">Society</string>
+	<string name="harn_class">Class</string>
+	<string name="harn_occupation">Occupation</string>
+	<string name="harn_background">Background</string>
+	<string name="harn_estrangement">Estrangement</string>
+	<string name="harn_pantheon">Pantheon</string>
+
+	<!-- Main tab - Standing -->
+	<string name="harn_standing">STANDING</string>
+	<string name="harn_home">Home</string>
+	<string name="harn_wealth">Wealth</string>
+	<string name="harn_coin">Coin</string>
+
+	<!-- Main tab - Appearance -->
+	<string name="harn_appearance">APPEARANCE</string>
+	<string name="harn_complexion">Complexion</string>
+	<string name="harn_hair">Hair</string>
+	<string name="harn_eyes">Eyes</string>
+	<string name="harn_height">Height</string>
+	<string name="harn_weight">Weight</string>
+	<string name="harn_handedness">Handedness</string>
+
+	<!-- Main tab - Traits -->
+	<string name="harn_traits">TRAITS</string>
+	<string name="harn_morality">Morality</string>
+	<string name="harn_psyche">Psyche</string>
+	<string name="harn_blessing">Blessing</string>
+
+	<!-- Main tab - Fate -->
+	<string name="harn_fate">FATE</string>
+	<string name="harn_roll">Roll</string>
+	<string name="harn_fp">FP</string>
+	<string name="harn_grace">Grace</string>
+	<string name="harn_piety">Piety</string>
+
+	<!-- Skills -->
+	<string name="harn_skills">SKILLS</string>
+	<string name="harn_skill_social">SOCIAL</string>
+	<string name="harn_skill_lore">LORE</string>
+	<string name="harn_skill_physical">PHYSICAL</string>
+	<string name="harn_skill_combat">COMBAT</string>
+	<string name="harn_skill_nature">NATURE</string>
+	<string name="harn_skill_craft">CRAFT</string>
+	<string name="harn_skill_esoterica">ESOTERICA</string>
+	<string name="harn_sm">SM</string>
+	<string name="harn_sb">SB</string>
+
+	<!-- Combat -->
+	<string name="harn_combat_skills">COMBAT SKILLS</string>
+	<string name="harn_initiative">Initiative</string>
+	<string name="harn_awareness">Awareness</string>
+	<string name="harn_dodge">Dodge</string>
+	<string name="harn_evasion">Evasion</string>
+	<string name="harn_shock">Shock</string>
+
+	<string name="harn_movement">MOVEMENT</string>
+	<string name="harn_move">Move</string>
+	<string name="harn_effective">Effective</string>
+	<string name="harn_half">Half</string>
+	<string name="harn_full">Full</string>
+	<string name="harn_double">Double</string>
+
+	<string name="harn_melee_weapons">MELEE WEAPONS</string>
+	<string name="harn_missile_weapons">MISSILE WEAPONS</string>
+
+	<!-- Weapon columns -->
+	<string name="harn_wq">WQ</string>
+	<string name="harn_hft">HFT</string>
+	<string name="harn_rch">RCH</string>
+	<string name="harn_atk">ATK</string>
+	<string name="harn_def">DEF</string>
+	<string name="harn_zd">ZD</string>
+	<string name="harn_imp">IMP</string>
+	<string name="harn_ta">TA</string>
+	<string name="harn_drw">DRW</string>
+	<string name="harn_br">BR</string>
+	<string name="harn_prj">PRJ</string>
+
+	<string name="harn_body_location">BODY LOCATION / INJURY</string>
+	<string name="harn_injury">INJURY</string>
+	<string name="harn_location">Location</string>
+	<string name="harn_m1">M1</string>
+	<string name="harn_s2">S2</string>
+	<string name="harn_s3">S3</string>
+	<string name="harn_g4">G4</string>
+	<string name="harn_k5">K5</string>
+
+	<string name="harn_shockstate">SHOCK STATE</string>
+	<string name="harn_stunned">Stunned</string>
+	<string name="harn_incapacitated">Incap</string>
+	<string name="harn_deceased">Dead</string>
+
+	<string name="harn_fatigue">FATIGUE</string>
+	<string name="harn_winded">Winded</string>
+	<string name="harn_weary">Weary</string>
+	<string name="harn_weak">Weak</string>
+	<string name="harn_pf">PF</string>
+	<string name="harn_endsr">End SR</string>
+
+	<string name="harn_stress">STRESS</string>
+	<string name="harn_auralshock">Aural Shock</string>
+	<string name="harn_shadow">Shadow</string>
+
+	<!-- Gear -->
+	<string name="harn_encumbrance">ENCUMBRANCE</string>
+	<string name="harn_armour">Armour</string>
+	<string name="harn_gear">Gear</string>
+	<string name="harn_strmod">Str Mod</string>
+	<string name="harn_enc">Enc</string>
+	<string name="harn_bulk">Bulk</string>
+
+	<string name="harn_armour_clothing">ARMOUR / CLOTHING</string>
+	<string name="harn_possessions">POSSESSIONS</string>
+	<string name="harn_notes">NOTES</string>
+
+	<!-- VOI (Voice) Attribute - used only for Singing -->
+	<string name="harn_attr_voi">Voice</string>
+	<string name="harn_attr_voi_abbr">VOI</string>
+
+	<!-- Calc button tooltip -->
+	<string name="calc">Calc</string>
+</root>

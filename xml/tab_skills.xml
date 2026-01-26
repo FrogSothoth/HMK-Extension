@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Skills Tab
+		6 skill categories stacked vertically: Social, Lore, Physical, Nature, Craft, Combat
+		Columns: SKILL, ATT1, ATT2, SM, SB, ML
+	-->
+
+	<!-- Template for a single skill row -->
+	<windowclass name="harn_skill_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						local sName = getValue();
+						if sName == "" then return; end
+
+						Debug.console("Skill name entered: " .. sName);
+
+						-- Look up skill data from database
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								if DB.getValue(nodeRefSkill, "name", "") == sName then
+									local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
+									local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
+									local nSM = DB.getValue(nodeRefSkill, "sm", 0);
+
+									Debug.console("Found skill data: att1=" .. sAtt1 .. ", att2=" .. sAtt2 .. ", sm=" .. tostring(nSM));
+
+									-- Update att1, att2, sm fields in character's skill entry
+									local nodeCharSkill = window.getDatabaseNode();
+									if nodeCharSkill then
+										Debug.console("Setting database values for: " .. nodeCharSkill.getPath());
+										DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
+										DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
+										DB.setValue(nodeCharSkill, "sm", "number", nSM);
+
+										-- Calculate SB from character attributes
+										-- Navigate to character node (skill -> skilllist -> character)
+										local nodeChar = nodeCharSkill.getParent().getParent();
+										if nodeChar then
+											-- Get attribute scores (field names are lowercase + "_score")
+											local sAtt1Field = string.lower(sAtt1) .. "_score";
+											local sAtt2Field = string.lower(sAtt2) .. "_score";
+											local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+											local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+
+											Debug.console("Attribute values: " .. sAtt1 .. "=" .. tostring(nAtt1Value) .. ", " .. sAtt2 .. "=" .. tostring(nAtt2Value));
+
+											-- Calculate SB: average, round up if att1 > att2, else round down
+											local nSB = 0;
+											if nAtt1Value > 0 or nAtt2Value > 0 then
+												local nAvg = (nAtt1Value + nAtt2Value) / 2;
+												if nAtt1Value > nAtt2Value then
+													nSB = math.ceil(nAvg);
+												else
+													nSB = math.floor(nAvg);
+												end
+											end
+
+											Debug.console("Calculated SB: " .. tostring(nSB));
+											DB.setValue(nodeCharSkill, "sb", "number", nSB);
+										else
+											Debug.console("ERROR: Could not get character node");
+										end
+									else
+										Debug.console("ERROR: Could not get database node");
+									end
+									return;
+								end
+							end
+							Debug.console("Skill not found in harnmaster.skills: " .. sName);
+						else
+							Debug.console("ERROR: harnmaster.skills node not found");
+						end
+					end
+				</script>
+			</stringfield>
+			<stringfield name="att1">
+				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att1</source>
+			</stringfield>
+			<stringfield name="att2">
+				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att2</source>
+			</stringfield>
+			<numberfield name="sm">
+				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>sm</source>
+			</numberfield>
+			<numberfield name="sb">
+				<anchored position="insidetopleft" offset="225,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>sb</source>
+			</numberfield>
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="260,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_tab_skills">
+		<script>
+			-- Helper function to check if a skill already exists in a list
+			function skillExists(nodeSkillList, sSkillName)
+				if not nodeSkillList then return false; end
+				for _, nodeSkill in pairs(DB.getChildren(nodeSkillList)) do
+					if DB.getValue(nodeSkill, "name", "") == sSkillName then
+						return true;
+					end
+				end
+				return false;
+			end
+
+			function onInit()
+				-- Auto-populate default skills (sm > 0) for new characters
+				local nodeChar = getDatabaseNode();
+				if not nodeChar then return; end
+
+				-- Check if skills have already been initialized using a flag
+				local bInitialized = DB.getValue(nodeChar, "skills_initialized", 0);
+				if bInitialized == 1 then
+					Debug.console("Skills already initialized, skipping auto-populate");
+					return;
+				end
+
+				-- Set the flag immediately to prevent duplicate runs
+				DB.setValue(nodeChar, "skills_initialized", "number", 1);
+
+				Debug.console("Auto-populating default skills for new character");
+
+				-- Group to datasource mapping
+				local tGroupMap = {
+					["Social"] = "socialskills",
+					["Lore"] = "loreskills",
+					["Physical"] = "physicalskills",
+					["Nature"] = "natureskills",
+					["Craft"] = "craftskills",
+					["Combat"] = "combatskills"
+				};
+
+				-- Get skills reference from database
+				local nodeSkillsRef = DB.findNode("harnmaster.skills");
+				if not nodeSkillsRef then
+					Debug.console("ERROR: harnmaster.skills not found");
+					return;
+				end
+
+				-- Track skills we've already added this run to prevent duplicates
+				local tAddedSkills = {};
+
+				-- Iterate through all skills
+				for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+					local nSM = DB.getValue(nodeRefSkill, "sm", 0);
+					if nSM > 0 then
+						local sName = DB.getValue(nodeRefSkill, "name", "");
+						local sGroup = DB.getValue(nodeRefSkill, "group", "");
+						local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
+						local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
+
+						-- Find the right skill list for this group
+						local sListName = tGroupMap[sGroup];
+						if sListName then
+							-- Create a unique key for this skill
+							local sKey = sListName .. ":" .. sName;
+
+							-- Skip if we already added this skill in this run
+							if tAddedSkills[sKey] then
+								Debug.console("Skipping duplicate: " .. sName);
+							else
+								-- Also check if it exists in the database already
+								local nodeSkillList = DB.createChild(nodeChar, sListName);
+								if not skillExists(nodeSkillList, sName) then
+									Debug.console("Adding default skill: " .. sName .. " to " .. sListName);
+
+									local nodeNewSkill = DB.createChild(nodeSkillList);
+
+									DB.setValue(nodeNewSkill, "name", "string", sName);
+									DB.setValue(nodeNewSkill, "att1", "string", sAtt1);
+									DB.setValue(nodeNewSkill, "att2", "string", sAtt2);
+									DB.setValue(nodeNewSkill, "sm", "number", nSM);
+
+									-- Calculate SB from character attributes
+									local sAtt1Field = string.lower(sAtt1) .. "_score";
+									local sAtt2Field = string.lower(sAtt2) .. "_score";
+									local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+									local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+
+									local nSB = 0;
+									if nAtt1Value > 0 or nAtt2Value > 0 then
+										local nAvg = (nAtt1Value + nAtt2Value) / 2;
+										if nAtt1Value > nAtt2Value then
+											nSB = math.ceil(nAvg);
+										else
+											nSB = math.floor(nAvg);
+										end
+									end
+									DB.setValue(nodeNewSkill, "sb", "number", nSB);
+
+									-- Mark as added
+									tAddedSkills[sKey] = true;
+								else
+									Debug.console("Skill already exists in DB: " .. sName);
+								end
+							end
+						end
+					end
+				end
+
+				Debug.console("Default skills auto-population complete");
+			end
+		</script>
+		<sheetdata>
+			<!-- SOCIAL Skills Frame -->
+			<frame_char name="social_frame">
+				<anchored position="insidetopleft" offset="0,0" width="310" height="90" />
+			</frame_char>
+			<label name="social_title">
+				<anchored to="social_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_social" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="social_h_skill">
+				<anchored to="social_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="social_h_att1">
+				<anchored to="social_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="social_h_att2">
+				<anchored to="social_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="social_h_sm">
+				<anchored to="social_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="social_h_sb">
+				<anchored to="social_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="social_h_ml">
+				<anchored to="social_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="socialskills">
+				<anchored to="social_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.socialskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- LORE Skills Frame -->
+			<frame_char name="lore_frame">
+				<anchored position="insidetopleft" offset="0,95" width="310" height="90" />
+			</frame_char>
+			<label name="lore_title">
+				<anchored to="lore_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_lore" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="lore_h_skill">
+				<anchored to="lore_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="lore_h_att1">
+				<anchored to="lore_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="lore_h_att2">
+				<anchored to="lore_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="lore_h_sm">
+				<anchored to="lore_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="lore_h_sb">
+				<anchored to="lore_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="lore_h_ml">
+				<anchored to="lore_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="loreskills">
+				<anchored to="lore_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.loreskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- PHYSICAL Skills Frame -->
+			<frame_char name="physical_frame">
+				<anchored position="insidetopleft" offset="0,190" width="310" height="90" />
+			</frame_char>
+			<label name="physical_title">
+				<anchored to="physical_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_physical" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="physical_h_skill">
+				<anchored to="physical_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="physical_h_att1">
+				<anchored to="physical_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="physical_h_att2">
+				<anchored to="physical_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="physical_h_sm">
+				<anchored to="physical_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="physical_h_sb">
+				<anchored to="physical_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="physical_h_ml">
+				<anchored to="physical_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="physicalskills">
+				<anchored to="physical_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.physicalskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- NATURE Skills Frame -->
+			<frame_char name="nature_frame">
+				<anchored position="insidetopleft" offset="0,285" width="310" height="90" />
+			</frame_char>
+			<label name="nature_title">
+				<anchored to="nature_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_nature" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="nature_h_skill">
+				<anchored to="nature_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="nature_h_att1">
+				<anchored to="nature_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="nature_h_att2">
+				<anchored to="nature_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="nature_h_sm">
+				<anchored to="nature_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="nature_h_sb">
+				<anchored to="nature_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="nature_h_ml">
+				<anchored to="nature_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="natureskills">
+				<anchored to="nature_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.natureskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- CRAFT Skills Frame -->
+			<frame_char name="craft_frame">
+				<anchored position="insidetopleft" offset="0,380" width="310" height="90" />
+			</frame_char>
+			<label name="craft_title">
+				<anchored to="craft_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_craft" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="craft_h_skill">
+				<anchored to="craft_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="craft_h_att1">
+				<anchored to="craft_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="craft_h_att2">
+				<anchored to="craft_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="craft_h_sm">
+				<anchored to="craft_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="craft_h_sb">
+				<anchored to="craft_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="craft_h_ml">
+				<anchored to="craft_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="craftskills">
+				<anchored to="craft_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.craftskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- COMBAT Skills Frame -->
+			<frame_char name="combat_frame">
+				<anchored position="insidetopleft" offset="0,475" width="310" height="90" />
+			</frame_char>
+			<label name="combat_title">
+				<anchored to="combat_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<static textres="harn_skill_combat" />
+				<font>sheetlabel</font>
+			</label>
+			<!-- Column Headers -->
+			<label name="combat_h_skill">
+				<anchored to="combat_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="combat_h_att1">
+				<anchored to="combat_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="combat_h_att2">
+				<anchored to="combat_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="combat_h_sm">
+				<anchored to="combat_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="combat_h_sb">
+				<anchored to="combat_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="combat_h_ml">
+				<anchored to="combat_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="combatskills">
+				<anchored to="combat_frame">
+					<top offset="40" />
+					<left offset="5" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.combatskills</datasource>
+				<class>harn_skill_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+		</sheetdata>
+	</windowclass>
+</root>

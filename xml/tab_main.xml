@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Main Tab
+		Birth, Family, Standing, Appearance, Traits, Fate
+	-->
+
+	<windowclass name="harn_tab_main">
+		<script>
+			function onInit()
+				-- Update sunsign on load if we have values
+				updateSunsign();
+			end
+
+			function updateSunsign()
+				local nDay = birthdate_day.getValue();
+				local sMonth = birthdate_month.getValue();
+
+				if nDay and nDay > 0 and sMonth and sMonth ~= "" then
+					local sSunsign = HarnManager.getSunsign(sMonth, nDay);
+					birth_sunsign.setValue(sSunsign);
+				end
+			end
+		</script>
+		<sheetdata>
+			<!-- BIRTH Section -->
+			<frame_char name="birth_frame">
+				<anchored position="insidetopleft" offset="0,0" width="200" height="200" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="birth_frame" />
+				<static textres="harn_birth" />
+			</label_frametop>
+
+			<label name="folk_label">
+				<anchored to="birth_frame" position="insidetopleft" offset="10,30" width="70" height="20" />
+				<static textres="harn_folk" />
+			</label>
+			<stringfield name="folk">
+				<anchored to="folk_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="agegroup_label">
+				<anchored to="folk_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_agegroup" />
+			</label>
+			<combobox name="agegroup">
+				<anchored to="agegroup_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<unsorted />
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Young", "Mature", "Old"});
+					end
+				</script>
+			</combobox>
+
+			<label name="birthdate_label">
+				<anchored to="agegroup_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_birthdate" />
+			</label>
+			<numberfield name="birthdate_day">
+				<anchored to="birthdate_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>1</min>
+				<max>30</max>
+				<script>
+					function onValueChanged()
+						window.updateSunsign();
+					end
+				</script>
+			</numberfield>
+			<combobox name="birthdate_month">
+				<anchored to="birthdate_day" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxsize>12</listmaxsize>
+				<unsorted />
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Nuzyael", "Peonu", "Kelen", "Nolus", "Larane", "Agrazhar", "Azura", "Halane", "Savor", "Ilvin", "Navek", "Morgat"});
+					end
+					function onValueChanged()
+						window.updateSunsign();
+					end
+				</script>
+			</combobox>
+
+			<label name="birth_sunsign_label">
+				<anchored to="birthdate_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_sunsign" />
+			</label>
+			<stringfield name="birth_sunsign">
+				<anchored to="birth_sunsign_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</stringfield>
+
+			<label name="birthplace_label">
+				<anchored to="birth_sunsign_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_birthplace" />
+			</label>
+			<combobox name="birthplace">
+				<anchored to="birthplace_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxsize>12</listmaxsize>
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Altor", "Azeryan", "Byria", "Chogoro - Mafan", "Dalkesh", "Emelrene", "Hacherdad", "Harbaal", "Harn", "Hepekeria", "Hurisea", "Ivinia", "Karejia", "Ketarh - Beshakan", "Northern Anzeloria", "Palithane", "Quarphor", "Reksyna", "Shorkyne", "Thonia", "Trierzon", "Umelria"});
+					end
+				</script>
+			</combobox>
+
+			<!-- FAMILY Section -->
+			<frame_char name="family_frame">
+				<anchored position="insidetopleft" offset="0,205" width="200" height="200" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="family_frame" />
+				<static textres="harn_family" />
+			</label_frametop>
+
+			<label name="society_label">
+				<anchored to="family_frame" position="insidetopleft" offset="10,30" width="80" height="20" />
+				<static textres="harn_society" />
+			</label>
+			<stringfield name="society">
+				<anchored to="society_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="class_label">
+				<anchored to="society_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_class" />
+			</label>
+			<stringfield name="class">
+				<anchored to="class_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="family_occupation_label">
+				<anchored to="class_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_occupation" />
+			</label>
+			<stringfield name="family_occupation">
+				<anchored to="family_occupation_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="background_label">
+				<anchored to="family_occupation_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_background" />
+			</label>
+			<combobox name="background">
+				<anchored to="background_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<unsorted />
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Urban", "Urban-City", "Rural", "Rural-Wilderness"});
+					end
+				</script>
+			</combobox>
+
+			<label name="estrangement_label">
+				<anchored to="background_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_estrangement" />
+			</label>
+			<combobox name="estrangement">
+				<anchored to="estrangement_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<unsorted />
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Outcast", "Unpopular", "Accepted", "Popular", "Favourite"});
+					end
+				</script>
+			</combobox>
+
+			<label name="pantheon_label">
+				<anchored to="estrangement_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_pantheon" />
+			</label>
+			<stringfield name="pantheon">
+				<anchored to="pantheon_label" position="righthigh" offset="5,0" width="90" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- STANDING Section -->
+			<frame_char name="standing_frame">
+				<anchored position="insidetopleft" offset="210,0" width="200" height="140" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="standing_frame" />
+				<static textres="harn_standing" />
+			</label_frametop>
+
+			<label name="occupation_label">
+				<anchored to="standing_frame" position="insidetopleft" offset="10,30" width="70" height="20" />
+				<static textres="harn_occupation" />
+			</label>
+			<stringfield name="occupation">
+				<anchored to="occupation_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="home_label">
+				<anchored to="occupation_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_home" />
+			</label>
+			<stringfield name="home">
+				<anchored to="home_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="wealth_label">
+				<anchored to="home_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_wealth" />
+			</label>
+			<stringfield name="wealth">
+				<anchored to="wealth_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="coin_label">
+				<anchored to="wealth_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_coin" />
+			</label>
+			<stringfield name="coin">
+				<anchored to="coin_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- TRAITS Section -->
+			<frame_char name="traits_frame">
+				<anchored position="insidetopleft" offset="210,145" width="200" height="130" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="traits_frame" />
+				<static textres="harn_traits" />
+			</label_frametop>
+
+			<label name="trait_sunsign_label">
+				<anchored to="traits_frame" position="insidetopleft" offset="10,30" width="70" height="20" />
+				<static textres="harn_sunsign" />
+			</label>
+			<stringfield name="trait_sunsign">
+				<anchored to="trait_sunsign_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="morality_label">
+				<anchored to="trait_sunsign_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_morality" />
+			</label>
+			<combobox name="morality">
+				<anchored to="morality_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<unsorted />
+				<script>
+					function onInit()
+						super.onInit();
+						addItems({"Diabolical", "Unscrupulous", "Corruptible", "Dutiful", "Principled", "Exemplary"});
+					end
+				</script>
+			</combobox>
+
+			<label name="psyche_label">
+				<anchored to="morality_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_psyche" />
+			</label>
+			<stringfield name="psyche">
+				<anchored to="psyche_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="blessing_label">
+				<anchored to="psyche_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_blessing" />
+			</label>
+			<stringfield name="blessing">
+				<anchored to="blessing_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- APPEARANCE Section -->
+			<frame_char name="appearance_frame">
+				<anchored position="insidetopleft" offset="420,0" width="180" height="200" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="appearance_frame" />
+				<static textres="harn_appearance" />
+			</label_frametop>
+
+			<label name="complexion_label">
+				<anchored to="appearance_frame" position="insidetopleft" offset="10,30" width="75" height="20" />
+				<static textres="harn_complexion" />
+			</label>
+			<stringfield name="complexion">
+				<anchored to="complexion_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="hair_label">
+				<anchored to="complexion_label" position="below" offset="0,5" width="75" height="20" />
+				<static textres="harn_hair" />
+			</label>
+			<stringfield name="hair">
+				<anchored to="hair_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="eyes_label">
+				<anchored to="hair_label" position="below" offset="0,5" width="75" height="20" />
+				<static textres="harn_eyes" />
+			</label>
+			<stringfield name="eyes">
+				<anchored to="eyes_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="height_label">
+				<anchored to="eyes_label" position="below" offset="0,5" width="75" height="20" />
+				<static textres="harn_height" />
+			</label>
+			<stringfield name="height">
+				<anchored to="height_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="weight_label">
+				<anchored to="height_label" position="below" offset="0,5" width="75" height="20" />
+				<static textres="harn_weight" />
+			</label>
+			<stringfield name="weight">
+				<anchored to="weight_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<label name="handedness_label">
+				<anchored to="weight_label" position="below" offset="0,5" width="75" height="20" />
+				<static textres="harn_handedness" />
+			</label>
+			<stringfield name="handedness">
+				<anchored to="handedness_label" position="righthigh" offset="5,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- FATE Section -->
+			<frame_char name="fate_frame">
+				<anchored position="insidetopleft" offset="210,280" width="200" height="120" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="fate_frame" />
+				<static textres="harn_fate" />
+			</label_frametop>
+
+			<label name="roll_label">
+				<anchored to="fate_frame" position="insidetopleft" offset="10,30" width="40" height="20" />
+				<static textres="harn_roll" />
+			</label>
+			<numberfield name="fate_roll">
+				<anchored to="roll_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="fp_label">
+				<anchored to="roll_label" position="righthigh" offset="50,0" width="25" height="20" />
+				<static textres="harn_fp" />
+			</label>
+			<numberfield name="fate_fp">
+				<anchored to="fp_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="grace_label">
+				<anchored to="roll_label" position="below" offset="0,5" width="40" height="20" />
+				<static textres="harn_grace" />
+			</label>
+			<numberfield name="grace">
+				<anchored to="grace_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="piety_label">
+				<anchored to="grace_label" position="below" offset="0,5" width="40" height="20" />
+				<static textres="harn_piety" />
+			</label>
+			<numberfield name="piety">
+				<anchored to="piety_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+</root>

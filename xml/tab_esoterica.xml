@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Esoterica Tab
+	-->
+
+	<windowclass name="harn_tab_esoterica">
+		<sheetdata>
+			<!-- Placeholder content -->
+			<label name="esoterica_title">
+				<anchored position="insidetopleft" offset="10,10" width="200" height="25" />
+				<static textres="harn_tab_esoterica" />
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- DEBUG: Test displaying SkillsData for Spirit -->
+			<label name="debug_header">
+				<anchored position="insidetopleft" offset="10,50" width="300" height="20" />
+				<static>DEBUG - Spirit skill from SkillsData:</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<label name="debug_name_label">
+				<anchored position="insidetopleft" offset="10,75" width="60" height="20" />
+				<static>Name:</static>
+				<font>sheetlabel</font>
+			</label>
+			<stringcontrol name="debug_name">
+				<anchored position="insidetopleft" offset="75,75" width="100" height="20" />
+				<font>sheettext</font>
+				<script>
+					function onFirstLayout()
+						Debug.console("DEBUG: Trying DB access");
+						local sResult = "NOT FOUND";
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							Debug.console("Found harnmaster.skills node");
+							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								local sName = DB.getValue(nodeSkill, "name", "");
+								if sName == "Spirit" then
+									sResult = sName;
+									break;
+								end
+							end
+						else
+							sResult = "NO DB NODE";
+							Debug.console("harnmaster.skills node not found");
+						end
+						setValue(sResult);
+					end
+				</script>
+			</stringcontrol>
+
+			<label name="debug_att1_label">
+				<anchored position="insidetopleft" offset="10,100" width="60" height="20" />
+				<static>ATT1:</static>
+				<font>sheetlabel</font>
+			</label>
+			<stringcontrol name="debug_att1">
+				<anchored position="insidetopleft" offset="75,100" width="50" height="20" />
+				<font>sheettext</font>
+				<script>
+					function onFirstLayout()
+						local sResult = "ERR";
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
+									sResult = DB.getValue(nodeSkill, "att1", "");
+									break;
+								end
+							end
+						end
+						setValue(sResult);
+					end
+				</script>
+			</stringcontrol>
+
+			<label name="debug_att2_label">
+				<anchored position="insidetopleft" offset="10,125" width="60" height="20" />
+				<static>ATT2:</static>
+				<font>sheetlabel</font>
+			</label>
+			<stringcontrol name="debug_att2">
+				<anchored position="insidetopleft" offset="75,125" width="50" height="20" />
+				<font>sheettext</font>
+				<script>
+					function onFirstLayout()
+						local sResult = "ERR";
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
+									sResult = DB.getValue(nodeSkill, "att2", "");
+									break;
+								end
+							end
+						end
+						setValue(sResult);
+					end
+				</script>
+			</stringcontrol>
+
+			<label name="debug_sm_label">
+				<anchored position="insidetopleft" offset="10,150" width="60" height="20" />
+				<static>SM:</static>
+				<font>sheetlabel</font>
+			</label>
+			<stringcontrol name="debug_sm">
+				<anchored position="insidetopleft" offset="75,150" width="50" height="20" />
+				<font>sheettext</font>
+				<script>
+					function onFirstLayout()
+						local sResult = "ERR";
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
+									sResult = tostring(DB.getValue(nodeSkill, "sm", 0));
+									break;
+								end
+							end
+						end
+						setValue(sResult);
+					end
+				</script>
+			</stringcontrol>
+		</sheetdata>
+	</windowclass>
+</root>

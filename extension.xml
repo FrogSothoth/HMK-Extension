@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.2">
+	<announcement text="HarnMaster Character Sheet Extension loaded" font="emotefont" />
+
+	<properties>
+		<name>HarnMaster</name>
+		<version>0.1</version>
+		<author>BigMucho</author>
+		<description>HarnMaster Kethira character sheet for Fantasy Grounds</description>
+		<ruleset>
+			<name>CoreRPG</name>
+		</ruleset>
+	</properties>
+
+	<base>
+		<!-- String resources for labels -->
+		<includefile source="xml/strings.xml" />
+
+		<!-- Character sheet definition -->
+		<includefile source="xml/charsheet.xml" />
+
+		<!-- Tab content windowclasses -->
+		<includefile source="xml/tab_attributes.xml" />
+		<includefile source="xml/tab_main.xml" />
+		<includefile source="xml/tab_skills.xml" />
+		<includefile source="xml/tab_esoterica.xml" />
+		<includefile source="xml/tab_gear.xml" />
+		<includefile source="xml/tab_combat.xml" />
+
+		<!-- Scripts -->
+		<script name="HarnManager" file="scripts/harn_manager.lua" />
+		<script name="SkillsData" file="scripts/skills_data.lua" />
+		<script name="SkillsManager" file="scripts/skills_manager.lua" />
+	</base>
+</root>
