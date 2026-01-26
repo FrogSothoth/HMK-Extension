@@ -46,7 +46,8 @@ This repository is organized to support both **development** and **learning**:
 │   └── FG-CoreRPG-Moon-Tracker/ # Great for: function wrapping
 │
 ├── .claude/skills/      # AI ASSISTANT SKILLS
-│   └── harn-guru/       # Answers HMK rules questions from local data
+│   ├── harn-guru/       # Answers HMK rules questions from local data
+│   └── fgu-guru/        # Answers FGU development questions from patterns/references
 │
 ├── CLAUDE.md            # Instructions for AI coding assistants
 └── README.md            # This file
@@ -60,7 +61,7 @@ This repository is organized to support both **development** and **learning**:
 | `docs/patterns/` | FGU coding patterns with examples | When you're stuck on "how do I..." |
 | `docs/hmk-rules/` | HMK game rules database | When you need game mechanics info |
 | `references/` | Working extensions to study | When learning new patterns |
-| `.claude/skills/` | AI assistant capabilities | When asking rules questions |
+| `.claude/skills/` | AI assistant capabilities | When asking rules or FGU dev questions |
 
 ---
 
@@ -115,6 +116,14 @@ That's it. The symbolic link means FGU always sees your latest edits.
 ## Learning FGU Development
 
 > **Claude is your pair programmer.** When you're stuck, describe what you're trying to do: *"I need to add a new field that auto-calculates from two other fields"* - Claude will check docs/patterns/ and reference extensions to show you how.
+
+Claude has access to a **fgu-guru** skill that searches local patterns and reference implementations. Ask naturally:
+
+- *"How do I make a field expand to fill available space?"*
+- *"What's the pattern for handling database changes?"*
+- *"How does anchoring work in FGU XML?"*
+
+Claude will search verified local code rather than guessing from training data.
 
 ### Start Here: docs/patterns/
 
@@ -205,7 +214,8 @@ sqlite3 docs/hmk-rules/hmk-rules.db \
 |------|--------------|
 | `extension.xml` | Manifest - defines what files to load |
 | `scripts/harn_manager.lua` | Calendar, sunsign calculations |
-| `scripts/bu_skills_manager.lua` | Skill definitions, SB formulas |
+| `scripts/skills_manager.lua` | Skill operations, SB calculations |
+| `scripts/skills_data.lua` | All 72 skills with governing attributes |
 | `xml/charsheet.xml` | Main character sheet structure |
 | `xml/tab_*.xml` | Individual tab layouts |
 | `xml/strings.xml` | All UI text (labels, etc.) |
