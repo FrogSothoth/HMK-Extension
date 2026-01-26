@@ -139,19 +139,20 @@ Key directories:
 ### This Project's Structure
 
 ```
-Continued-HMK-Extension/
-├── extension.xml          # Extension manifest
-├── scripts/
-│   └── harn_manager.lua   # Main Lua script
-├── xml/
-│   ├── strings.xml        # String resources
-│   ├── charsheet.xml      # Character sheet definition
-│   ├── tab_*.xml          # Tab content definitions
-│   └── ...
-└── docs/
-    ├── macos-development-guide.md
-    ├── developer-resources.md (this file)
-    └── research/
+HMK-Extension/
+├── extension/             # FGU extension source (symlink target)
+│   ├── extension.xml      # Extension manifest
+│   ├── scripts/
+│   │   └── harn_manager.lua   # Main Lua script
+│   └── xml/
+│       ├── strings.xml        # String resources
+│       ├── charsheet.xml      # Character sheet definition
+│       └── tab_*.xml          # Tab content definitions
+├── docs/
+│   ├── macos-development-guide.md
+│   ├── developer-resources.md (this file)
+│   └── research/
+└── references/            # Git submodules of example extensions
 ```
 
 ---
@@ -176,7 +177,7 @@ The reference repos are included as **git submodules**. When cloning this projec
 
 ```bash
 # Option 1: Clone with submodules in one command
-git clone --recursive https://github.com/YOUR_USERNAME/Continued-HMK-Extension.git
+git clone --recursive https://github.com/YOUR_USERNAME/HMK-Extension.git
 
 # Option 2: If already cloned without --recursive
 git submodule update --init --recursive

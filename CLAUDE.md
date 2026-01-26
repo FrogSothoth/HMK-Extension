@@ -25,13 +25,16 @@ This extension provides a custom character sheet for the HarnMaster RPG system r
 │   ├── extension.xml          # Manifest - defines extension metadata and includes
 │   ├── scripts/
 │   │   ├── harn_manager.lua       # Main manager - lifecycle hooks, calendar/sunsign
-│   │   └── bu_skills_manager.lua  # Skills manager - skill definitions and SB calcs
+│   │   ├── skills_manager.lua     # Skills manager - SB calculations, skill operations
+│   │   ├── skills_data.lua        # Skills database - all 72 skills with attributes
+│   │   └── bu_skills_manager.lua  # Backup/alternate skills manager
 │   └── xml/
-│       ├── strings.xml        # Localized strings (173 entries)
+│       ├── strings.xml        # Localized strings
 │       ├── charsheet.xml      # Main character sheet with tab definitions
 │       ├── tab_main.xml       # Birth, family, standing, appearance
 │       ├── tab_attributes.xml # Physical/mental attributes with auto-calc ML
 │       ├── tab_skills.xml     # 7 skill category lists with CRUD
+│       ├── tab_esoterica.xml  # Magic and mysteries
 │       ├── tab_combat.xml     # Weapons, injuries, fatigue
 │       └── tab_gear.xml       # Equipment and encumbrance
 │
@@ -75,7 +78,7 @@ Create a symbolic link (or directory junction on Windows) from FGU's extensions 
 2. Launch FGU and load a campaign
 3. Enable the "HarnMaster" extension
 4. Type `/reload` in chat
-5. You should see: "HarnMaster Character Sheet Extension loaded"
+5. You should see: "HarnMaster Extension loaded (HMK-Extension)"
 
 **Without this link, you'll need to manually copy files after every change.**
 

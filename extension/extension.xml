@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <root version="3.2">
-	<announcement text="HarnMaster Character Sheet Extension loaded" font="emotefont" />
+	<announcement text="HarnMaster Extension loaded (HMK-Extension)" font="emotefont" />
 
 	<properties>
 		<name>HarnMaster</name>

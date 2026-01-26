@@ -34,7 +34,7 @@ This repository is organized to support both **development** and **learning**:
 │   └── xml/             # UI definitions (character sheet layout)
 │
 ├── docs/                # LEARNING RESOURCES
-│   ├── patterns.md      # "How do I do X in FGU?" - code patterns
+│   ├── patterns/        # "How do I do X in FGU?" - code patterns
 │   ├── hmk-rules/       # HMK game rules (database + markdown)
 │   ├── hmk-data/        # Structured game data (JSON)
 │   └── official-sources/# Kelestia's official PDFs and spreadsheets
@@ -57,7 +57,7 @@ This repository is organized to support both **development** and **learning**:
 | Folder | Purpose | When You'll Use It |
 |--------|---------|-------------------|
 | `extension/` | The code FGU actually runs | Every time you make changes |
-| `docs/patterns.md` | FGU coding patterns with examples | When you're stuck on "how do I..." |
+| `docs/patterns/` | FGU coding patterns with examples | When you're stuck on "how do I..." |
 | `docs/hmk-rules/` | HMK game rules database | When you need game mechanics info |
 | `references/` | Working extensions to study | When learning new patterns |
 | `.claude/skills/` | AI assistant capabilities | When asking rules questions |
@@ -71,8 +71,8 @@ This repository is organized to support both **development** and **learning**:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Continued-HMK-Extension.git
-cd Continued-HMK-Extension
+git clone https://github.com/your-username/HMK-Extension.git
+cd HMK-Extension
 git submodule update --init --recursive   # Downloads reference extensions
 ```
 
@@ -96,7 +96,7 @@ FGU needs to find our extension. We create a **symbolic link** so FGU sees our `
 **Verify it worked:**
 1. Check that `[FGU Data Folder]/extensions/HarnMaster/extension.xml` exists
 2. Launch FGU, load any campaign, enable "HarnMaster" extension
-3. You should see: "HarnMaster Character Sheet Extension loaded"
+3. You should see: "HarnMaster Extension loaded (HMK-Extension)"
 
 ### Step 3: Development Workflow
 
@@ -114,13 +114,13 @@ That's it. The symbolic link means FGU always sees your latest edits.
 
 ## Learning FGU Development
 
-> **Claude is your pair programmer.** When you're stuck, describe what you're trying to do: *"I need to add a new field that auto-calculates from two other fields"* - Claude will check patterns.md and reference extensions to show you how.
+> **Claude is your pair programmer.** When you're stuck, describe what you're trying to do: *"I need to add a new field that auto-calculates from two other fields"* - Claude will check docs/patterns/ and reference extensions to show you how.
 
-### Start Here: patterns.md
+### Start Here: docs/patterns/
 
-**Location:** `docs/patterns.md`
+**Location:** `docs/patterns/` (folder with multiple pattern files)
 
-This document shows you how to do common things in FGU with working code examples:
+These documents show you how to do common things in FGU with working code examples:
 - How to read/write character data (DB.getValue/DB.setValue)
 - How to create calculated fields (onValueChanged)
 - How to make lists that add/remove items (windowlist)
@@ -130,7 +130,7 @@ This document shows you how to do common things in FGU with working code example
 
 ### Learn From Working Extensions
 
-The `references/` folder contains real, working FGU extensions. When `patterns.md` isn't enough, study these:
+The `references/` folder contains real, working FGU extensions. When `docs/patterns/` isn't enough, study these:
 
 | Extension | What to Learn | Key Files to Read |
 |-----------|---------------|-------------------|
