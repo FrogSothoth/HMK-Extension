@@ -1,0 +1,1527 @@
+{
+  "body_locations": [
+    {
+      "abbrev": "sk",
+      "name": "Skull",
+      "zone": "Head"
+    },
+    {
+      "abbrev": "fa",
+      "name": "Face",
+      "zone": "Head"
+    },
+    {
+      "abbrev": "nk",
+      "name": "Neck",
+      "zone": "Head"
+    },
+    {
+      "abbrev": "sh",
+      "name": "Shoulder",
+      "zone": "Arms"
+    },
+    {
+      "abbrev": "ua",
+      "name": "Upper Arm",
+      "zone": "Arms"
+    },
+    {
+      "abbrev": "el",
+      "name": "Elbow",
+      "zone": "Arms"
+    },
+    {
+      "abbrev": "fo",
+      "name": "Forearm",
+      "zone": "Arms"
+    },
+    {
+      "abbrev": "ha",
+      "name": "Hand",
+      "zone": "Arms"
+    },
+    {
+      "abbrev": "tx",
+      "name": "Thorax",
+      "zone": "Torso"
+    },
+    {
+      "abbrev": "ab",
+      "name": "Abdomen",
+      "zone": "Torso"
+    },
+    {
+      "abbrev": "pv",
+      "name": "Pelvis",
+      "zone": "Torso"
+    },
+    {
+      "abbrev": "th",
+      "name": "Thigh",
+      "zone": "Legs"
+    },
+    {
+      "abbrev": "kn",
+      "name": "Knee",
+      "zone": "Legs"
+    },
+    {
+      "abbrev": "ca",
+      "name": "Calf",
+      "zone": "Legs"
+    },
+    {
+      "abbrev": "ft",
+      "name": "Foot",
+      "zone": "Legs"
+    }
+  ],
+  "materials": [
+    {
+      "id": "cloth",
+      "name": "Cloth",
+      "abbrev": "C",
+      "av_blunt": 0,
+      "av_edge": 1,
+      "av_point": 0,
+      "av_fire": 1,
+      "is_rigid": false,
+      "description": "Heavy, coarse buckram or serge for the masses, linen and silk for the wealthy. Includes soft leather, an expensive status material that offers no greater protection than buckram."
+    },
+    {
+      "id": "leather",
+      "name": "Leather",
+      "abbrev": "L",
+      "av_blunt": 1,
+      "av_edge": 2,
+      "av_point": 1,
+      "av_fire": 3,
+      "is_rigid": false,
+      "description": "Heavy, stiff rawhide used primarily in belts and shoes. In cattle-rich cultures of central Lythia, often fashioned into near-rigid tunics."
+    },
+    {
+      "id": "padded",
+      "name": "Padded",
+      "abbrev": "D",
+      "av_blunt": 2,
+      "av_edge": 2,
+      "av_point": 1,
+      "av_fire": 2,
+      "is_rigid": false,
+      "description": "Either a single layer of thick wool clothing, or wool or flax stuffed between two stitched layers of cloth. May be worn over or under other armour like Mail."
+    },
+    {
+      "id": "quilted",
+      "name": "Quilted",
+      "abbrev": "Q",
+      "av_blunt": 4,
+      "av_edge": 3,
+      "av_point": 2,
+      "av_fire": 3,
+      "is_rigid": false,
+      "description": "Usually six to eight layers of cloth sewn together, perhaps stuffed. Worn by themselves or over other armours. Includes thick furs of northern or tribal folk."
+    },
+    {
+      "id": "gambeson",
+      "name": "Gambeson",
+      "abbrev": "G",
+      "av_blunt": 6,
+      "av_edge": 5,
+      "av_point": 4,
+      "av_fire": 5,
+      "is_rigid": false,
+      "description": "A substantial, near-rigid material of 16-24 layers of stitched cloth. Articles worn almost exclusively by themselves. Very heavy when wet."
+    },
+    {
+      "id": "kurbul",
+      "name": "Kûrbúl",
+      "abbrev": "K",
+      "av_blunt": 4,
+      "av_edge": 6,
+      "av_point": 5,
+      "av_fire": 4,
+      "is_rigid": true,
+      "description": "Azeryani word for leather treated with hot water into a hard but brittle material. Used in helmets and breastplates. About five times as thick as Plate but offers half the protection at equal weight."
+    },
+    {
+      "id": "scale",
+      "name": "Scale",
+      "abbrev": "S",
+      "av_blunt": 4,
+      "av_edge": 8,
+      "av_point": 5,
+      "av_fire": 5,
+      "is_rigid": true,
+      "description": "Leather reinforced with overlapping metal plates. More cumbersome than Plate and less durable than Mail, but quicker and cheaper to produce than both."
+    },
+    {
+      "id": "mail",
+      "name": "Mail",
+      "abbrev": "M",
+      "av_blunt": 2,
+      "av_edge": 8,
+      "av_point": 7,
+      "av_fire": 3,
+      "is_rigid": true,
+      "description": "Interlocking metal rings secured by interlacing leather thongs or attached to an underlayer. Can be fashioned into flexible articles that cover the entire body."
+    },
+    {
+      "id": "plate",
+      "name": "Plate",
+      "abbrev": "P",
+      "av_blunt": 6,
+      "av_edge": 11,
+      "av_point": 9,
+      "av_fire": 5,
+      "is_rigid": true,
+      "description": "Rigid and continuous metal covering, used for helms, breastplates, and spot protection. Less encumbering over the same area than Mail, but fairly expensive."
+    }
+  ],
+  "suits": [
+    {
+      "id": "clothing",
+      "name": "Clothing",
+      "price": 100,
+      "enc": 0,
+      "area_fire": "f1",
+      "weight": 5,
+      "composition": [
+        "Cloth Vest",
+        "Cloth Tunic",
+        "Cloth Breeches",
+        "Cloth Swaddle"
+      ],
+      "description": "The basic article of clothing for folk throughout most of Venârivè. Offers some protection against the elements, if very little versus weapons.",
+      "page": 112,
+      "coverage": {
+        "sk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ua": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "el": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "fo": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "ab": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "pv": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "th": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ft": [
+          0,
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "id": "heavy-clothing",
+      "name": "Heavy Clothing",
+      "price": 240,
+      "enc": 0,
+      "area_fire": "f3",
+      "weight": 10,
+      "composition": [
+        "Leather Cap",
+        "Padded Shirt",
+        "Cloth Sleeved Tunic",
+        "Cloth Surcoat",
+        "Cloth Breeches",
+        "Cloth Swaddle",
+        "Leather Shoes"
+      ],
+      "description": "A suit of heavier layers including a padded shirt, commonly worn as backing to a mail byrnie. The stiff leather helm mitigates some weapon impact.",
+      "page": 112,
+      "coverage": {
+        "sk": [
+          1,
+          2,
+          1,
+          3
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          2,
+          4,
+          1,
+          4
+        ],
+        "ua": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "el": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "fo": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          2,
+          4,
+          1,
+          4
+        ],
+        "ab": [
+          2,
+          4,
+          1,
+          4
+        ],
+        "pv": [
+          0,
+          3,
+          0,
+          3
+        ],
+        "th": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "kn": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "ca": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "quilted-coat",
+      "name": "Quilted Coat",
+      "price": 400,
+      "enc": 5,
+      "area_fire": "f4",
+      "weight": 20,
+      "composition": [
+        "Kurbul Helm",
+        "Padded Cap",
+        "Quilted Coat",
+        "Cloth Tunic",
+        "Cloth Breeches",
+        "Cloth Leggings",
+        "Leather Shoes"
+      ],
+      "description": "True armour with a kurbul helmet marking the wearer as a martialist: a yeoman archer, town militia veteran, or perhaps a successful brigand.",
+      "page": 112,
+      "coverage": {
+        "sk": [
+          6,
+          8,
+          6,
+          6
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          4,
+          4,
+          2,
+          4
+        ],
+        "ua": [
+          4,
+          4,
+          2,
+          4
+        ],
+        "el": [
+          4,
+          4,
+          2,
+          4
+        ],
+        "fo": [
+          4,
+          3,
+          2,
+          3
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          4,
+          4,
+          2,
+          4
+        ],
+        "ab": [
+          4,
+          4,
+          2,
+          4
+        ],
+        "pv": [
+          4,
+          5,
+          2,
+          5
+        ],
+        "th": [
+          4,
+          5,
+          2,
+          5
+        ],
+        "kn": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "ca": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "kurbul-cuirass",
+      "name": "Kûrbúl Cuirass",
+      "price": 500,
+      "enc": 5,
+      "area_fire": "f4",
+      "weight": 20,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Kurbul Spaulders",
+        "Kurbul Rerebraces",
+        "Kurbul Cuirass",
+        "Padded Sleeved Tunic",
+        "Cloth Trousers",
+        "Cloth Swaddle",
+        "Leather Boots"
+      ],
+      "description": "A suit for professional soldiers - city guards or mercenaries. Kurbul is rigid leather created with hot water, hard but brittle.",
+      "page": 113,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          6,
+          8,
+          6,
+          6
+        ],
+        "ua": [
+          6,
+          8,
+          6,
+          6
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          6,
+          8,
+          6,
+          6
+        ],
+        "ab": [
+          6,
+          8,
+          6,
+          6
+        ],
+        "pv": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "th": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "scale-byrnie",
+      "name": "Scale Byrnie",
+      "price": 700,
+      "enc": 10,
+      "area_fire": "f4",
+      "weight": 30,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Scale Byrnie",
+        "Padded Coat",
+        "Cloth Trousers",
+        "Cloth Swaddle",
+        "Leather Boots"
+      ],
+      "description": "Scale armour with overlapping metal plates backed with leather. Stiffer and less durable than mail, more cumbersome than plate, but quicker and cheaper to produce.",
+      "page": 113,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "ua": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "ab": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "pv": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "th": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "mail-byrnie",
+      "name": "Mail Byrnie",
+      "price": 800,
+      "enc": 5,
+      "area_fire": "f3",
+      "weight": 20,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Mail Byrnie",
+        "Padded Tunic",
+        "Cloth Trousers",
+        "Cloth Swaddle",
+        "Leather Boots"
+      ],
+      "description": "Flexible mail covering the torso with a plate helm. Intended for maximum mobility and extended wear - suited for marines, viking raiders, or travelling nobles.",
+      "page": 113,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ua": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ab": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "pv": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "th": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "gambeson",
+      "name": "Gambeson",
+      "price": 800,
+      "enc": 10,
+      "area_fire": "f5",
+      "weight": 30,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Gambeson Coat",
+        "Gambeson Sleeves",
+        "Cloth Trousers",
+        "Kurbul Poleyns",
+        "Leather Boots"
+      ],
+      "description": "Extremely rigid textile armour from up to two dozen layers of stitched cloth. Surprisingly heavy and more so when soaked. Worn by household men-at-arms or squires.",
+      "page": 114,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "ua": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "el": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "fo": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "ab": [
+          6,
+          5,
+          4,
+          5
+        ],
+        "pv": [
+          2,
+          3,
+          1,
+          3
+        ],
+        "th": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "kn": [
+          4,
+          6,
+          5,
+          4
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "scale-habergeon",
+      "name": "Scale Habergeon",
+      "price": 950,
+      "enc": 15,
+      "area_fire": "f6",
+      "weight": 40,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Scale Habergeon",
+        "Padded Coat",
+        "Scale Tassets",
+        "Cloth Trousers",
+        "Leather Boots"
+      ],
+      "description": "Extended scale coverage including tassets for thigh protection. Scale shares some flexibility of mail but its stiffness prevents use in full sleeves or leggings.",
+      "page": 114,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "sh": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "ua": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "ab": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "pv": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "th": [
+          6,
+          10,
+          6,
+          7
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "mail-hauberk",
+      "name": "Mail Hauberk",
+      "price": 1200,
+      "enc": 10,
+      "area_fire": "f4",
+      "weight": 30,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Mail Coif",
+        "Mail Hauberk",
+        "Padded Coat",
+        "Cloth Trousers",
+        "Leather Boots"
+      ],
+      "description": "A longer mail shirt extending to mid-thigh with a mail coif protecting neck and shoulders. Standard equipment for professional warriors.",
+      "page": 114,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "sh": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ua": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ab": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "pv": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "th": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "half-plate",
+      "name": "Half Plate",
+      "price": 1500,
+      "enc": 10,
+      "area_fire": "f5",
+      "weight": 35,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Mail Coif",
+        "Plate Cuirass",
+        "Mail Hauberk",
+        "Padded Coat",
+        "Plate Tassets",
+        "Leather Boots"
+      ],
+      "description": "Plate cuirass worn over a mail hauberk with plate tassets. Represents a significant investment, typically worn by knights and nobles.",
+      "page": 115,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "sh": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ua": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "el": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "fo": [
+          2,
+          2,
+          1,
+          2
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ab": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "pv": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "th": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "kn": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "ca": [
+          1,
+          4,
+          1,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "mail-armour",
+      "name": "Mail Armour",
+      "price": 2000,
+      "enc": 15,
+      "area_fire": "f5",
+      "weight": 40,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Mail Coif",
+        "Mail Hauberk",
+        "Mail Sleeves",
+        "Padded Coat",
+        "Mail Chausses",
+        "Leather Boots"
+      ],
+      "description": "Full mail coverage from head to toe. The flexibility of mail allows articles covering the entire body. Worn by wealthy knights and nobles.",
+      "page": 115,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "sh": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ua": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "el": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "fo": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ab": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "pv": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "th": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "kn": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ca": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "ft": [
+          1,
+          3,
+          1,
+          4
+        ]
+      }
+    },
+    {
+      "id": "plate-armour",
+      "name": "Plate Armour",
+      "price": 3000,
+      "enc": 15,
+      "area_fire": "f6",
+      "weight": 50,
+      "composition": [
+        "Plate Helm",
+        "Padded Cap",
+        "Mail Coif",
+        "Plate Cuirass",
+        "Plate Spaulders",
+        "Plate Rerebraces",
+        "Plate Vambraces",
+        "Mail Hauberk",
+        "Padded Coat",
+        "Plate Tassets",
+        "Plate Cuisses",
+        "Plate Poleyns",
+        "Plate Greaves",
+        "Plate Sabatons"
+      ],
+      "description": "The pinnacle of personal protection. Full plate armour covering nearly every location. Extremely expensive and reserved for the wealthiest nobles and champions.",
+      "page": 116,
+      "coverage": {
+        "sk": [
+          8,
+          13,
+          10,
+          7
+        ],
+        "fa": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "nk": [
+          4,
+          10,
+          8,
+          5
+        ],
+        "sh": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ua": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "el": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "fo": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tx": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ab": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "pv": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "th": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "kn": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ca": [
+          8,
+          19,
+          17,
+          10
+        ],
+        "ft": [
+          8,
+          13,
+          10,
+          7
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "location_count": 15,
+    "material_count": 9,
+    "suit_count": 12
+  }
+}

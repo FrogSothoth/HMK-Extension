@@ -1,0 +1,739 @@
+{
+  "attributes": {
+    "agl": "Agility",
+    "aur": "Aura",
+    "cml": "Comeliness",
+    "cre": "Creativity",
+    "dex": "Dexterity",
+    "elo": "Eloquence",
+    "emp": "Empathy",
+    "end": "Endurance",
+    "per": "Perception",
+    "rea": "Reasoning",
+    "str": "Strength",
+    "voi": "Voice",
+    "wil": "Will"
+  },
+  "groups": {
+    "lore": {
+      "name": "Lore",
+      "description": "Knowledge-based skills covering academic, professional, and scholarly pursuits."
+    },
+    "physical": {
+      "name": "Physical",
+      "description": "Skills involving bodily coordination, movement, and physical performance."
+    },
+    "combat": {
+      "name": "Combat",
+      "description": "Skills used in armed and unarmed combat situations."
+    },
+    "social": {
+      "name": "Social",
+      "description": "Skills involving interpersonal interaction, persuasion, and communication."
+    },
+    "nature": {
+      "name": "Nature",
+      "description": "Skills related to the natural world, animals, and outdoor survival."
+    },
+    "craft": {
+      "name": "Craft",
+      "description": "Skills for creating, repairing, and working with materials."
+    },
+    "esoterica": {
+      "name": "Esoterica",
+      "description": "Arcane and mystical skills dealing with supernatural forces."
+    }
+  },
+  "skills": [
+    {
+      "id": "brewing",
+      "name": "Brewing",
+      "group_id": "lore",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "cookery",
+      "name": "Cookery",
+      "group_id": "lore",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "embalming",
+      "name": "Embalming",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "engineering",
+      "name": "Engineering",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "cre",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "folklore",
+      "name": "Folklore",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "wil",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "heraldry",
+      "name": "Heraldry",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "law",
+      "name": "Law",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "mathematics",
+      "name": "Mathematics",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "cre",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "mercantilism",
+      "name": "Mercantilism",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "perfumery",
+      "name": "Perfumery",
+      "group_id": "lore",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "physician",
+      "name": "Physician",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "ritual",
+      "name": "Ritual",
+      "group_id": "lore",
+      "attr1": "wil",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Each religion has its own Ritual skill."
+    },
+    {
+      "id": "script",
+      "name": "Script",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Each script is a separate skill."
+    },
+    {
+      "id": "shipwright",
+      "name": "Shipwright",
+      "group_id": "lore",
+      "attr1": "rea",
+      "attr2": "cre",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "acrobatics",
+      "name": "Acrobatics",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "end",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "awareness",
+      "name": "Awareness",
+      "group_id": "physical",
+      "attr1": "per",
+      "attr2": "wil",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "climbing",
+      "name": "Climbing",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "dex",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "dancing",
+      "name": "Dancing",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "cre",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "jumping",
+      "name": "Jumping",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "str",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "legerdemain",
+      "name": "Legerdemain",
+      "group_id": "physical",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Sleight of hand and pickpocketing."
+    },
+    {
+      "id": "riding",
+      "name": "Riding",
+      "group_id": "physical",
+      "attr1": "emp",
+      "attr2": "agl",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "stealth",
+      "name": "Stealth",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "wil",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "swimming",
+      "name": "Swimming",
+      "group_id": "physical",
+      "attr1": "agl",
+      "attr2": "end",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "archery",
+      "name": "Archery",
+      "group_id": "combat",
+      "attr1": "per",
+      "attr2": "dex",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": "Covers bows and crossbows."
+    },
+    {
+      "id": "initiative",
+      "name": "Initiative",
+      "group_id": "combat",
+      "attr1": "wil",
+      "attr2": "rea",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "shock",
+      "name": "Shock",
+      "group_id": "combat",
+      "attr1": "str",
+      "attr2": "end",
+      "default_sm": 3,
+      "parent_skill": "initiative",
+      "notes": "Subskill of Initiative. Uses Initiative SM but own SB."
+    },
+    {
+      "id": "melee",
+      "name": "Melee",
+      "group_id": "combat",
+      "attr1": "dex",
+      "attr2": "agl",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": "Covers all melee weapons."
+    },
+    {
+      "id": "dodge",
+      "name": "Dodge",
+      "group_id": "combat",
+      "attr1": "agl",
+      "attr2": "per",
+      "default_sm": 2,
+      "parent_skill": "melee",
+      "notes": "Subskill of Melee. Uses Melee SM but own SB."
+    },
+    {
+      "id": "slings",
+      "name": "Slings",
+      "group_id": "combat",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Hand slings and staff slings."
+    },
+    {
+      "id": "throwing",
+      "name": "Throwing",
+      "group_id": "combat",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": "Thrown weapons like javelins."
+    },
+    {
+      "id": "charm",
+      "name": "Charm",
+      "group_id": "social",
+      "attr1": "cml",
+      "attr2": "emp",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "command",
+      "name": "Command",
+      "group_id": "social",
+      "attr1": "wil",
+      "attr2": "elo",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "discourse",
+      "name": "Discourse",
+      "group_id": "social",
+      "attr1": "rea",
+      "attr2": "elo",
+      "default_sm": 2,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "intrigue",
+      "name": "Intrigue",
+      "group_id": "social",
+      "attr1": "emp",
+      "attr2": "cre",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "language",
+      "name": "Language",
+      "group_id": "social",
+      "attr1": "elo",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Each language is a separate skill."
+    },
+    {
+      "id": "singing",
+      "name": "Singing",
+      "group_id": "social",
+      "attr1": "voi",
+      "attr2": "cre",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": "Uses Voice (VOI) attribute, generated with 4d6 drop lowest."
+    },
+    {
+      "id": "theatrics",
+      "name": "Theatrics",
+      "group_id": "social",
+      "attr1": "cre",
+      "attr2": "elo",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "agriculture",
+      "name": "Agriculture",
+      "group_id": "nature",
+      "attr1": "per",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "animalcraft",
+      "name": "Animalcraft",
+      "group_id": "nature",
+      "attr1": "emp",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "fishing",
+      "name": "Fishing",
+      "group_id": "nature",
+      "attr1": "per",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "herblore",
+      "name": "Herblore",
+      "group_id": "nature",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "mineralogy",
+      "name": "Mineralogy",
+      "group_id": "nature",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "piloting",
+      "name": "Piloting",
+      "group_id": "nature",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "seamanship",
+      "name": "Seamanship",
+      "group_id": "nature",
+      "attr1": "wil",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "survival",
+      "name": "Survival",
+      "group_id": "nature",
+      "attr1": "wil",
+      "attr2": "rea",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "timbercraft",
+      "name": "Timbercraft",
+      "group_id": "nature",
+      "attr1": "per",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "tracking",
+      "name": "Tracking",
+      "group_id": "nature",
+      "attr1": "rea",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "ceramics",
+      "name": "Ceramics",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "drawing",
+      "name": "Drawing",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "cre",
+      "default_sm": 1,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "fletching",
+      "name": "Fletching",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Making arrows and bolts."
+    },
+    {
+      "id": "glassworking",
+      "name": "Glassworking",
+      "group_id": "craft",
+      "attr1": "per",
+      "attr2": "dex",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "hideworking",
+      "name": "Hideworking",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Leather working and tanning."
+    },
+    {
+      "id": "jewelcraft",
+      "name": "Jewelcraft",
+      "group_id": "craft",
+      "attr1": "per",
+      "attr2": "dex",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "lockcraft",
+      "name": "Lockcraft",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Making and picking locks."
+    },
+    {
+      "id": "masonry",
+      "name": "Masonry",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "str",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "metalcraft",
+      "name": "Metalcraft",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "str",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Blacksmithing and metalworking."
+    },
+    {
+      "id": "milling",
+      "name": "Milling",
+      "group_id": "craft",
+      "attr1": "per",
+      "attr2": "str",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "musician",
+      "name": "Musician",
+      "group_id": "craft",
+      "attr1": "per",
+      "attr2": "cre",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "textilecraft",
+      "name": "Textilecraft",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Weaving, tailoring, and cloth work."
+    },
+    {
+      "id": "weaponcraft",
+      "name": "Weaponcraft",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "str",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Making weapons and armor. Suboccupations: Armourer, Bowyer."
+    },
+    {
+      "id": "woodworking",
+      "name": "Woodworking",
+      "group_id": "craft",
+      "attr1": "dex",
+      "attr2": "str",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": null
+    },
+    {
+      "id": "alchemy",
+      "name": "Alchemy",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "per",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Transmutation and potion-making."
+    },
+    {
+      "id": "astrology",
+      "name": "Astrology",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Reading the stars and fates."
+    },
+    {
+      "id": "divination",
+      "name": "Divination",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "rea",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Seeing the future through various methods."
+    },
+    {
+      "id": "psionics",
+      "name": "Psionics",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "wil",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Mental powers and telepathy."
+    },
+    {
+      "id": "runecraft",
+      "name": "Runecraft",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "emp",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Creating and reading magical runes."
+    },
+    {
+      "id": "spirit",
+      "name": "Spirit",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "wil",
+      "default_sm": 3,
+      "parent_skill": null,
+      "notes": "Connection to the spirit world. All characters start with SM3."
+    },
+    {
+      "id": "tarotry",
+      "name": "Tarotry",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "emp",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Divination through tarot cards."
+    },
+    {
+      "id": "trance",
+      "name": "Trance",
+      "group_id": "esoterica",
+      "attr1": "aur",
+      "attr2": "cre",
+      "default_sm": 0,
+      "parent_skill": null,
+      "notes": "Meditative and altered states."
+    }
+  ]
+}

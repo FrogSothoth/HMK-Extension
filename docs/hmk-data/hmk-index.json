@@ -1,0 +1,214 @@
+{
+  "title": "HarnMaster Kethira",
+  "version": "1.4",
+  "publisher": "Keléstia Productions",
+  "year": 2024,
+  "total_pages": 437,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "Hârn and the World of Kèthîra",
+      "start_page": 8,
+      "sections": [
+        { "title": "Kèthîra Map", "start_page": 10 },
+        { "title": "Kèthîra", "start_page": 11 },
+        { "title": "Venârivè Map", "start_page": 12 },
+        { "title": "Venârivè", "start_page": 13 }
+      ]
+    },
+    {
+      "chapter": 2,
+      "title": "Character",
+      "start_page": 16,
+      "sections": [
+        { "title": "Birth", "start_page": 18 },
+        {
+          "title": "Family",
+          "start_page": 25,
+          "subsections": [
+            { "title": "Class & Occupation Table", "start_page": 27 }
+          ]
+        },
+        {
+          "title": "Persona",
+          "start_page": 35,
+          "subsections": [
+            { "title": "Occupations Table", "start_page": 42 },
+            { "title": "Skills List", "start_page": 46 }
+          ]
+        },
+        { "title": "The Mysteries", "start_page": 53 },
+        { "title": "Advice & Options", "start_page": 57 }
+      ]
+    },
+    {
+      "chapter": 3,
+      "title": "Skills",
+      "start_page": 58,
+      "sections": [
+        {
+          "title": "Skill System",
+          "start_page": 60,
+          "subsections": [
+            { "title": "Mastery Level", "start_page": 60 },
+            { "title": "Secondary Mastery", "start_page": 62 }
+          ]
+        },
+        {
+          "title": "Skill Descriptions",
+          "start_page": 63,
+          "subsections": [
+            { "title": "Skill Groups", "start_page": 63 }
+          ]
+        },
+        { "title": "Advice & Options", "start_page": 92 }
+      ]
+    },
+    {
+      "chapter": 4,
+      "title": "Possessions",
+      "start_page": 94,
+      "sections": [
+        {
+          "title": "Weapons",
+          "start_page": 97,
+          "subsections": [
+            { "title": "Melee Weapons", "start_page": 97 },
+            { "title": "Missile Weapons", "start_page": 107 }
+          ]
+        },
+        {
+          "title": "Armour",
+          "start_page": 111,
+          "subsections": [
+            { "title": "Armour Suits", "start_page": 112 },
+            { "title": "Armour Articles", "start_page": 117 }
+          ]
+        },
+        { "title": "Miscellany", "start_page": 120 },
+        { "title": "Advice & Options", "start_page": 133 }
+      ]
+    },
+    {
+      "chapter": 5,
+      "title": "Adventure",
+      "start_page": 134,
+      "sections": [
+        {
+          "title": "Influence",
+          "start_page": 137,
+          "subsections": [
+            { "title": "Persuasion", "start_page": 137 },
+            { "title": "Conspiracy", "start_page": 139 }
+          ]
+        },
+        {
+          "title": "Travel",
+          "start_page": 141,
+          "subsections": [
+            { "title": "Trekking", "start_page": 141 },
+            { "title": "Seafaring", "start_page": 151 },
+            { "title": "Gateways", "start_page": 154 }
+          ]
+        },
+        {
+          "title": "Combat",
+          "start_page": 157,
+          "subsections": [
+            { "title": "Melee", "start_page": 157 },
+            { "title": "Missile Sequence", "start_page": 163 },
+            { "title": "Melee Sequence", "start_page": 165 },
+            { "title": "Injury Sequence", "start_page": 167 },
+            { "title": "Nolóra: Melee Example", "start_page": 173 }
+          ]
+        },
+        {
+          "title": "Trauma",
+          "start_page": 175,
+          "subsections": [
+            { "title": "Physical Trauma", "start_page": 176 },
+            { "title": "Healing Sequence", "start_page": 178 },
+            { "title": "Mental Trauma", "start_page": 187 }
+          ]
+        },
+        { "title": "Advice & Options", "start_page": 191 }
+      ]
+    },
+    {
+      "chapter": 6,
+      "title": "The Mysteries",
+      "start_page": 192,
+      "sections": [
+        {
+          "title": "Arcane Mysteries",
+          "start_page": 194,
+          "subsections": [
+            { "title": "Incantation", "start_page": 195 },
+            { "title": "Shèk-Pvâr Spell List", "start_page": 211 },
+            { "title": "Arcane Talents", "start_page": 259 },
+            { "title": "Alchemy", "start_page": 265 },
+            { "title": "Divination", "start_page": 275 }
+          ]
+        },
+        {
+          "title": "Astral Mysteries",
+          "start_page": 289,
+          "subsections": [
+            { "title": "Shamanism", "start_page": 299 },
+            { "title": "Ælrhin Reverie", "start_page": 308 }
+          ]
+        },
+        {
+          "title": "Divine Mysteries",
+          "start_page": 309,
+          "subsections": [
+            { "title": "Divine Grace", "start_page": 311 },
+            { "title": "Pantheons", "start_page": 313 },
+            { "title": "Religions", "start_page": 315 },
+            { "title": "Ritual Summoning", "start_page": 346 }
+          ]
+        },
+        { "title": "Advice & Options", "start_page": 348 }
+      ]
+    },
+    {
+      "chapter": 7,
+      "title": "Bestiary",
+      "start_page": 350,
+      "sections": [
+        { "title": "Animals", "start_page": 354 },
+        { "title": "Elementals", "start_page": 358 },
+        { "title": "Folk", "start_page": 363 },
+        { "title": "Gârgún", "start_page": 369 },
+        { "title": "Ívashù", "start_page": 372 },
+        { "title": "Môrvrin", "start_page": 377 },
+        { "title": "Mythic Creatures", "start_page": 385 },
+        { "title": "Spirits", "start_page": 393 },
+        { "title": "Advice & Options", "start_page": 401 }
+      ]
+    },
+    {
+      "chapter": 8,
+      "title": "Campaign",
+      "start_page": 402,
+      "sections": [
+        { "title": "Game Elements", "start_page": 404 },
+        { "title": "Preparing A Game", "start_page": 405 },
+        { "title": "Adventures", "start_page": 406 },
+        { "title": "Encounter Tables", "start_page": 407 },
+        { "title": "Non-Player Characters", "start_page": 410 },
+        { "title": "Character Development", "start_page": 413 }
+      ]
+    }
+  ],
+  "appendices": [
+    { "appendix": "I", "title": "Regions", "start_page": 415 },
+    { "appendix": "II", "title": "Languages", "start_page": 424 },
+    { "appendix": "III", "title": "Character Detail", "start_page": 427 }
+  ],
+  "back_matter": [
+    { "title": "Keléstia Glossary", "start_page": 430 },
+    { "title": "Index", "start_page": 432 },
+    { "title": "Character Sheet", "start_page": 435 }
+  ]
+}

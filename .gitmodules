@@ -1,0 +1,15 @@
+[submodule "references/FG-Aura-Effect"]
+	path = references/FG-Aura-Effect
+	url = https://github.com/FG-Unofficial-Developers-Guild/FG-Aura-Effect.git
+[submodule "references/CapitalGains"]
+	path = references/CapitalGains
+	url = https://github.com/MeAndUnique/CapitalGains.git
+[submodule "references/FG-2e-PlayersOption"]
+	path = references/FG-2e-PlayersOption
+	url = https://github.com/drplote/FG-2e-PlayersOption.git
+[submodule "references/FG-CoreRPG-Moon-Tracker"]
+	path = references/FG-CoreRPG-Moon-Tracker
+	url = https://github.com/FG-Unofficial-Developers-Guild/FG-CoreRPG-Moon-Tracker.git
+[submodule "references/FGU-Theme-Hearth"]
+	path = references/FGU-Theme-Hearth
+	url = https://github.com/SirMotte/FGU-Theme-Hearth.git
