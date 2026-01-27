@@ -12,6 +12,59 @@
 	<!-- Template for a single skill row -->
 	<windowclass name="harn_skill_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				-- Check if this skill needs special attribute display (e.g., Singing needs VOI)
+				local sName = DB.getValue(getDatabaseNode(), "name", "");
+				Debug.console("harn_skill_entry.onInit: " .. sName);
+				updateSpecialFields(sName);
+			end
+
+			function updateSpecialFields(sName)
+				Debug.console("updateSpecialFields called with: '" .. tostring(sName) .. "'");
+
+				-- Hide all special fields first
+				voi_label.setVisible(false);
+				voi_value.setVisible(false);
+				lang_label.setVisible(false);
+				lang_value.setVisible(false);
+				deity_label.setVisible(false);
+				deity_value.setVisible(false);
+				type_label.setVisible(false);
+				type_value.setVisible(false);
+
+				-- Show VOI field for Singing skill
+				if sName == "Singing" then
+					Debug.console("Showing VOI field for Singing");
+					voi_label.setVisible(true);
+					voi_value.setVisible(true);
+					-- Get character node and load VOI score
+					local nodeSkill = getDatabaseNode();
+					if nodeSkill then
+						local nodeChar = nodeSkill.getParent().getParent();
+						if nodeChar then
+							local nVOI = DB.getValue(nodeChar, "voi_score", 0);
+							voi_value.setValue(nVOI);
+						end
+					end
+				-- Show Lang field for Language skill (matches "Language" or "Language: X")
+				elseif sName == "Language" or string.sub(sName, 1, 10) == "Language: " then
+					Debug.console("Showing Lang field for Language skill");
+					lang_label.setVisible(true);
+					lang_value.setVisible(true);
+				-- Show Deity field for Ritual skill (matches "Ritual" or "Ritual: X")
+				elseif sName == "Ritual" or string.sub(sName, 1, 8) == "Ritual: " then
+					Debug.console("Showing Deity field for Ritual skill");
+					deity_label.setVisible(true);
+					deity_value.setVisible(true);
+				-- Show Type field for Script skill (matches "Script" or "Script: X")
+				elseif sName == "Script" or string.sub(sName, 1, 8) == "Script: " then
+					Debug.console("Showing Type field for Script skill");
+					type_label.setVisible(true);
+					type_value.setVisible(true);
+				end
+			end
+		</script>
 		<sheetdata>
 			<stringfield name="name">
 				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
@@ -73,6 +126,8 @@
 									else
 										Debug.console("ERROR: Could not get database node");
 									end
+									-- Update special field visibility based on skill name
+									window.updateSpecialFields(sName);
 									return;
 								end
 							end
@@ -80,6 +135,9 @@
 						else
 							Debug.console("ERROR: harnmaster.skills node not found");
 						end
+
+						-- Update special field visibility for manually entered skill names
+						window.updateSpecialFields(sName);
 					end
 				</script>
 			</stringfield>
@@ -122,6 +180,81 @@
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<!-- Special attribute fields (hidden by default, shown for specific skills) -->
+			<label name="voi_label">
+				<anchored position="insidetopleft" offset="305,0" width="30" height="20" />
+				<static>VOI</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<numberfield name="voi_value">
+				<anchored position="insidetopleft" offset="335,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<invisible />
+				<script>
+					function onValueChanged()
+						-- Save VOI back to character's voi_score
+						local nodeSkill = window.getDatabaseNode();
+						if nodeSkill then
+							local nodeChar = nodeSkill.getParent().getParent();
+							if nodeChar then
+								DB.setValue(nodeChar, "voi_score", "number", getValue());
+							end
+						end
+					end
+				</script>
+			</numberfield>
+
+			<!-- Lang field for Language skill (stores on skill node) -->
+			<label name="lang_label">
+				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
+				<static>Lang</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<stringfield name="lang_value">
+				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<maxchars>15</maxchars>
+				<source>language</source>
+				<invisible />
+			</stringfield>
+
+			<!-- Deity field for Ritual skill (stores on skill node) -->
+			<label name="deity_label">
+				<anchored position="insidetopleft" offset="305,0" width="40" height="20" />
+				<static>Deity</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<stringfield name="deity_value">
+				<anchored position="insidetopleft" offset="345,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<maxchars>15</maxchars>
+				<source>deity</source>
+				<invisible />
+			</stringfield>
+
+			<!-- Type field for Script skill (stores on skill node) -->
+			<label name="type_label">
+				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
+				<static>Type</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<stringfield name="type_value">
+				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<maxchars>15</maxchars>
+				<source>scripttype</source>
+				<invisible />
+			</stringfield>
 		</sheetdata>
 	</windowclass>
 
