@@ -43,16 +43,23 @@
 			<numberfield name="str_score">
 				<anchored to="str_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>str_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.str_ml.setValue(nScore * 5);
+						-- Recalculate all skill bases
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="str_ml">
 				<anchored to="str_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>str_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -69,16 +76,22 @@
 			<numberfield name="end_score">
 				<anchored to="end_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>end_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.end_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="end_ml">
 				<anchored to="end_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>end_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -95,16 +108,22 @@
 			<numberfield name="dex_score">
 				<anchored to="dex_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>dex_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.dex_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="dex_ml">
 				<anchored to="dex_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>dex_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -121,16 +140,22 @@
 			<numberfield name="agl_score">
 				<anchored to="agl_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>agl_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.agl_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="agl_ml">
 				<anchored to="agl_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>agl_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -147,16 +172,22 @@
 			<numberfield name="per_score">
 				<anchored to="per_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>per_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.per_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="per_ml">
 				<anchored to="per_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>per_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -173,16 +204,22 @@
 			<numberfield name="cml_score">
 				<anchored to="cml_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cml_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.cml_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="cml_ml">
 				<anchored to="cml_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cml_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -220,16 +257,22 @@
 			<numberfield name="aur_score">
 				<anchored to="aur_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>aur_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.aur_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="aur_ml">
 				<anchored to="aur_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>aur_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -246,16 +289,22 @@
 			<numberfield name="wil_score">
 				<anchored to="wil_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>wil_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.wil_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="wil_ml">
 				<anchored to="wil_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>wil_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -272,16 +321,22 @@
 			<numberfield name="rea_score">
 				<anchored to="rea_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>rea_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.rea_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="rea_ml">
 				<anchored to="rea_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>rea_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -298,16 +353,22 @@
 			<numberfield name="cre_score">
 				<anchored to="cre_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cre_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.cre_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="cre_ml">
 				<anchored to="cre_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cre_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -324,16 +385,22 @@
 			<numberfield name="emp_score">
 				<anchored to="emp_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>emp_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.emp_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="emp_ml">
 				<anchored to="emp_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>emp_ml</source>
 				<readonly />
 			</numberfield>
 
@@ -350,16 +417,22 @@
 			<numberfield name="elo_score">
 				<anchored to="elo_label" position="righthigh" offset="60,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>elo_score</source>
 				<script>
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.elo_ml.setValue(nScore * 5);
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+							SkillsManager.recalculateAllSB(nodeChar);
+						end
 					end
 				</script>
 			</numberfield>
 			<numberfield name="elo_ml">
 				<anchored to="elo_score" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>elo_ml</source>
 				<readonly />
 			</numberfield>
 		</sheetdata>

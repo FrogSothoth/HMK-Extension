@@ -16,8 +16,53 @@
 		<tooltip field="name" />
 		<softclose />
 		<script>
+			local ATTRIBUTE_FIELDS = {
+				"str_score", "end_score", "dex_score", "agl_score", "per_score", "cml_score",
+				"aur_score", "wil_score", "rea_score", "cre_score", "emp_score", "elo_score", "voi_score"
+			};
+
 			function onInit()
 				WindowTabManager.populate(self);
+
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					Debug.console("Registering attribute handlers for: " .. DB.getPath(nodeChar));
+					for _, sField in ipairs(ATTRIBUTE_FIELDS) do
+						local sPath = DB.getPath(nodeChar, sField);
+						Debug.console("  Adding handler for: " .. sPath);
+						DB.addHandler(sPath, "onUpdate", onAttributeChanged);
+					end
+					if SkillsManager and SkillsManager.recalculateAllSB then
+						SkillsManager.recalculateAllSB(nodeChar);
+					end
+				else
+					Debug.console("WARNING: No character node found in charsheet onInit");
+				end
+			end
+
+			function onClose()
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					for _, sField in ipairs(ATTRIBUTE_FIELDS) do
+						DB.removeHandler(DB.getPath(nodeChar, sField), "onUpdate", onAttributeChanged);
+					end
+				end
+			end
+
+			function onAttributeChanged(nodeField)
+				Debug.console("onAttributeChanged fired for: " .. DB.getPath(nodeField));
+				local nodeChar = DB.getParent(nodeField);
+				if nodeChar then
+					Debug.console("  Character node: " .. DB.getPath(nodeChar));
+					if SkillsManager and SkillsManager.recalculateAllSB then
+						Debug.console("  Calling recalculateAllSB");
+						SkillsManager.recalculateAllSB(nodeChar);
+					else
+						Debug.console("  WARNING: SkillsManager.recalculateAllSB not available");
+					end
+				else
+					Debug.console("  WARNING: Could not get parent node");
+				end
 			end
 		</script>
 		<sheetdata>

@@ -6,8 +6,12 @@
 SkillsManager = {};
 
 -- Initialize function - called when scripts are fully loaded
-function SkillsManager.onInit()
-	-- Manager is ready
+-- NOTE: Must be global function onInit(), not SkillsManager.onInit()
+function onInit()
+	Debug.console("SkillsManager: onInit() called");
+	Debug.console("  SkillsManager table exists: " .. tostring(SkillsManager ~= nil));
+	Debug.console("  recalculateAllSB exists: " .. tostring(SkillsManager.recalculateAllSB ~= nil));
+	Debug.console("  calculateSB exists: " .. tostring(SkillsManager.calculateSB ~= nil));
 end
 
 -- Database node names for each skill group
@@ -178,8 +182,12 @@ end
 -- Call this when attributes change
 function SkillsManager.recalculateAllSB(nodeChar)
 	if not nodeChar then
+		Debug.console("recalculateAllSB: No character node provided");
 		return;
 	end
+
+	Debug.console("recalculateAllSB: Starting for " .. DB.getPath(nodeChar));
+	local nUpdated = 0;
 
 	-- Iterate through all skill group nodes
 	for sGroup, sListName in pairs(SkillsManager.GROUP_NODES) do
@@ -192,10 +200,13 @@ function SkillsManager.recalculateAllSB(nodeChar)
 				if sAtt1 ~= "" and sAtt2 ~= "" then
 					local nSB = SkillsManager.calculateSB(nodeChar, sAtt1, sAtt2);
 					DB.setValue(nodeSkill, "sb", "number", nSB);
+					nUpdated = nUpdated + 1;
 				end
 			end
 		end
 	end
+
+	Debug.console("recalculateAllSB: Updated " .. nUpdated .. " skills");
 end
 
 -- Get list of available skills for a group that character doesn't have yet
