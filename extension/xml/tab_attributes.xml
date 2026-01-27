@@ -39,13 +39,6 @@
 				<anchored to="str_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_str_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.str_ml.getValue();
-						DiceManager.rollTest(nML, "STR");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="str_score">
 				<anchored to="str_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -79,13 +72,6 @@
 				<anchored to="end_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_end_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.end_ml.getValue();
-						DiceManager.rollTest(nML, "END");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="end_score">
 				<anchored to="end_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -118,13 +104,6 @@
 				<anchored to="dex_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_dex_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.dex_ml.getValue();
-						DiceManager.rollTest(nML, "DEX");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="dex_score">
 				<anchored to="dex_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -157,13 +136,6 @@
 				<anchored to="agl_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_agl_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.agl_ml.getValue();
-						DiceManager.rollTest(nML, "AGL");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="agl_score">
 				<anchored to="agl_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -196,13 +168,6 @@
 				<anchored to="per_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_per_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.per_ml.getValue();
-						DiceManager.rollTest(nML, "PER");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="per_score">
 				<anchored to="per_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -235,13 +200,6 @@
 				<anchored to="cml_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_cml_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.cml_ml.getValue();
-						DiceManager.rollTest(nML, "CML");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="cml_score">
 				<anchored to="cml_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -295,13 +253,6 @@
 				<anchored to="aur_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_aur_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.aur_ml.getValue();
-						DiceManager.rollTest(nML, "AUR");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="aur_score">
 				<anchored to="aur_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -334,13 +285,6 @@
 				<anchored to="wil_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_wil_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.wil_ml.getValue();
-						DiceManager.rollTest(nML, "WIL");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="wil_score">
 				<anchored to="wil_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -373,13 +317,6 @@
 				<anchored to="rea_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_rea_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.rea_ml.getValue();
-						DiceManager.rollTest(nML, "REA");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="rea_score">
 				<anchored to="rea_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -412,13 +349,6 @@
 				<anchored to="cre_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_cre_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.cre_ml.getValue();
-						DiceManager.rollTest(nML, "CRE");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="cre_score">
 				<anchored to="cre_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -451,13 +381,6 @@
 				<anchored to="emp_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_emp_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.emp_ml.getValue();
-						DiceManager.rollTest(nML, "EMP");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="emp_score">
 				<anchored to="emp_label" position="righthigh" offset="60,0" width="40" height="20" />
@@ -490,13 +413,6 @@
 				<anchored to="elo_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<static textres="harn_attr_elo_abbr" />
 				<font>sheetlabel</font>
-				<script>
-					function onClickDown(button, x, y)
-						local nML = window.elo_ml.getValue();
-						DiceManager.rollTest(nML, "ELO");
-						return true;
-					end
-				</script>
 			</label>
 			<numberfield name="elo_score">
 				<anchored to="elo_label" position="righthigh" offset="60,0" width="40" height="20" />
