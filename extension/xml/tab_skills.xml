@@ -4,6 +4,9 @@
 		HarnMaster Skills Tab
 		6 skill categories stacked vertically: Social, Lore, Physical, Nature, Craft, Combat
 		Columns: SKILL, ATT1, ATT2, SM, SB, ML
+
+		Each skill group auto-sizes to fit all skills (no internal scrolling).
+		Tab scrolls vertically if content exceeds available space.
 	-->
 
 	<!-- Template for a single skill row -->
@@ -122,6 +125,76 @@
 		</sheetdata>
 	</windowclass>
 
+	<!-- Individual skill group windowclass - auto-sizes to content -->
+	<windowclass name="harn_skill_group">
+		<margins control="0,0,0,5" />
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<!-- Group Title -->
+			<label name="title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="10" />
+				</anchored>
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- Column Headers -->
+			<label name="h_skill">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="h_att1">
+				<anchored to="h_skill" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_att2">
+				<anchored to="h_att1" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_sm">
+				<anchored to="h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_sb">
+				<anchored to="h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_ml">
+				<anchored to="h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<!-- Skills List - no bottom anchor, uses noscroll to show all items -->
+			<windowlist name="skills">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="5" />
+					<right offset="-5" />
+				</anchored>
+				<class>harn_skill_entry</class>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+		</sheetdata>
+	</windowclass>
+
 	<windowclass name="harn_tab_skills">
 		<script>
 			-- Helper function to check if a skill already exists in a list
@@ -172,11 +245,17 @@
 				-- Track skills we've already added this run to prevent duplicates
 				local tAddedSkills = {};
 
+				-- Skills to always include as defaults (even with SM=0)
+				local tAlwaysInclude = {
+					["Language"] = true,
+					["Ritual"] = true
+				};
+
 				-- Iterate through all skills
 				for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+					local sName = DB.getValue(nodeRefSkill, "name", "");
 					local nSM = DB.getValue(nodeRefSkill, "sm", 0);
-					if nSM > 0 then
-						local sName = DB.getValue(nodeRefSkill, "name", "");
+					if nSM > 0 or tAlwaysInclude[sName] then
 						local sGroup = DB.getValue(nodeRefSkill, "group", "");
 						local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
 						local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
@@ -234,350 +313,371 @@
 			end
 		</script>
 		<sheetdata>
-			<!-- SOCIAL Skills Frame -->
-			<frame_char name="social_frame">
-				<anchored position="insidetopleft" offset="0,0" width="310" height="90" />
-			</frame_char>
+			<!-- Use anchor_column for vertical flow -->
+			<anchor_column name="columnanchor" />
+
+			<!-- SOCIAL Skills -->
 			<label name="social_title">
-				<anchored to="social_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_social" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="social_h_skill">
-				<anchored to="social_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="social_h_att1">
-				<anchored to="social_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="social_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="social_h_att2">
-				<anchored to="social_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="social_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="social_h_sm">
-				<anchored to="social_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="social_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="social_h_sb">
-				<anchored to="social_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="social_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="social_h_ml">
-				<anchored to="social_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="social_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="socialskills">
-				<anchored to="social_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.socialskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
 
-			<!-- LORE Skills Frame -->
-			<frame_char name="lore_frame">
-				<anchored position="insidetopleft" offset="0,95" width="310" height="90" />
-			</frame_char>
+			<!-- LORE Skills -->
 			<label name="lore_title">
-				<anchored to="lore_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_lore" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="lore_h_skill">
-				<anchored to="lore_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="lore_h_att1">
-				<anchored to="lore_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="lore_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="lore_h_att2">
-				<anchored to="lore_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="lore_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="lore_h_sm">
-				<anchored to="lore_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="lore_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="lore_h_sb">
-				<anchored to="lore_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="lore_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="lore_h_ml">
-				<anchored to="lore_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="lore_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="loreskills">
-				<anchored to="lore_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.loreskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
 
-			<!-- PHYSICAL Skills Frame -->
-			<frame_char name="physical_frame">
-				<anchored position="insidetopleft" offset="0,190" width="310" height="90" />
-			</frame_char>
+			<!-- PHYSICAL Skills -->
 			<label name="physical_title">
-				<anchored to="physical_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_physical" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="physical_h_skill">
-				<anchored to="physical_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="physical_h_att1">
-				<anchored to="physical_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="physical_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="physical_h_att2">
-				<anchored to="physical_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="physical_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="physical_h_sm">
-				<anchored to="physical_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="physical_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="physical_h_sb">
-				<anchored to="physical_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="physical_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="physical_h_ml">
-				<anchored to="physical_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="physical_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="physicalskills">
-				<anchored to="physical_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.physicalskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
 
-			<!-- NATURE Skills Frame -->
-			<frame_char name="nature_frame">
-				<anchored position="insidetopleft" offset="0,285" width="310" height="90" />
-			</frame_char>
+			<!-- NATURE Skills -->
 			<label name="nature_title">
-				<anchored to="nature_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_nature" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="nature_h_skill">
-				<anchored to="nature_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="nature_h_att1">
-				<anchored to="nature_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="nature_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="nature_h_att2">
-				<anchored to="nature_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="nature_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="nature_h_sm">
-				<anchored to="nature_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="nature_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="nature_h_sb">
-				<anchored to="nature_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="nature_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="nature_h_ml">
-				<anchored to="nature_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="nature_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="natureskills">
-				<anchored to="nature_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.natureskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
 
-			<!-- CRAFT Skills Frame -->
-			<frame_char name="craft_frame">
-				<anchored position="insidetopleft" offset="0,380" width="310" height="90" />
-			</frame_char>
+			<!-- CRAFT Skills -->
 			<label name="craft_title">
-				<anchored to="craft_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_craft" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="craft_h_skill">
-				<anchored to="craft_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="craft_h_att1">
-				<anchored to="craft_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="craft_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="craft_h_att2">
-				<anchored to="craft_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="craft_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="craft_h_sm">
-				<anchored to="craft_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="craft_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="craft_h_sb">
-				<anchored to="craft_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="craft_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="craft_h_ml">
-				<anchored to="craft_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="craft_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="craftskills">
-				<anchored to="craft_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.craftskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
 
-			<!-- COMBAT Skills Frame -->
-			<frame_char name="combat_frame">
-				<anchored position="insidetopleft" offset="0,475" width="310" height="90" />
-			</frame_char>
+			<!-- COMBAT Skills -->
 			<label name="combat_title">
-				<anchored to="combat_frame" position="insidetopleft" offset="10,5" width="80" height="20" />
+				<anchored width="310" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+				</anchored>
 				<static textres="harn_skill_combat" />
 				<font>sheetlabel</font>
 			</label>
-			<!-- Column Headers -->
 			<label name="combat_h_skill">
-				<anchored to="combat_frame" position="insidetopleft" offset="10,22" width="100" height="20" />
+				<anchored width="100" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="combat_h_att1">
-				<anchored to="combat_frame" position="insidetopleft" offset="115,22" width="35" height="20" />
+				<anchored to="combat_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="combat_h_att2">
-				<anchored to="combat_frame" position="insidetopleft" offset="155,22" width="35" height="20" />
+				<anchored to="combat_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="combat_h_sm">
-				<anchored to="combat_frame" position="insidetopleft" offset="195,22" width="30" height="20" />
+				<anchored to="combat_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="combat_h_sb">
-				<anchored to="combat_frame" position="insidetopleft" offset="230,22" width="30" height="20" />
+				<anchored to="combat_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="combat_h_ml">
-				<anchored to="combat_frame" position="insidetopleft" offset="265,22" width="35" height="20" />
+				<anchored to="combat_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<windowlist name="combatskills">
-				<anchored to="combat_frame">
-					<top offset="40" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="5" />
 					<right offset="-5" />
-					<bottom offset="-5" />
 				</anchored>
 				<datasource>.combatskills</datasource>
 				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
