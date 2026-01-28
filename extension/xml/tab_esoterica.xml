@@ -3,8 +3,7 @@
 	<!--
 		HarnMaster Esoterica Tab
 		4 sections: Esoterica, Spells, Talents, Alchemy
-		Each in a visible frame_char box with dynamic height
-		Entire tab is scrollable
+		Each in a visible frame_char box with content anchored inside
 	-->
 
 	<!-- Template for esoterica skill entry (like regular skills) -->
@@ -210,235 +209,6 @@
 		</sheetdata>
 	</windowclass>
 
-	<!-- Scrollable content template for the esoterica tab -->
-	<windowclass name="harn_esoterica_content">
-		<margins control="0,0,0,5" />
-		<script>
-			-- Constants for layout calculation
-			local ENTRY_HEIGHT = 22;  -- Height per list entry (including margin)
-			local HEADER_HEIGHT = 50; -- Height of frame header + column headers
-			local FRAME_PADDING = 10; -- Extra padding at bottom of frame
-			local MIN_LIST_HEIGHT = 44; -- Minimum height for empty list (2 entries worth)
-
-			function onInit()
-				-- Initial layout
-				updateAllFrameHeights();
-			end
-
-			function updateAllFrameHeights()
-				updateFrameHeight("esotericalist", "esoterica_frame");
-				updateFrameHeight("spellslist", "spells_frame");
-				updateFrameHeight("talentslist", "talents_frame");
-				updateFrameHeight("alchemylist", "alchemy_frame");
-			end
-
-			function updateFrameHeight(sListName, sFrameName)
-				local wList = self[sListName];
-				local wFrame = self[sFrameName];
-				if not wList or not wFrame then return; end
-
-				-- Count entries in the list
-				local nCount = 0;
-				for _ in pairs(wList.getWindows()) do
-					nCount = nCount + 1;
-				end
-
-				-- Calculate list height (minimum 2 entries for add button space)
-				local nListHeight = math.max(MIN_LIST_HEIGHT, nCount * ENTRY_HEIGHT + ENTRY_HEIGHT);
-
-				-- Calculate frame height
-				local nFrameHeight = HEADER_HEIGHT + nListHeight + FRAME_PADDING;
-
-				-- Resize frame
-				wFrame.setAnchoredHeight(nFrameHeight);
-
-				-- Resize list to match
-				wList.setAnchoredHeight(nListHeight);
-			end
-		</script>
-		<sheetdata>
-			<!-- ESOTERICA Section -->
-			<frame_char name="esoterica_frame">
-				<anchored position="insidetopleft" offset="5,5" width="320" height="120" />
-			</frame_char>
-			<label_frametop name="esoterica_title">
-				<anchored to="esoterica_frame" />
-				<static textres="harn_esoterica_esoterica" />
-			</label_frametop>
-			<label name="esoterica_h_skill">
-				<anchored to="esoterica_frame" position="insidetopleft" offset="10,25" width="100" height="20" />
-				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="esoterica_h_att1">
-				<anchored to="esoterica_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="esoterica_h_att2">
-				<anchored to="esoterica_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="esoterica_h_sm">
-				<anchored to="esoterica_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
-				<static>SM</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="esoterica_h_sb">
-				<anchored to="esoterica_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
-				<static>SB</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="esoterica_h_ml">
-				<anchored to="esoterica_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ML</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<windowlist name="esotericalist">
-				<anchored to="esoterica_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
-				<datasource>.esotericalist</datasource>
-				<class>harn_esoterica_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-				<script>
-					function onListChanged()
-						if window.updateFrameHeight then
-							window.updateFrameHeight("esotericalist", "esoterica_frame");
-						end
-					end
-				</script>
-			</windowlist>
-
-			<!-- SPELLS Section - anchored below esoterica_frame -->
-			<frame_char name="spells_frame">
-				<anchored to="esoterica_frame" position="below" offset="0,10" width="320" height="120" />
-			</frame_char>
-			<label_frametop name="spells_title">
-				<anchored to="spells_frame" />
-				<static textres="harn_esoterica_spells" />
-			</label_frametop>
-			<label name="spells_h_name">
-				<anchored to="spells_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
-				<static>NAME</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="spells_h_conv">
-				<anchored to="spells_h_name" position="righthigh" offset="5,0" width="60" height="20" />
-				<static textres="harn_esoterica_conv" />
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="spells_h_cmp">
-				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_esoterica_cmp" />
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="spells_h_ml">
-				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ML</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<windowlist name="spellslist">
-				<anchored to="spells_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
-				<datasource>.spellslist</datasource>
-				<class>harn_spell_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-				<script>
-					function onListChanged()
-						if window.updateFrameHeight then
-							window.updateFrameHeight("spellslist", "spells_frame");
-						end
-					end
-				</script>
-			</windowlist>
-
-			<!-- TALENTS Section - anchored below spells_frame -->
-			<frame_char name="talents_frame">
-				<anchored to="spells_frame" position="below" offset="0,10" width="220" height="120" />
-			</frame_char>
-			<label_frametop name="talents_title">
-				<anchored to="talents_frame" />
-				<static textres="harn_esoterica_talents" />
-			</label_frametop>
-			<label name="talents_h_name">
-				<anchored to="talents_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
-				<static>NAME</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="talents_h_ml">
-				<anchored to="talents_h_name" position="righthigh" offset="5,0" width="40" height="20" />
-				<static>ML</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<windowlist name="talentslist">
-				<anchored to="talents_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
-				<datasource>.talentslist</datasource>
-				<class>harn_talent_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-				<script>
-					function onListChanged()
-						if window.updateFrameHeight then
-							window.updateFrameHeight("talentslist", "talents_frame");
-						end
-					end
-				</script>
-			</windowlist>
-
-			<!-- ALCHEMY Section - anchored below talents_frame -->
-			<frame_char name="alchemy_frame">
-				<anchored to="talents_frame" position="below" offset="0,10" width="220" height="120" />
-			</frame_char>
-			<label_frametop name="alchemy_title">
-				<anchored to="alchemy_frame" />
-				<static textres="harn_esoterica_alchemy" />
-			</label_frametop>
-			<label name="alchemy_h_name">
-				<anchored to="alchemy_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
-				<static>NAME</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="alchemy_h_ml">
-				<anchored to="alchemy_h_name" position="righthigh" offset="5,0" width="40" height="20" />
-				<static>ML</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<windowlist name="alchemylist">
-				<anchored to="alchemy_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
-				<datasource>.alchemylist</datasource>
-				<class>harn_alchemy_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-				<script>
-					function onListChanged()
-						if window.updateFrameHeight then
-							window.updateFrameHeight("alchemylist", "alchemy_frame");
-						end
-					end
-				</script>
-			</windowlist>
-		</sheetdata>
-	</windowclass>
-
 	<windowclass name="harn_tab_esoterica">
 		<script>
 			function onInit()
@@ -506,15 +276,161 @@
 			end
 		</script>
 		<sheetdata>
-			<!-- Scrollable container for all esoterica content -->
-			<scrollframe name="esoterica_scroll">
-				<anchored position="insidetopleft" offset="0,0">
-					<right anchor="right" offset="0" />
-					<bottom anchor="bottom" offset="0" />
-				</anchored>
-				<frame>sheetfocus</frame>
-				<template>harn_esoterica_content</template>
-			</scrollframe>
+			<!-- ESOTERICA Section -->
+			<frame_char name="esoterica_frame">
+				<anchored position="insidetopleft" offset="5,5" width="320" height="120" />
+			</frame_char>
+			<label_frametop name="esoterica_title">
+				<anchored to="esoterica_frame" />
+				<static textres="harn_esoterica_esoterica" />
+			</label_frametop>
+			<!-- Esoterica headers anchored inside frame -->
+			<label name="esoterica_h_skill">
+				<anchored to="esoterica_frame" position="insidetopleft" offset="10,25" width="100" height="20" />
+				<static>SKILL</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="esoterica_h_att1">
+				<anchored to="esoterica_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_att2">
+				<anchored to="esoterica_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_sm">
+				<anchored to="esoterica_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_sb">
+				<anchored to="esoterica_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_ml">
+				<anchored to="esoterica_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="esotericalist">
+				<anchored to="esoterica_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<datasource>.esotericalist</datasource>
+				<class>harn_esoterica_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- SPELLS Section -->
+			<frame_char name="spells_frame">
+				<anchored position="insidetopleft" offset="5,135" width="320" height="120" />
+			</frame_char>
+			<label_frametop name="spells_title">
+				<anchored to="spells_frame" />
+				<static textres="harn_esoterica_spells" />
+			</label_frametop>
+			<!-- Spells headers anchored inside frame -->
+			<label name="spells_h_name">
+				<anchored to="spells_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="spells_h_conv">
+				<anchored to="spells_h_name" position="righthigh" offset="5,0" width="60" height="20" />
+				<static textres="harn_esoterica_conv" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="spells_h_cmp">
+				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_esoterica_cmp" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="spells_h_ml">
+				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="spellslist">
+				<anchored to="spells_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<datasource>.spellslist</datasource>
+				<class>harn_spell_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- TALENTS Section -->
+			<frame_char name="talents_frame">
+				<anchored position="insidetopleft" offset="5,265" width="220" height="120" />
+			</frame_char>
+			<label_frametop name="talents_title">
+				<anchored to="talents_frame" />
+				<static textres="harn_esoterica_talents" />
+			</label_frametop>
+			<!-- Talents headers anchored inside frame -->
+			<label name="talents_h_name">
+				<anchored to="talents_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="talents_h_ml">
+				<anchored to="talents_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="talentslist">
+				<anchored to="talents_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<datasource>.talentslist</datasource>
+				<class>harn_talent_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- ALCHEMY Section -->
+			<frame_char name="alchemy_frame">
+				<anchored position="insidetopleft" offset="5,395" width="220" height="120" />
+			</frame_char>
+			<label_frametop name="alchemy_title">
+				<anchored to="alchemy_frame" />
+				<static textres="harn_esoterica_alchemy" />
+			</label_frametop>
+			<!-- Alchemy headers anchored inside frame -->
+			<label name="alchemy_h_name">
+				<anchored to="alchemy_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="alchemy_h_ml">
+				<anchored to="alchemy_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="alchemylist">
+				<anchored to="alchemy_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<datasource>.alchemylist</datasource>
+				<class>harn_alchemy_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 		</sheetdata>
 	</windowclass>
 </root>
