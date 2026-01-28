@@ -96,6 +96,14 @@
 	<string name="harn_skill_craft">CRAFT</string>
 	<string name="harn_skill_esoterica">ESOTERICA</string>
 	<string name="harn_sm">SM</string>
+
+	<!-- Esoterica tab sections -->
+	<string name="harn_esoterica_esoterica">ESOTERICA</string>
+	<string name="harn_esoterica_spells">SPELLS</string>
+	<string name="harn_esoterica_talents">TALENTS</string>
+	<string name="harn_esoterica_alchemy">ALCHEMY</string>
+	<string name="harn_esoterica_conv">CONV</string>
+	<string name="harn_esoterica_cmp">CMP</string>
 	<string name="harn_sb">SB</string>
 
 	<!-- Combat -->

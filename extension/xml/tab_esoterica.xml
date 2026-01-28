@@ -2,129 +2,435 @@
 <root>
 	<!--
 		HarnMaster Esoterica Tab
+		4 sections: Esoterica, Spells, Talents, Alchemy
+		Each in a visible frame_char box with content anchored inside
 	-->
 
-	<windowclass name="harn_tab_esoterica">
+	<!-- Template for esoterica skill entry (like regular skills) -->
+	<windowclass name="harn_esoterica_entry">
+		<margins control="0,0,0,2" />
 		<sheetdata>
-			<!-- Placeholder content -->
-			<label name="esoterica_title">
-				<anchored position="insidetopleft" offset="10,10" width="200" height="25" />
-				<static textres="harn_tab_esoterica" />
-				<font>sheetlabel</font>
-			</label>
-
-			<!-- DEBUG: Test displaying SkillsData for Spirit -->
-			<label name="debug_header">
-				<anchored position="insidetopleft" offset="10,50" width="300" height="20" />
-				<static>DEBUG - Spirit skill from SkillsData:</static>
-				<font>sheetlabel</font>
-			</label>
-
-			<label name="debug_name_label">
-				<anchored position="insidetopleft" offset="10,75" width="60" height="20" />
-				<static>Name:</static>
-				<font>sheetlabel</font>
-			</label>
-			<stringcontrol name="debug_name">
-				<anchored position="insidetopleft" offset="75,75" width="100" height="20" />
-				<font>sheettext</font>
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
-					function onFirstLayout()
-						Debug.console("DEBUG: Trying DB access");
-						local sResult = "NOT FOUND";
+					function onLoseFocus()
+						local sName = getValue();
+						if sName == "" then return; end
+
+						Debug.console("Esoterica skill name entered: " .. sName);
+
+						-- Look up skill data from database (Esoterica group only)
 						local nodeSkillsRef = DB.findNode("harnmaster.skills");
 						if nodeSkillsRef then
-							Debug.console("Found harnmaster.skills node");
-							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
-								local sName = DB.getValue(nodeSkill, "name", "");
-								if sName == "Spirit" then
-									sResult = sName;
-									break;
+							for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								local sGroup = DB.getValue(nodeRefSkill, "group", "");
+								if sGroup == "Esoterica" and DB.getValue(nodeRefSkill, "name", "") == sName then
+									local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
+									local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
+									local nSM = DB.getValue(nodeRefSkill, "sm", 0);
+
+									Debug.console("Found esoterica skill: att1=" .. sAtt1 .. ", att2=" .. sAtt2 .. ", sm=" .. tostring(nSM));
+
+									-- Update fields in character's skill entry
+									local nodeCharSkill = window.getDatabaseNode();
+									if nodeCharSkill then
+										DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
+										DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
+										DB.setValue(nodeCharSkill, "sm", "number", nSM);
+
+										-- Calculate SB from character attributes
+										local nodeChar = nodeCharSkill.getParent().getParent();
+										if nodeChar then
+											local sAtt1Field = string.lower(sAtt1) .. "_score";
+											local sAtt2Field = string.lower(sAtt2) .. "_score";
+											local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+											local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+
+											local nSB = 0;
+											if nAtt1Value > 0 or nAtt2Value > 0 then
+												local nAvg = (nAtt1Value + nAtt2Value) / 2;
+												if nAtt1Value > nAtt2Value then
+													nSB = math.ceil(nAvg);
+												else
+													nSB = math.floor(nAvg);
+												end
+											end
+											DB.setValue(nodeCharSkill, "sb", "number", nSB);
+										end
+									end
+									return;
 								end
 							end
-						else
-							sResult = "NO DB NODE";
-							Debug.console("harnmaster.skills node not found");
+							Debug.console("Esoterica skill not found: " .. sName);
 						end
-						setValue(sResult);
 					end
 				</script>
-			</stringcontrol>
+			</stringfield>
+			<stringfield name="att1">
+				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att1</source>
+			</stringfield>
+			<stringfield name="att2">
+				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att2</source>
+			</stringfield>
+			<numberfield name="sm">
+				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>sm</source>
+			</numberfield>
+			<numberfield name="sb">
+				<anchored position="insidetopleft" offset="225,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>sb</source>
+			</numberfield>
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="260,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
 
-			<label name="debug_att1_label">
-				<anchored position="insidetopleft" offset="10,100" width="60" height="20" />
-				<static>ATT1:</static>
+	<!-- Template for spell entry -->
+	<windowclass name="harn_spell_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						local sName = getValue();
+						if sName == "" then return; end
+
+						Debug.console("Spell name entered: " .. sName);
+
+						-- Look up spell data from database
+						local nodeSpellsRef = DB.findNode("harnmaster.spells");
+						if nodeSpellsRef then
+							for _, nodeRefSpell in pairs(DB.getChildren(nodeSpellsRef)) do
+								if DB.getValue(nodeRefSpell, "name", "") == sName then
+									local sConv = DB.getValue(nodeRefSpell, "conv", "");
+									local nCmp = DB.getValue(nodeRefSpell, "cmp", 0);
+
+									Debug.console("Found spell: conv=" .. sConv .. ", cmp=" .. tostring(nCmp));
+
+									-- Update fields in character's spell entry
+									local nodeCharSpell = window.getDatabaseNode();
+									if nodeCharSpell then
+										DB.setValue(nodeCharSpell, "conv", "string", sConv);
+										DB.setValue(nodeCharSpell, "cmp", "number", nCmp);
+									end
+									return;
+								end
+							end
+							Debug.console("Spell not found: " .. sName);
+						end
+					end
+				</script>
+			</stringfield>
+			<stringfield name="conv">
+				<anchored position="insidetopleft" offset="160,0" width="60" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>conv</source>
+			</stringfield>
+			<numberfield name="cmp">
+				<anchored position="insidetopleft" offset="225,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>cmp</source>
+			</numberfield>
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="265,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Template for talent entry -->
+	<windowclass name="harn_talent_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="160,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Template for alchemy entry -->
+	<windowclass name="harn_alchemy_entry">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="160,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_tab_esoterica">
+		<script>
+			function onInit()
+				-- Auto-populate default esoterica skills (sm > 0) for new characters
+				local nodeChar = getDatabaseNode();
+				if not nodeChar then return; end
+
+				-- Check if esoterica has already been initialized
+				local bInitialized = DB.getValue(nodeChar, "esoterica_initialized", 0);
+				if bInitialized == 1 then
+					return;
+				end
+
+				-- Set the flag immediately
+				DB.setValue(nodeChar, "esoterica_initialized", "number", 1);
+
+				Debug.console("Auto-populating default esoterica skills");
+
+				-- Get skills reference from database
+				local nodeSkillsRef = DB.findNode("harnmaster.skills");
+				if not nodeSkillsRef then
+					Debug.console("ERROR: harnmaster.skills not found");
+					return;
+				end
+
+				-- Find esoterica skills with SM > 0 (should be Spirit)
+				for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+					local sGroup = DB.getValue(nodeRefSkill, "group", "");
+					if sGroup == "Esoterica" then
+						local sName = DB.getValue(nodeRefSkill, "name", "");
+						local nSM = DB.getValue(nodeRefSkill, "sm", 0);
+						if nSM > 0 then
+							local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
+							local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
+
+							Debug.console("Adding esoterica skill: " .. sName);
+
+							local nodeEsotericaList = DB.createChild(nodeChar, "esotericalist");
+							local nodeNewSkill = DB.createChild(nodeEsotericaList);
+
+							DB.setValue(nodeNewSkill, "name", "string", sName);
+							DB.setValue(nodeNewSkill, "att1", "string", sAtt1);
+							DB.setValue(nodeNewSkill, "att2", "string", sAtt2);
+							DB.setValue(nodeNewSkill, "sm", "number", nSM);
+
+							-- Calculate SB from character attributes
+							local sAtt1Field = string.lower(sAtt1) .. "_score";
+							local sAtt2Field = string.lower(sAtt2) .. "_score";
+							local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+							local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+
+							local nSB = 0;
+							if nAtt1Value > 0 or nAtt2Value > 0 then
+								local nAvg = (nAtt1Value + nAtt2Value) / 2;
+								if nAtt1Value > nAtt2Value then
+									nSB = math.ceil(nAvg);
+								else
+									nSB = math.floor(nAvg);
+								end
+							end
+							DB.setValue(nodeNewSkill, "sb", "number", nSB);
+						end
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<!-- ESOTERICA Section -->
+			<frame_char name="esoterica_frame">
+				<anchored position="insidetopleft" offset="5,5" width="320" height="120" />
+			</frame_char>
+			<label_frametop name="esoterica_title">
+				<anchored to="esoterica_frame" />
+				<static textres="harn_esoterica_esoterica" />
+			</label_frametop>
+			<!-- Esoterica headers anchored inside frame -->
+			<label name="esoterica_h_skill">
+				<anchored to="esoterica_frame" position="insidetopleft" offset="10,25" width="100" height="20" />
+				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
-			<stringcontrol name="debug_att1">
-				<anchored position="insidetopleft" offset="75,100" width="50" height="20" />
-				<font>sheettext</font>
-				<script>
-					function onFirstLayout()
-						local sResult = "ERR";
-						local nodeSkillsRef = DB.findNode("harnmaster.skills");
-						if nodeSkillsRef then
-							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
-								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
-									sResult = DB.getValue(nodeSkill, "att1", "");
-									break;
-								end
-							end
-						end
-						setValue(sResult);
-					end
-				</script>
-			</stringcontrol>
+			<label name="esoterica_h_att1">
+				<anchored to="esoterica_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_att2">
+				<anchored to="esoterica_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_sm">
+				<anchored to="esoterica_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SM</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_sb">
+				<anchored to="esoterica_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="esoterica_h_ml">
+				<anchored to="esoterica_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="esotericalist">
+				<anchored to="esoterica_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<datasource>.esotericalist</datasource>
+				<class>harn_esoterica_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 
-			<label name="debug_att2_label">
-				<anchored position="insidetopleft" offset="10,125" width="60" height="20" />
-				<static>ATT2:</static>
+			<!-- SPELLS Section -->
+			<frame_char name="spells_frame">
+				<anchored position="insidetopleft" offset="5,135" width="320" height="120" />
+			</frame_char>
+			<label_frametop name="spells_title">
+				<anchored to="spells_frame" />
+				<static textres="harn_esoterica_spells" />
+			</label_frametop>
+			<!-- Spells headers anchored inside frame -->
+			<label name="spells_h_name">
+				<anchored to="spells_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
 				<font>sheetlabel</font>
 			</label>
-			<stringcontrol name="debug_att2">
-				<anchored position="insidetopleft" offset="75,125" width="50" height="20" />
-				<font>sheettext</font>
-				<script>
-					function onFirstLayout()
-						local sResult = "ERR";
-						local nodeSkillsRef = DB.findNode("harnmaster.skills");
-						if nodeSkillsRef then
-							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
-								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
-									sResult = DB.getValue(nodeSkill, "att2", "");
-									break;
-								end
-							end
-						end
-						setValue(sResult);
-					end
-				</script>
-			</stringcontrol>
+			<label name="spells_h_conv">
+				<anchored to="spells_h_name" position="righthigh" offset="5,0" width="60" height="20" />
+				<static textres="harn_esoterica_conv" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="spells_h_cmp">
+				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_esoterica_cmp" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="spells_h_ml">
+				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="35" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="spellslist">
+				<anchored to="spells_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<datasource>.spellslist</datasource>
+				<class>harn_spell_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 
-			<label name="debug_sm_label">
-				<anchored position="insidetopleft" offset="10,150" width="60" height="20" />
-				<static>SM:</static>
+			<!-- TALENTS Section -->
+			<frame_char name="talents_frame">
+				<anchored position="insidetopleft" offset="5,265" width="220" height="120" />
+			</frame_char>
+			<label_frametop name="talents_title">
+				<anchored to="talents_frame" />
+				<static textres="harn_esoterica_talents" />
+			</label_frametop>
+			<!-- Talents headers anchored inside frame -->
+			<label name="talents_h_name">
+				<anchored to="talents_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
 				<font>sheetlabel</font>
 			</label>
-			<stringcontrol name="debug_sm">
-				<anchored position="insidetopleft" offset="75,150" width="50" height="20" />
-				<font>sheettext</font>
-				<script>
-					function onFirstLayout()
-						local sResult = "ERR";
-						local nodeSkillsRef = DB.findNode("harnmaster.skills");
-						if nodeSkillsRef then
-							for _, nodeSkill in pairs(DB.getChildren(nodeSkillsRef)) do
-								if DB.getValue(nodeSkill, "name", "") == "Spirit" then
-									sResult = tostring(DB.getValue(nodeSkill, "sm", 0));
-									break;
-								end
-							end
-						end
-						setValue(sResult);
-					end
-				</script>
-			</stringcontrol>
+			<label name="talents_h_ml">
+				<anchored to="talents_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="talentslist">
+				<anchored to="talents_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<datasource>.talentslist</datasource>
+				<class>harn_talent_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- ALCHEMY Section -->
+			<frame_char name="alchemy_frame">
+				<anchored position="insidetopleft" offset="5,395" width="220" height="120" />
+			</frame_char>
+			<label_frametop name="alchemy_title">
+				<anchored to="alchemy_frame" />
+				<static textres="harn_esoterica_alchemy" />
+			</label_frametop>
+			<!-- Alchemy headers anchored inside frame -->
+			<label name="alchemy_h_name">
+				<anchored to="alchemy_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<static>NAME</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="alchemy_h_ml">
+				<anchored to="alchemy_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<windowlist name="alchemylist">
+				<anchored to="alchemy_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<datasource>.alchemylist</datasource>
+				<class>harn_alchemy_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 		</sheetdata>
 	</windowclass>
 </root>
