@@ -276,17 +276,26 @@
 			end
 		</script>
 		<sheetdata>
+			<anchor_column name="columnanchor" />
+
 			<!-- ESOTERICA Section -->
-			<frame_char name="esoterica_frame">
-				<anchored position="insidetopleft" offset="5,5" width="320" height="120" />
-			</frame_char>
-			<label_frametop name="esoterica_title">
-				<anchored to="esoterica_frame" />
+			<label name="esoterica_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_esoterica_esoterica" />
-			</label_frametop>
-			<!-- Esoterica headers anchored inside frame -->
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
 			<label name="esoterica_h_skill">
-				<anchored to="esoterica_frame" position="insidetopleft" offset="10,25" width="100" height="20" />
+				<anchored height="20" width="100">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
@@ -321,7 +330,11 @@
 				<center />
 			</label>
 			<windowlist name="esotericalist">
-				<anchored to="esoterica_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="5" />
+					<right offset="-5" />
+				</anchored>
 				<datasource>.esotericalist</datasource>
 				<class>harn_esoterica_entry</class>
 				<sortby><field>name</field></sortby>
@@ -331,16 +344,23 @@
 			</windowlist>
 
 			<!-- SPELLS Section -->
-			<frame_char name="spells_frame">
-				<anchored position="insidetopleft" offset="5,135" width="320" height="120" />
-			</frame_char>
-			<label_frametop name="spells_title">
-				<anchored to="spells_frame" />
+			<label name="spells_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_esoterica_spells" />
-			</label_frametop>
-			<!-- Spells headers anchored inside frame -->
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
 			<label name="spells_h_name">
-				<anchored to="spells_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<anchored height="20" width="150">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+				</anchored>
 				<static>NAME</static>
 				<font>sheetlabel</font>
 			</label>
@@ -363,7 +383,11 @@
 				<center />
 			</label>
 			<windowlist name="spellslist">
-				<anchored to="spells_frame" position="insidetopleft" offset="5,45" width="305" height="70" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="5" />
+					<right offset="-5" />
+				</anchored>
 				<datasource>.spellslist</datasource>
 				<class>harn_spell_entry</class>
 				<sortby><field>name</field></sortby>
@@ -373,16 +397,23 @@
 			</windowlist>
 
 			<!-- TALENTS Section -->
-			<frame_char name="talents_frame">
-				<anchored position="insidetopleft" offset="5,265" width="220" height="120" />
-			</frame_char>
-			<label_frametop name="talents_title">
-				<anchored to="talents_frame" />
+			<label name="talents_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_esoterica_talents" />
-			</label_frametop>
-			<!-- Talents headers anchored inside frame -->
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
 			<label name="talents_h_name">
-				<anchored to="talents_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<anchored height="20" width="150">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+				</anchored>
 				<static>NAME</static>
 				<font>sheetlabel</font>
 			</label>
@@ -393,7 +424,11 @@
 				<center />
 			</label>
 			<windowlist name="talentslist">
-				<anchored to="talents_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="5" />
+					<right offset="-5" />
+				</anchored>
 				<datasource>.talentslist</datasource>
 				<class>harn_talent_entry</class>
 				<sortby><field>name</field></sortby>
@@ -403,16 +438,23 @@
 			</windowlist>
 
 			<!-- ALCHEMY Section -->
-			<frame_char name="alchemy_frame">
-				<anchored position="insidetopleft" offset="5,395" width="220" height="120" />
-			</frame_char>
-			<label_frametop name="alchemy_title">
-				<anchored to="alchemy_frame" />
+			<label name="alchemy_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_esoterica_alchemy" />
-			</label_frametop>
-			<!-- Alchemy headers anchored inside frame -->
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
 			<label name="alchemy_h_name">
-				<anchored to="alchemy_frame" position="insidetopleft" offset="10,25" width="150" height="20" />
+				<anchored height="20" width="150">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+				</anchored>
 				<static>NAME</static>
 				<font>sheetlabel</font>
 			</label>
@@ -423,7 +465,11 @@
 				<center />
 			</label>
 			<windowlist name="alchemylist">
-				<anchored to="alchemy_frame" position="insidetopleft" offset="5,45" width="205" height="70" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="5" />
+					<right offset="-5" />
+				</anchored>
 				<datasource>.alchemylist</datasource>
 				<class>harn_alchemy_entry</class>
 				<sortby><field>name</field></sortby>
