@@ -23,6 +23,12 @@ SkillsData.spells = nil;
 -- Lookup table by spell name (built in onInit)
 SkillsData.spellsByName = nil;
 
+-- Master talents list (built in onInit)
+SkillsData.talents = nil;
+
+-- Lookup table by talent name (built in onInit)
+SkillsData.talentsByName = nil;
+
 -- Initialize function - called when scripts are fully loaded
 -- NOTE: Must be global 'onInit' for FG to call it automatically
 function onInit()
@@ -356,6 +362,37 @@ function onInit()
 		SkillsData.spellsByName[spell.name] = spell;
 	end
 
+	-- Build master talents list
+	-- Each talent has: name
+	SkillsData.talents = {};
+
+	-- PSIONIC TALENTS
+	table.insert(SkillsData.talents, {name="Amplification"});
+	table.insert(SkillsData.talents, {name="Clairvoyance"});
+	table.insert(SkillsData.talents, {name="Disembodiment"});
+	table.insert(SkillsData.talents, {name="Elemental Bolt"});
+	table.insert(SkillsData.talents, {name="Enthral"});
+	table.insert(SkillsData.talents, {name="Extratemporality"});
+	table.insert(SkillsData.talents, {name="Healing"});
+	table.insert(SkillsData.talents, {name="Hex"});
+	table.insert(SkillsData.talents, {name="Medium"});
+	table.insert(SkillsData.talents, {name="Natural Attunement"});
+	table.insert(SkillsData.talents, {name="Negation"});
+	table.insert(SkillsData.talents, {name="Prescience"});
+	table.insert(SkillsData.talents, {name="Psychometry"});
+	table.insert(SkillsData.talents, {name="Sensitivity"});
+	table.insert(SkillsData.talents, {name="Telekinesis"});
+	table.insert(SkillsData.talents, {name="Telepathy"});
+	table.insert(SkillsData.talents, {name="Transference"});
+	table.insert(SkillsData.talents, {name="Transformation"});
+	table.insert(SkillsData.talents, {name="Visnomy"});
+
+	-- Build lookup table by talent name for quick access
+	SkillsData.talentsByName = {};
+	for _, talent in ipairs(SkillsData.talents) do
+		SkillsData.talentsByName[talent.name] = talent;
+	end
+
 	-- Store skills data in the database for cross-script access
 	-- First, delete any existing data to prevent duplicates on reload
 	local nodeExisting = DB.findNode("harnmaster.skills");
@@ -397,6 +434,24 @@ function onInit()
 
 	Debug.console("SkillsData initialized with " .. #SkillsData.spells .. " spells");
 	Debug.console("SkillsData stored in database at harnmaster.spells");
+
+	-- Store talents data in the database for cross-script access
+	-- First, delete any existing data to prevent duplicates on reload
+	local nodeExistingTalents = DB.findNode("harnmaster.talents");
+	if nodeExistingTalents then
+		nodeExistingTalents.delete();
+		Debug.console("Cleared existing harnmaster.talents node");
+	end
+
+	-- Now create fresh talent reference data
+	local nodeTalentsRef = DB.createNode("harnmaster.talents");
+	for _, talent in ipairs(SkillsData.talents) do
+		local nodeTalent = DB.createChild(nodeTalentsRef);
+		DB.setValue(nodeTalent, "name", "string", talent.name);
+	end
+
+	Debug.console("SkillsData initialized with " .. #SkillsData.talents .. " talents");
+	Debug.console("SkillsData stored in database at harnmaster.talents");
 end
 
 -- Get all skills for a specific group
@@ -485,4 +540,22 @@ end
 function SkillsData.getAllSpells()
 	if not SkillsData.spells then return {}; end
 	return SkillsData.spells;
+end
+
+-- Get talent data by name
+function SkillsData.getTalent(sName)
+	if not SkillsData.talentsByName then return nil; end
+	return SkillsData.talentsByName[sName];
+end
+
+-- Get all talents
+function SkillsData.getAllTalents()
+	if not SkillsData.talents then return {}; end
+	return SkillsData.talents;
+end
+
+-- Check if a talent name is valid
+function SkillsData.isValidTalent(sName)
+	if not SkillsData.talentsByName then return false; end
+	return SkillsData.talentsByName[sName] ~= nil;
 end
