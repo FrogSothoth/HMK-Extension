@@ -29,6 +29,12 @@ SkillsData.talents = nil;
 -- Lookup table by talent name (built in onInit)
 SkillsData.talentsByName = nil;
 
+-- Master alchemy list (built in onInit)
+SkillsData.alchemy = nil;
+
+-- Lookup table by alchemy name (built in onInit)
+SkillsData.alchemyByName = nil;
+
 -- Initialize function - called when scripts are fully loaded
 -- NOTE: Must be global 'onInit' for FG to call it automatically
 function onInit()
@@ -393,6 +399,53 @@ function onInit()
 		SkillsData.talentsByName[talent.name] = talent;
 	end
 
+	-- Build master alchemy list
+	-- Each alchemy has: name
+	SkillsData.alchemy = {};
+
+	-- ALCHEMICAL FORMULAS
+	table.insert(SkillsData.alchemy, {name="Acid"});
+	table.insert(SkillsData.alchemy, {name="Airtrap"});
+	table.insert(SkillsData.alchemy, {name="Aqua"});
+	table.insert(SkillsData.alchemy, {name="Darkvision"});
+	table.insert(SkillsData.alchemy, {name="Dreamwalk"});
+	table.insert(SkillsData.alchemy, {name="Egosight"});
+	table.insert(SkillsData.alchemy, {name="Equipoise"});
+	table.insert(SkillsData.alchemy, {name="Erudition"});
+	table.insert(SkillsData.alchemy, {name="Eruption"});
+	table.insert(SkillsData.alchemy, {name="Exsiccation"});
+	table.insert(SkillsData.alchemy, {name="Fireshield"});
+	table.insert(SkillsData.alchemy, {name="Footpad"});
+	table.insert(SkillsData.alchemy, {name="Formfix"});
+	table.insert(SkillsData.alchemy, {name="Fumebomb"});
+	table.insert(SkillsData.alchemy, {name="Ghostsight"});
+	table.insert(SkillsData.alchemy, {name="Healing"});
+	table.insert(SkillsData.alchemy, {name="Iceshield"});
+	table.insert(SkillsData.alchemy, {name="Mending"});
+	table.insert(SkillsData.alchemy, {name="Might"});
+	table.insert(SkillsData.alchemy, {name="Mindsalve"});
+	table.insert(SkillsData.alchemy, {name="Object Aegis"});
+	table.insert(SkillsData.alchemy, {name="Passion"});
+	table.insert(SkillsData.alchemy, {name="Physic"});
+	table.insert(SkillsData.alchemy, {name="Poison"});
+	table.insert(SkillsData.alchemy, {name="Quiescence"});
+	table.insert(SkillsData.alchemy, {name="Shadowbreath"});
+	table.insert(SkillsData.alchemy, {name="Shout"});
+	table.insert(SkillsData.alchemy, {name="Soulbuffer"});
+	table.insert(SkillsData.alchemy, {name="Soulcloak"});
+	table.insert(SkillsData.alchemy, {name="Sustenance"});
+	table.insert(SkillsData.alchemy, {name="Traumashield"});
+	table.insert(SkillsData.alchemy, {name="Verity"});
+	table.insert(SkillsData.alchemy, {name="Wakefulness"});
+	table.insert(SkillsData.alchemy, {name="Warmth"});
+	table.insert(SkillsData.alchemy, {name="Weakness"});
+
+	-- Build lookup table by alchemy name for quick access
+	SkillsData.alchemyByName = {};
+	for _, alch in ipairs(SkillsData.alchemy) do
+		SkillsData.alchemyByName[alch.name] = alch;
+	end
+
 	-- Store skills data in the database for cross-script access
 	-- First, delete any existing data to prevent duplicates on reload
 	local nodeExisting = DB.findNode("harnmaster.skills");
@@ -452,6 +505,24 @@ function onInit()
 
 	Debug.console("SkillsData initialized with " .. #SkillsData.talents .. " talents");
 	Debug.console("SkillsData stored in database at harnmaster.talents");
+
+	-- Store alchemy data in the database for cross-script access
+	-- First, delete any existing data to prevent duplicates on reload
+	local nodeExistingAlchemy = DB.findNode("harnmaster.alchemy");
+	if nodeExistingAlchemy then
+		nodeExistingAlchemy.delete();
+		Debug.console("Cleared existing harnmaster.alchemy node");
+	end
+
+	-- Now create fresh alchemy reference data
+	local nodeAlchemyRef = DB.createNode("harnmaster.alchemy");
+	for _, alch in ipairs(SkillsData.alchemy) do
+		local nodeAlch = DB.createChild(nodeAlchemyRef);
+		DB.setValue(nodeAlch, "name", "string", alch.name);
+	end
+
+	Debug.console("SkillsData initialized with " .. #SkillsData.alchemy .. " alchemy formulas");
+	Debug.console("SkillsData stored in database at harnmaster.alchemy");
 end
 
 -- Get all skills for a specific group
@@ -558,4 +629,22 @@ end
 function SkillsData.isValidTalent(sName)
 	if not SkillsData.talentsByName then return false; end
 	return SkillsData.talentsByName[sName] ~= nil;
+end
+
+-- Get alchemy data by name
+function SkillsData.getAlchemy(sName)
+	if not SkillsData.alchemyByName then return nil; end
+	return SkillsData.alchemyByName[sName];
+end
+
+-- Get all alchemy formulas
+function SkillsData.getAllAlchemy()
+	if not SkillsData.alchemy then return {}; end
+	return SkillsData.alchemy;
+end
+
+-- Check if an alchemy name is valid
+function SkillsData.isValidAlchemy(sName)
+	if not SkillsData.alchemyByName then return false; end
+	return SkillsData.alchemyByName[sName] ~= nil;
 end
