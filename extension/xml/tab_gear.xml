@@ -7,32 +7,49 @@
 
 	<!-- Template for possession/item entry -->
 	<windowclass name="harn_possession_entry">
+		<script file="scripts/possession_entry.lua" />
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="leftanchor">
 				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
 				<disabled />
 			</genericcontrol>
+			
+			<!-- Item Name -->
 			<stringfield name="name">
-				<anchored to="leftanchor" width="200" height="20">
+				<anchored to="leftanchor" width="155" height="20">
 					<top />
 					<left offset="5" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<numberfield name="quantity">
-				<anchored to="name" width="40" height="20">
+			
+			<!-- Weight (moved before Quantity) -->
+			<numberfield name="weight">
+				<anchored to="name" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<numberfield name="weight">
-				<anchored to="quantity" width="40" height="20">
+
+			<!-- Quantity -->
+			<numberfield name="quantity">
+				<anchored to="weight" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			
+			<!-- Total Weight (Calculated) -->
+			<numberfield name="total_weight">
+				<anchored to="quantity" width="45" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 		</sheetdata>
 	</windowclass>
@@ -181,63 +198,87 @@
 			</button_iadd>
 
 			<!-- POSSESSIONS Section -->
-			<frame_char name="poss_frame">
-				<anchored position="insidetopleft" offset="0,185" width="300" height="220" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="poss_frame" />
+			<!-- Use anchor_column for vertical flow below the top row -->
+			<anchor_column name="columnanchor">
+				<anchored position="insidetopleft" offset="0,185" width="0" height="0" />
+			</anchor_column>
+
+			<!-- POSSESSIONS Section -->
+			<label name="poss_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_possessions" />
-			</label_frametop>
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
 
 			<!-- Possessions list headers -->
 			<label name="poss_name_header">
-				<anchored to="poss_frame" position="insidetopleft" offset="10,28" width="200" height="15" />
+				<anchored height="15">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+					<width>155</width>
+				</anchored>
 				<static>Item</static>
 				<font>sheetlabel</font>
 			</label>
+			<label name="poss_wt_header">
+				<anchored to="poss_name_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>Wt</static>
+				<font>sheetlabel</font>
+			</label>
 			<label name="poss_qty_header">
-				<anchored to="poss_name_header" position="righthigh" offset="5,0" width="40" height="15" />
+				<anchored to="poss_wt_header" position="righthigh" offset="5,0" width="35" height="15" />
 				<static>Qty</static>
 				<font>sheetlabel</font>
 			</label>
-			<label name="poss_wt_header">
-				<anchored to="poss_qty_header" position="righthigh" offset="5,0" width="40" height="15" />
-				<static>Wt</static>
+			<label name="poss_total_header">
+				<anchored to="poss_qty_header" position="righthigh" offset="5,0" width="45" height="15" />
+				<static>Total</static>
 				<font>sheetlabel</font>
 			</label>
 
 			<windowlist name="possessions">
-				<anchored to="poss_frame">
-					<top offset="45" />
-					<left offset="5" />
-					<right offset="-5" />
-					<bottom offset="-25" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+					<right offset="-10" />
 				</anchored>
 				<datasource>.possessions</datasource>
 				<class>harn_possession_entry</class>
+				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			
 			<button_iadd name="poss_iadd">
-				<anchored to="possessions" position="aboveright" offset="0,8" />
+				<anchored to="possessions" position="aboveright" offset="5,8" />
 				<target>possessions</target>
 			</button_iadd>
 
 			<!-- NOTES Section -->
-			<frame_char name="notes_frame">
-				<anchored position="insidetopleft" offset="305,185" width="285" height="220" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="notes_frame" />
+			<label name="notes_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
 				<static textres="harn_notes" />
-			</label_frametop>
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
 
 			<stringfield name="notes">
-				<anchored to="notes_frame">
-					<top offset="30" />
-					<left offset="10" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
 					<right offset="-15" />
-					<bottom offset="-10" />
+					<height>120</height>
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<multilinespacing>20</multilinespacing>

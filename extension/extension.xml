@@ -31,5 +31,6 @@
 		<script name="HarnManager" file="scripts/harn_manager.lua" />
 		<script name="SkillsData" file="scripts/skills_data.lua" />
 		<script name="SkillsManager" file="scripts/skills_manager.lua" />
+		<script name="EquipmentData" file="scripts/equipment_data.lua" />
 	</base>
 </root>
