@@ -3,7 +3,11 @@
     "allow": [
       "Bash(find:*)",
       "Bash(ls:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(winget install:*)",
+      "Bash(choco install:*)",
+      "Bash(tail:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

@@ -17,16 +17,25 @@
 			
 			<!-- Item Name -->
 			<stringfield name="name">
-				<anchored to="leftanchor" width="155" height="20">
+				<anchored to="leftanchor" width="135" height="20">
 					<top />
 					<left offset="5" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
+
+			<!-- Location -->
+			<stringfield name="location">
+				<anchored to="name" width="120" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
 			
-			<!-- Weight (moved before Quantity) -->
+			<!-- Weight -->
 			<numberfield name="weight">
-				<anchored to="name" width="35" height="20">
+				<anchored to="location" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -221,25 +230,33 @@
 				<anchored height="15">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
 					<left offset="15" />
-					<width>155</width>
+					<width>135</width>
 				</anchored>
 				<static>Item</static>
 				<font>sheetlabel</font>
 			</label>
+			<label name="poss_loc_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="120" height="15" />
+				<static>Location</static>
+				<font>sheetlabel</font>
+			</label>
 			<label name="poss_wt_header">
-				<anchored to="poss_name_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<anchored to="poss_name_header" position="insidetopleft" offset="263,0" width="35" height="15" />
 				<static>Wt</static>
 				<font>sheetlabel</font>
+				<center />
 			</label>
 			<label name="poss_qty_header">
-				<anchored to="poss_wt_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<anchored to="poss_name_header" position="insidetopleft" offset="302,0" width="35" height="15" />
 				<static>Qty</static>
 				<font>sheetlabel</font>
+				<center />
 			</label>
 			<label name="poss_total_header">
-				<anchored to="poss_qty_header" position="righthigh" offset="5,0" width="45" height="15" />
+				<anchored to="poss_name_header" position="insidetopleft" offset="341,0" width="45" height="15" />
 				<static>Total</static>
 				<font>sheetlabel</font>
+				<center />
 			</label>
 
 			<windowlist name="possessions">
