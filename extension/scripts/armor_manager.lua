@@ -65,44 +65,117 @@ function calculateArmor(nodeChar)
 
     -- 3. Calculate Bulk Penalties
     local nTotalBulk = 0;
-    for sZone, tZoneLocs in pairs(ArmorData.BodyZones) do
-        if checkZoneRestrictions(sZone, tZoneLocs, locData) then
-            nTotalBulk = nTotalBulk + 5;
-        end
+    for sLoc, tData in pairs(locData) do
+        nTotalBulk = nTotalBulk + calculateLocationBulk(tData.materials);
     end
 
     -- 4. Update Database
     updateBodyLocations(nodeChar, locData);
     
     -- Update Encumbrance and Bulk
-    -- HMK: Armour field contains weight, Bulk contains penalties
-    DB.setValue(nodeChar, "armour_enc", "number", math.floor(nArmorWeight + 0.5));
-    DB.setValue(nodeChar, "bulk", "number", nArmorPenalty + nTotalBulk);
+    -- HMK: armour_enc field contains summed ENC from items, Bulk contains penalties
+    DB.setValue(nodeChar, "armour_enc", "number", nArmorPenalty);
+    DB.setValue(nodeChar, "bulk", "number", nTotalBulk);
 
     -- Ensure gear is also recalculated to get latest total
     calculateGear(nodeChar);
 end
 
--- Sum up all possessions weight
-function calculateGear(nodeChar)
-    if not nodeChar then return; end
+-- Bulk penalty based on AmorProfiles.csv
+function calculateLocationBulk(tMaterials)
+    if #tMaterials == 0 then return 0; end
 
-    local nGearEnc = 0;
-    local nodeGearList = nodeChar.getChild("possessions");
-    if nodeGearList then
-        for _, nodeItem in pairs(nodeGearList.getChildren()) do
-            nGearEnc = nGearEnc + DB.getValue(nodeItem, "total_weight", 0);
+    -- Count total Cloth/Padded in worn materials
+    local nLightWorn = 0;
+    local tHeavyWorn = {};
+    for _, sMat in ipairs(tMaterials) do
+        if sMat == "Cloth" or sMat == "Padded" then
+            nLightWorn = nLightWorn + 1;
+        else
+            table.insert(tHeavyWorn, sMat);
         end
     end
 
+    -- Find best matching profile (exact match of heavy materials)
+    local nMaxLightInProfile = 0;
+    local bHeavyMatchFound = false;
+
+    for _, tProfile in ipairs(ArmorData.Profiles) do
+        local nLightInProfile = 0;
+        local tHeavyInProfile = {};
+        for _, sPMat in ipairs(tProfile) do
+            if sPMat == "Cloth" or sPMat == "Padded" then
+                nLightInProfile = nLightInProfile + 1;
+            else
+                table.insert(tHeavyInProfile, sPMat);
+            end
+        end
+
+        -- Check if heavy materials match exactly (order doesn't matter for bulk penalty logic usually, but here we assume set match)
+        if #tHeavyInProfile == #tHeavyWorn then
+            local bMatch = true;
+            local tTempHeavy = {};
+            for _, v in ipairs(tHeavyWorn) do tTempHeavy[v] = (tTempHeavy[v] or 0) + 1; end
+            for _, v in ipairs(tHeavyInProfile) do
+                if not tTempHeavy[v] or tTempHeavy[v] == 0 then
+                    bMatch = false;
+                    break;
+                else
+                    tTempHeavy[v] = tTempHeavy[v] - 1;
+                end
+            end
+
+            if bMatch then
+                bHeavyMatchFound = true;
+                if nLightInProfile > nMaxLightInProfile then
+                    nMaxLightInProfile = nLightInProfile;
+                end
+            end
+        end
+    end
+
+    -- If no profile matches the heavy configuration at all, use 0 as base light count?
+    -- Actually, most sets are covered. If not covered, assume base is 0.
+    local nExtra = nLightWorn - nMaxLightInProfile;
+    if nExtra > 0 then
+        return nExtra * -5;
+    end
+
+    return 0;
+end
+
+-- Sum up all possessions weight and calculate Gear ENC
+function calculateGear(nodeChar)
+    if not nodeChar then return; end
+
+    local nTotalPossWeight = 0;
+    local nodeGearList = nodeChar.getChild("possessions");
+    if nodeGearList then
+        for _, nodeItem in pairs(nodeGearList.getChildren()) do
+            nTotalPossWeight = nTotalPossWeight + DB.getValue(nodeItem, "total_weight", 0);
+        end
+    end
+
+    -- Gear Encumbrance = floor(Total weight / 20) * 5
+    local nGearEnc = math.floor(nTotalPossWeight / 20) * 5;
     DB.setValue(nodeChar, "gear_enc", "number", nGearEnc);
 
     -- Update Totals
+    -- Strength Encumbrance Modifier: 25 - (floor(STR / 2) * 5)
+    local nStrScore = DB.getValue(nodeChar, "str_score", 10);
+    local nStrEncMod = 25 - (math.floor(nStrScore / 2) * 5);
+    DB.setValue(nodeChar, "strmod", "number", nStrEncMod);
+
     local nArmorEnc = DB.getValue(nodeChar, "armour_enc", 0);
-    local nBulk = DB.getValue(nodeChar, "bulk", 0);
-    local nEncTotal = nArmorEnc + nGearEnc;
+    local nEncTotal = nArmorEnc + nGearEnc + nStrEncMod;
     
     DB.setValue(nodeChar, "enc_total", "number", nEncTotal);
+    
+    -- PF is separate from Total ENC as per user's "Bulk handled separately" note?
+    -- Actually user says: "ENC entry in Encumbrance, then, is the sum of Armour,Gear,and STR Mod."
+    -- In prior code PF was EncTotal + Bulk. I'll keep Bulk (penalties) separate for now.
+    -- If user wants PF updated I will, but they didn't mention it in the breakdown.
+    local nBulk = DB.getValue(nodeChar, "bulk", 0);
     DB.setValue(nodeChar, "pf", "number", nEncTotal + nBulk);
 end
 

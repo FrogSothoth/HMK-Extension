@@ -50,8 +50,13 @@
 						window.str_ml.setValue(nScore * 5);
 						-- Recalculate all skill bases
 						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
+						if nodeChar then
+							if SkillsManager and SkillsManager.recalculateAllSB then
+								SkillsManager.recalculateAllSB(nodeChar);
+							end
+							if ArmorManager and ArmorManager.calculateGear then
+								ArmorManager.calculateGear(nodeChar);
+							end
 						end
 					end
 				</script>

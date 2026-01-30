@@ -85,11 +85,13 @@
 					<left anchor="right" offset="10" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>weight</source>
 			</numberfield>
 		</sheetdata>
 	</windowclass>
 
 	<windowclass name="harn_tab_gear">
+		<script file="scripts/tab_gear.lua" />
 		<sheetdata>
 			<!-- ENCUMBRANCE Section -->
 			<frame_char name="enc_frame">
@@ -126,6 +128,7 @@
 			<numberfield name="strmod">
 				<anchored to="strmod_label" position="righthigh" offset="5,0" width="50" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="enc_label">
@@ -160,13 +163,14 @@
 			<!-- Armour list headers -->
 			<label name="armour_name_header">
 				<anchored to="armour_frame" position="insidetopleft" offset="10,28" width="200" height="15" />
-				<static>Item</static>
+				<static textres="harn_item" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="armour_wt_header">
-				<anchored to="armour_name_header" position="righthigh" offset="10,0" width="45" height="15" />
-				<static>Wt</static>
+				<anchored to="armour_name_header" position="insidetopleft" offset="205,0" width="45" height="15" />
+				<static textres="harn_wt" />
 				<font>sheetlabel</font>
+				<center />
 			</label>
 
 			<windowlist name="armourlist">
@@ -182,7 +186,7 @@
 				<allowdelete />
 			</windowlist>
 			<button_iadd name="armour_iadd">
-				<anchored to="armourlist" position="aboveright" offset="0,8" />
+				<anchored to="armourlist" position="aboveright" offset="2,8" />
 				<target>armourlist</target>
 			</button_iadd>
 
