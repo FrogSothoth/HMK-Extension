@@ -65,6 +65,7 @@
 
 	<!-- Template for armour entry -->
 	<windowclass name="harn_armour_entry">
+		<script file="scripts/armour_entry.lua" />
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="leftanchor">
@@ -72,30 +73,16 @@
 				<disabled />
 			</genericcontrol>
 			<stringfield name="name">
-				<anchored to="leftanchor" width="120" height="20">
+				<anchored to="leftanchor" width="200" height="20">
 					<top />
 					<left offset="5" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<stringfield name="location">
-				<anchored to="name" width="60" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
-			<numberfield name="protection">
-				<anchored to="location" width="35" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
 			<numberfield name="weight">
-				<anchored to="protection" width="35" height="20">
+				<anchored to="name" width="45" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="10" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
@@ -120,6 +107,7 @@
 			<numberfield name="armour_enc">
 				<anchored to="armour_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="gear_enc_label">
@@ -147,6 +135,7 @@
 			<numberfield name="enc_total">
 				<anchored to="enc_label" position="righthigh" offset="5,0" width="50" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="bulk_label">
@@ -156,6 +145,7 @@
 			<numberfield name="bulk">
 				<anchored to="bulk_label" position="righthigh" offset="5,0" width="50" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<!-- ARMOUR / CLOTHING Section -->
@@ -169,22 +159,12 @@
 
 			<!-- Armour list headers -->
 			<label name="armour_name_header">
-				<anchored to="armour_frame" position="insidetopleft" offset="10,28" width="120" height="15" />
+				<anchored to="armour_frame" position="insidetopleft" offset="10,28" width="200" height="15" />
 				<static>Item</static>
 				<font>sheetlabel</font>
 			</label>
-			<label name="armour_loc_header">
-				<anchored to="armour_name_header" position="righthigh" offset="5,0" width="60" height="15" />
-				<static>Loc</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="armour_prot_header">
-				<anchored to="armour_loc_header" position="righthigh" offset="5,0" width="35" height="15" />
-				<static>Prot</static>
-				<font>sheetlabel</font>
-			</label>
 			<label name="armour_wt_header">
-				<anchored to="armour_prot_header" position="righthigh" offset="5,0" width="35" height="15" />
+				<anchored to="armour_name_header" position="righthigh" offset="10,0" width="45" height="15" />
 				<static>Wt</static>
 				<font>sheetlabel</font>
 			</label>

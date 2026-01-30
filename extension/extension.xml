@@ -32,5 +32,7 @@
 		<script name="SkillsData" file="scripts/skills_data.lua" />
 		<script name="SkillsManager" file="scripts/skills_manager.lua" />
 		<script name="EquipmentData" file="scripts/equipment_data.lua" />
+		<script name="ArmorData" file="scripts/armor_data.lua" />
+		<script name="ArmorManager" file="scripts/armor_manager.lua" />
 	</base>
 </root>

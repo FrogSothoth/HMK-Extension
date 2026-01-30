@@ -163,18 +163,83 @@
 				<disabled />
 			</genericcontrol>
 			<stringfield name="location">
-				<anchored to="leftanchor" width="70" height="20">
+				<anchored to="leftanchor" width="55" height="20">
 					<top />
 					<left offset="5" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</stringfield>
-			<numberfield name="armor">
-				<anchored to="location" width="30" height="20">
+			<stringfield name="av_b">
+				<anchored to="location" width="22" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="1" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<script>
+					function onValueChanged()
+						local bRigid = window.is_rigid.getValue() == 1;
+						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+					end
+				</script>
+			</stringfield>
+			<stringfield name="av_e">
+				<anchored to="av_b" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<script>
+					function onValueChanged()
+						local bRigid = window.is_rigid.getValue() == 1;
+						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+					end
+				</script>
+			</stringfield>
+			<stringfield name="av_p">
+				<anchored to="av_e" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<script>
+					function onValueChanged()
+						local bRigid = window.is_rigid.getValue() == 1;
+						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+					end
+				</script>
+			</stringfield>
+			<stringfield name="av_f">
+				<anchored to="av_p" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<script>
+					function onValueChanged()
+						local bRigid = window.is_rigid.getValue() == 1;
+						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+					end
+				</script>
+			</stringfield>
+			<numberfield name="is_rigid">
+				<anchored to="location" width="0" height="0">
+					<top />
+					<left />
+				</anchored>
+				<invisible />
+				<script>
+					function onValueChanged()
+						window.av_b.onValueChanged();
+						window.av_e.onValueChanged();
+						window.av_p.onValueChanged();
+						window.av_f.onValueChanged();
+					end
+				</script>
 			</numberfield>
 		</sheetdata>
 	</windowclass>
@@ -182,21 +247,51 @@
 	<windowclass name="harn_tab_combat">
 		<script>
 			function onInit()
-				-- Initialize body locations if empty
+				-- Initialize body locations
 				local nodeChar = getDatabaseNode();
 				if not nodeChar then return; end
 
 				local nodeList = DB.createChild(nodeChar, "bodylocations");
+				
+				-- Consolidation Logic: If Hip or Groin exist, rename/merge them to Pelvis
+				local nodePelvis = nil;
+				local nodesToMerge = {};
+				for _, node in pairs(nodeList.getChildren()) do
+					local sLoc = DB.getValue(node, "location", ""):lower();
+					if sLoc == "pelvis" then
+						nodePelvis = node;
+					elseif sLoc == "hip" or sLoc == "groin" then
+						table.insert(nodesToMerge, node);
+					end
+				end
+
+				if #nodesToMerge > 0 then
+					if not nodePelvis then
+						nodePelvis = nodesToMerge[1];
+						DB.setValue(nodePelvis, "location", "string", "Pelvis");
+						table.remove(nodesToMerge, 1);
+					end
+					-- Delete extras
+					for _, node in ipairs(nodesToMerge) do
+						node.delete();
+					end
+				end
+
+				-- Standard Initialization
 				if DB.getChildCount(nodeList) == 0 then
 					local locations = {
 						"Skull", "Face", "Neck", "Shoulder", "Upper Arm",
 						"Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
-						"Hip", "Groin", "Thigh", "Knee", "Calf", "Foot"
+						"Pelvis", "Thigh", "Knee", "Calf", "Foot"
 					};
 					for _, loc in ipairs(locations) do
 						local node = DB.createChild(nodeList);
 						DB.setValue(node, "location", "string", loc);
-						DB.setValue(node, "armor", "number", 0);
+						DB.setValue(node, "av_b", "string", "0");
+						DB.setValue(node, "av_e", "string", "0");
+						DB.setValue(node, "av_p", "string", "0");
+						DB.setValue(node, "av_f", "string", "0");
+						DB.setValue(node, "is_rigid", "number", 0);
 					end
 				end
 			end
@@ -302,6 +397,7 @@
 			<numberfield name="pf">
 				<anchored to="pf_label" position="righthigh" offset="0,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="weary_label">
@@ -366,7 +462,7 @@
 
 			<!-- BODY LOCATION - Right side, fixed width, responsive height -->
 			<frame_char name="bodyloc_frame">
-				<anchored position="insidetopright" offset="0,120" width="130">
+				<anchored position="insidetopright" offset="0,120" width="160">
 					<bottom offset="0" />
 				</anchored>
 			</frame_char>
@@ -376,14 +472,33 @@
 			</label_frametop>
 
 			<label name="loc_h">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="65" height="15" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="55" height="15" />
 				<static textres="harn_location" />
 				<font>sheetlabel</font>
 			</label>
-			<label name="armor_h">
-				<anchored to="loc_h" position="righthigh" offset="3,0" width="25" height="15" />
-				<static>AR</static>
+			<label name="h_b">
+				<anchored to="loc_h" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>B</static>
 				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_e">
+				<anchored to="h_b" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>E</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_p">
+				<anchored to="h_e" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>P</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_f">
+				<anchored to="h_p" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>F</static>
+				<font>sheetlabel</font>
+				<center />
 			</label>
 
 			<windowlist name="bodylocations">
@@ -395,16 +510,13 @@
 				</anchored>
 				<datasource>.bodylocations</datasource>
 				<class>harn_bodyloc_entry</class>
+				<noscroll />
 			</windowlist>
-			<scrollbar>
-				<anchored to="bodylocations" />
-				<target>bodylocations</target>
-			</scrollbar>
 
 			<!-- MELEE WEAPONS - Left side, responsive width -->
 			<frame_char name="melee_frame">
 				<anchored position="insidetopleft" offset="0,120" height="140">
-					<right offset="-135" />
+					<right offset="-165" />
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -490,7 +602,7 @@
 			<!-- MISSILE WEAPONS - Below melee, responsive width -->
 			<frame_char name="missile_frame">
 				<anchored to="melee_frame" position="below" offset="0,5">
-					<right offset="-135" />
+					<right offset="-165" />
 					<bottom offset="0" />
 				</anchored>
 			</frame_char>
