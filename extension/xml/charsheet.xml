@@ -24,6 +24,15 @@
 			function onInit()
 				WindowTabManager.populate(self);
 
+				-- Hook into tab selection to provide a refresh event for child windows
+				if WindowTabManager.onTabSelect then
+					local oldOnTabSelect = WindowTabManager.onTabSelect;
+					WindowTabManager.onTabSelect = function(wTabControl, sTab)
+						oldOnTabSelect(wTabControl, sTab);
+						self.onTabSelect(sTab);
+					end
+				end
+
 				local nodeChar = getDatabaseNode();
 				if nodeChar then
 					Debug.console("Registering attribute handlers for: " .. DB.getPath(nodeChar));
@@ -62,6 +71,17 @@
 					end
 				else
 					Debug.console("  WARNING: Could not get parent node");
+				end
+			end
+
+			function onTabSelect(sTab)
+				Debug.console("charsheet.onTabSelect: " .. tostring(sTab));
+				-- In many tab managers, the active subwindow is named after the tab, 
+				-- or there is a generic 'content' subwindow.
+				if self[sTab] and self[sTab].subwindow and self[sTab].subwindow.onRefresh then
+					self[sTab].subwindow.onRefresh();
+				elseif self.content and self.content.subwindow and self.content.subwindow.onRefresh then
+					self.content.subwindow.onRefresh();
 				end
 			end
 		</script>

@@ -21,11 +21,16 @@
 					birth_sunsign.setValue(sSunsign);
 				end
 			end
+
+			function onRefresh()
+				-- Main tab refresh logic if needed
+				updateSunsign();
+			end
 		</script>
 		<sheetdata>
 			<!-- BIRTH Section -->
 			<frame_char name="birth_frame">
-				<anchored position="insidetopleft" offset="0,0" width="200" height="200" />
+				<anchored position="insidetopleft" offset="0,0" width="200" height="225" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="birth_frame" />
@@ -109,14 +114,52 @@
 				<script>
 					function onInit()
 						super.onInit();
-						addItems({"Altor", "Azeryan", "Byria", "Chogoro - Mafan", "Dalkesh", "Emelrene", "Hacherdad", "Harbaal", "Harn", "Hepekeria", "Hurisea", "Ivinia", "Karejia", "Ketarh - Beshakan", "Northern Anzeloria", "Palithane", "Quarphor", "Reksyna", "Shorkyne", "Thonia", "Trierzon", "Umelria"});
+						addItems({"Altor", "Azeryan", "Byria", "Chogoro-Mafani", "Dalkesh", "Emelrene", "Hacherdad", "Harbaal", "Harn", "Hepekeria", "Hurisea", "Ivinia", "Karejia", "Ketarh-Beshakan", "Northern Anzeloria", "Palithane", "Quarphor", "Reksyna", "Shorkyne", "Thonia", "Trierzon", "Umelria"});
+					end
+					function onValueChanged()
+						window.birthplace_realm.clear();
+						local sNation = getValue();
+						if BirthData.Nations[sNation] then
+							local tRealms = {};
+							for sRealm, _ in pairs(BirthData.Nations[sNation]) do
+								table.insert(tRealms, sRealm);
+							end
+							table.sort(tRealms);
+							window.birthplace_realm.addItems(tRealms);
+							window.birthplace_realm.setReadOnly(false);
+						else
+							window.birthplace_realm.setReadOnly(true);
+						end
+					end
+				</script>
+			</combobox>
+			<combobox name="birthplace_realm">
+				<anchored to="birthplace" position="below" offset="0,5" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxsize>12</listmaxsize>
+				<script>
+					function onInit()
+						super.onInit();
+						setReadOnly(true);
+					end
+					function onValueChanged()
+						local sNation = window.birthplace.getValue();
+						local sRealm = getValue();
+						if BirthData.Nations[sNation] and BirthData.Nations[sNation][sRealm] then
+							local tData = BirthData.Nations[sNation][sRealm];
+							window.society.setValue(tData.society or "");
+							window.pantheon.setValue(tData.pantheon or "");
+							
+							-- Update language on Skills tab
+							HarnManager.updateNativeLanguage(window.getDatabaseNode(), tData.language);
+						end
 					end
 				</script>
 			</combobox>
 
 			<!-- FAMILY Section -->
 			<frame_char name="family_frame">
-				<anchored position="insidetopleft" offset="0,205" width="200" height="200" />
+				<anchored position="insidetopleft" offset="0,230" width="200" height="200" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="family_frame" />

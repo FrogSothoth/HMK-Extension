@@ -18,6 +18,32 @@
 				local sName = DB.getValue(getDatabaseNode(), "name", "");
 				Debug.console("harn_skill_entry.onInit: " .. sName);
 				updateSpecialFields(sName);
+
+				-- Add handlers for name and language updates
+				local node = getDatabaseNode();
+				if node then
+					DB.addHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
+					DB.addHandler(node.getPath() .. ".language", "onUpdate", onLanguageUpdate);
+				end
+			end
+
+			function onClose()
+				local node = getDatabaseNode();
+				if node then
+					DB.removeHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
+					DB.removeHandler(node.getPath() .. ".language", "onUpdate", onLanguageUpdate);
+				end
+			end
+
+			function onNameUpdate()
+				local sName = DB.getValue(getDatabaseNode(), "name", "");
+				updateSpecialFields(sName);
+			end
+
+			function onLanguageUpdate()
+				-- Force text update on lang_value by resetting its value from DB
+				local sLang = DB.getValue(getDatabaseNode(), "language", "");
+				lang_value.setValue(sLang);
 			end
 
 			function updateSpecialFields(sName)
@@ -339,6 +365,22 @@
 					end
 				end
 				return false;
+			end
+
+			function onRefresh()
+				Debug.console("harn_tab_skills.onRefresh called");
+				-- Iterate through all skill lists and force entries to update their special fields
+				local tLists = { socialskills, loreskills, physicalskills, natureskills, craftskills, combatskills };
+				for _, list in ipairs(tLists) do
+					for _, window in pairs(list.getWindows()) do
+						if window.onNameUpdate then
+							window.onNameUpdate();
+						end
+						if window.onLanguageUpdate then
+							window.onLanguageUpdate();
+						end
+					end
+				end
 			end
 
 			function onInit()

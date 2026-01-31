@@ -108,3 +108,35 @@ function getSunsign(sMonthName, nDay)
 	local sSunsign = getSunsignData(nDayOfYear)
 	return sSunsign
 end
+
+-- Update the first-created "Language" skill entry found on the character sheet
+function updateNativeLanguage(nodeChar, sLanguage)
+	if not nodeChar or not sLanguage or sLanguage == "" then return end
+
+	local tSkillLists = { "socialskills", "loreskills", "physicalskills", "natureskills", "craftskills", "combatskills" }
+	
+	for _, sListName in ipairs(tSkillLists) do
+		local nodeCharChild = nodeChar.getChild(sListName)
+		if nodeCharChild then
+			-- To find the "first-created", we sort the child keys (id-XXXXX)
+			local tKeys = {}
+			for k, _ in pairs(nodeCharChild.getChildren()) do
+				table.insert(tKeys, k)
+			end
+			table.sort(tKeys)
+
+			for _, sKey in ipairs(tKeys) do
+				local nodeSkill = nodeCharChild.getChild(sKey)
+				local sName = DB.getValue(nodeSkill, "name", "")
+				-- Match "Language" exactly or names starting with "Language: "
+				if sName == "Language" or string.sub(sName, 1, 10) == "Language: " then
+					Debug.console("HarnManager.updateNativeLanguage: Updating " .. sName .. " (" .. sKey .. ") to " .. sLanguage)
+					DB.setValue(nodeSkill, "language", "string", sLanguage)
+					return true -- Found and updated
+				end
+			end
+		end
+	end
+	Debug.console("HarnManager.updateNativeLanguage: No Language skill found to update.")
+	return false
+end
