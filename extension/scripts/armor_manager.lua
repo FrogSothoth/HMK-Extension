@@ -88,86 +88,186 @@ function calculateArmor(nodeChar)
         end
     end
 
-    -- 3. Calculate Bulk Penalties
-    local nTotalBulk = 0;
-    for sLoc, tData in pairs(locData) do
-        nTotalBulk = nTotalBulk + calculateLocationBulk(tData.materials);
-    end
-
+        -- 3. Calculate Bulk and Layering Encumbrance
+    local nBulk, nExtraEnc, bError = calculateBulkAndLayering(nodeChar, locData);
+    
     -- 4. Update Database
     updateBodyLocations(nodeChar, locData);
     
     -- Update Encumbrance and Bulk
-    -- HMK: armour_enc field contains summed ENC from items, Bulk contains penalties
-    safeSetValue(nodeChar, "armour_enc", "number", nArmorPenalty);
+    -- nExtraEnc is from Padded1/Quilted1 matching profiles (+5)
+    local nFinalArmorPenalty = nArmorPenalty + nExtraEnc;
+    
+    safeSetValue(nodeChar, "armour_enc", "number", nFinalArmorPenalty);
     safeSetValue(nodeChar, "armour_weight_total", "float", nArmorWeight);
-    safeSetValue(nodeChar, "bulk", "number", nTotalBulk);
+    
+    if bError then
+        safeSetValue(nodeChar, "bulk_str", "string", "ERR");
+    else
+        safeSetValue(nodeChar, "bulk_str", "string", tostring(nBulk));
+    end
+
+    -- Cleanup legacy bulk node if it exists to prevent confusion/errors
+    if nodeChar.getChild("bulk") then
+        nodeChar.getChild("bulk").delete();
+    end
 
     -- Ensure gear is also recalculated to get latest total
     calculateGear(nodeChar);
 end
 
--- Bulk penalty based on AmorProfiles.csv
-function calculateLocationBulk(tMaterials)
-    if #tMaterials == 0 then return 0; end
+-- New matching and bulk logic
+function calculateBulkAndLayering(nodeChar, locData)
+    local zones = { "Head", "Arms", "Torso", "Legs" };
+    local zoneItems = {};
+    for _, z in ipairs(zones) do zoneItems[z] = {}; end
 
-    -- Count total Cloth/Padded in worn materials
-    local nLightWorn = 0;
-    local tHeavyWorn = {};
-    for _, sMat in ipairs(tMaterials) do
-        if sMat == "Cloth" or sMat == "Padded" then
-            nLightWorn = nLightWorn + 1;
-        else
-            table.insert(tHeavyWorn, sMat);
+    -- Group items by zone
+    -- We need to know which items are in which zone to check suffixes correctly.
+    -- We'll use the materials collected in locData but with more metadata.
+    -- To avoid duplicates in a zone (same item covering multiple locs in same zone), we track by item node path.
+    
+    local nodeArmourList = nodeChar.getChild("armourlist");
+    if nodeArmourList then
+        for _, nodeItem in pairs(nodeArmourList.getChildren()) do
+            local sName = DB.getValue(nodeItem, "name", "");
+            local tItem = ArmorData.lookupItem(sName);
+            if tItem then
+                local bSuffix1 = ArmorData.isSpecialItem1(sName);
+                local tZonesSeen = {};
+
+                for sLoc, _ in pairs(tItem.cov) do
+                    local sZone = getZoneFromLoc(sLoc);
+                    if sZone and not tZonesSeen[sZone] then
+                        tZonesSeen[sZone] = true;
+                        table.insert(zoneItems[sZone], {
+                            mat = tItem.material,
+                            isSuffix1 = bSuffix1,
+                            name = sName
+                        });
+                    end
+                end
+            end
         end
     end
 
-    -- Find best matching profile (exact match of heavy materials)
-    local nMaxLightInProfile = 0;
-    local bHeavyMatchFound = false;
+    local nTotalBulk = 0;
+    local bAnyError = false;
+    local bHasExtraEnc = false;
+
+    for _, sZone in ipairs(zones) do
+        local tItems = zoneItems[sZone];
+        if #tItems > 0 then
+            local nZoneBulk, bZoneExtraEnc, bZoneError = calculateZoneBulk(sZone, tItems);
+            if bZoneError then
+                bAnyError = true;
+            else
+                nTotalBulk = nTotalBulk + nZoneBulk;
+                if bZoneExtraEnc then bHasExtraEnc = true; end
+            end
+        end
+    end
+
+    return nTotalBulk, (bHasExtraEnc and 5 or 0), bAnyError;
+end
+
+function calculateZoneBulk(sZone, tItems)
+    -- 1. Try exact profile match
+    local bMatch, bExtraEnc = matchProfile(sZone, tItems);
+    if bMatch then
+        return 0, bExtraEnc, false;
+    end
+
+    -- 2. Try minor violation (-5 penalty)
+    -- Violation if removing one Cloth or Padded item results in a match.
+    for i, tItem in ipairs(tItems) do
+        if tItem.mat == "Cloth" or tItem.mat == "Padded" then
+            -- Create subset without this item
+            local tSubset = {};
+            for j, v in ipairs(tItems) do if i ~= j then table.insert(tSubset, v); end end
+            
+            local bSubMatch, bSubExtraEnc = matchProfile(sZone, tSubset);
+            if bSubMatch then
+                -- Penalize -5 per location in zone? 
+                -- User: "receives a -5 bulk penalty for the arms and a -5 bulk penalty for the legs"
+                -- I'll return -5 for the zone.
+                return -5, bSubExtraEnc, false;
+            end
+        end
+    end
+
+    -- 3. Major violation
+    return 0, false, true;
+end
+
+function matchProfile(sZone, tItems)
+    if #tItems == 0 then return true, false; end
+    
+    local bIsArmsOrLegs = (sZone == "Arms" or sZone == "Legs");
 
     for _, tProfile in ipairs(ArmorData.Profiles) do
-        local nLightInProfile = 0;
-        local tHeavyInProfile = {};
-        for _, sPMat in ipairs(tProfile) do
-            if sPMat == "Cloth" or sPMat == "Padded" then
-                nLightInProfile = nLightInProfile + 1;
-            else
-                table.insert(tHeavyInProfile, sPMat);
+        if #tProfile == #tItems then
+            -- Try to match materials and suffixes
+            -- Since the items can be in any order, we try permutations or a greedy match.
+            -- With max 4 items, let's just do a simple recursive match.
+            local bMatched, bExtraEnc = checkMatchRecursive(tProfile, tItems, 1, {}, bIsArmsOrLegs);
+            if bMatched then
+                return true, bExtraEnc;
             end
         end
+    end
+    return false, false;
+end
 
-        -- Check if heavy materials match exactly (order doesn't matter for bulk penalty logic usually, but here we assume set match)
-        if #tHeavyInProfile == #tHeavyWorn then
-            local bMatch = true;
-            local tTempHeavy = {};
-            for _, v in ipairs(tHeavyWorn) do tTempHeavy[v] = (tTempHeavy[v] or 0) + 1; end
-            for _, v in ipairs(tHeavyInProfile) do
-                if not tTempHeavy[v] or tTempHeavy[v] == 0 then
-                    bMatch = false;
-                    break;
-                else
-                    tTempHeavy[v] = tTempHeavy[v] - 1;
+function checkMatchRecursive(tProfile, tItems, nIdx, tUsed, bIsArmsOrLegs)
+    if nIdx > #tProfile then return true, false; end
+
+    local tSlot = tProfile[nIdx];
+    for i, tItem in ipairs(tItems) do
+        if not tUsed[i] then
+            -- Check material
+            if tItem.mat == tSlot.m then
+                -- Check Suffix 1 (Cloth1/Padded1/Quilted1)
+                local bSuffix1OK = true;
+                if tSlot.s == 1 then
+                    bSuffix1OK = tItem.isSuffix1;
                 end
-            end
 
-            if bMatch then
-                bHeavyMatchFound = true;
-                if nLightInProfile > nMaxLightInProfile then
-                    nMaxLightInProfile = nLightInProfile;
+                -- Check Suffix 2 (Kurbul2/Plate2)
+                local bSuffix2OK = true;
+                if tSlot.s == 2 then
+                    bSuffix2OK = bIsArmsOrLegs;
+                end
+
+                if bSuffix1OK and bSuffix2OK then
+                    tUsed[i] = true;
+                    local bRes, bEnc = checkMatchRecursive(tProfile, tItems, nIdx + 1, tUsed, bIsArmsOrLegs);
+                    if bRes then
+                        -- Check for extra enc if this matched a Suffix 1 slot with Padded/Quilted
+                        local bThisExtra = (tSlot.s == 1 and (tItem.mat == "Padded" or tItem.mat == "Quilted"));
+                        return true, bEnc or bThisExtra;
+                    end
+                    tUsed[i] = false;
                 end
             end
         end
     end
+    return false, false;
+end
 
-    -- If no profile matches the heavy configuration at all, use 0 as base light count?
-    -- Actually, most sets are covered. If not covered, assume base is 0.
-    local nExtra = nLightWorn - nMaxLightInProfile;
-    if nExtra > 0 then
-        return nExtra * -5;
+function getZoneFromLoc(sLoc)
+    -- FO = Forearm, FT = Foot (as per user's correction)
+    -- Skull, Face, Neck -> Head
+    -- Shoulder, Upper Arm, Elbow, Forearm (FO), Hand -> Arms
+    -- Thorax, Abdomen, Pelvis -> Torso
+    -- Thigh, Knee, Calf, Foot (FT) -> Legs
+    
+    for sZone, tLocs in pairs(ArmorData.BodyZones) do
+        for _, sZLoc in ipairs(tLocs) do
+            if sZLoc == sLoc then return sZone; end
+        end
     end
-
-    return 0;
+    return nil;
 end
 
 -- Sum up all possessions weight and calculate Gear ENC
@@ -203,11 +303,14 @@ function calculateGear(nodeChar)
     
     safeSetValue(nodeChar, "enc_total", "number", nEncTotal);
     
-    -- PF is separate from Total ENC as per user's "Bulk handled separately" note?
-    -- Actually user says: "ENC entry in Encumbrance, then, is the sum of Armour,Gear,and STR Mod."
-    -- In prior code PF was EncTotal + Bulk. I'll keep Bulk (penalties) separate for now.
-    -- If user wants PF updated I will, but they didn't mention it in the breakdown.
-    local nBulk = DB.getValue(nodeChar, "bulk", 0);
+    local nBulk = 0;
+    local sBulk = DB.getValue(nodeChar, "bulk_str", "0");
+    if sBulk == "ERR" then
+        -- Handle ERR state? For now, treated as 0 in math, but blocks worn calc.
+    else
+        nBulk = tonumber(sBulk) or 0;
+    end
+    
     safeSetValue(nodeChar, "pf", "number", nEncTotal + nBulk);
 end
 

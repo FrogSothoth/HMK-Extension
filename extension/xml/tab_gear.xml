@@ -146,11 +146,12 @@
 				<anchored to="enc_label" position="below" offset="0,5" width="80" height="20" />
 				<static textres="harn_bulk" />
 			</label>
-			<numberfield name="bulk">
+			<stringfield name="bulk_str">
 				<anchored to="bulk_label" position="righthigh" offset="5,0" width="50" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
-			</numberfield>
+				<center />
+			</stringfield>
 
 			<!-- ARMOUR / CLOTHING Section (Moved to anchor_column flow) -->
 

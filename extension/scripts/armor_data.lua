@@ -24,45 +24,178 @@ BodyZones = {
     ["Legs"]  = { "Thigh", "Knee", "Calf", "Foot" },
 }
 
--- Layering Profiles (from AmorProfiles.csv)
+-- Layering Profiles (from ArmorProfiles.csv and user requirements)
 -- Sequences that result in 0 Bulk penalty.
+-- m = material name
+-- s = suffix (1: Cloth1/Padded1/Quilted1, 2: Kurbul2/Plate2)
 Profiles = {
-    { "Cloth", "Cloth", "Cloth" },
-    { "Cloth", "Cloth", "Padded" },
-    { "Cloth", "Cloth", "Leather" },
-    { "Cloth", "Padded", "Leather" },
-    { "Cloth", "Padded", "Kurbul" },
-    { "Cloth", "Padded", "Plate" },
-    { "Cloth", "Quilted", "Kurbul" },
-    { "Cloth", "Quilted", "Plate" },
-    { "Cloth", "Gambeson" },
-    { "Cloth", "Cloth", "Kurbul" },
-    { "Cloth", "Padded", "Kurbul" },
-    { "Cloth", "Scale", "Kurbul" },
-    { "Cloth", "Scale", "Plate" },
-    { "Padded", "Scale", "Kurbul" },
-    { "Padded", "Scale", "Plate" },
-    { "Cloth", "Cloth", "Mail", "Kurbul" },
-    { "Cloth", "Cloth", "Mail", "Plate" },
-    { "Cloth", "Padded", "Mail", "Kurbul" },
-    { "Cloth", "Padded", "Mail", "Plate" },
-    { "Cloth", "Cloth", "Plate" },
-    { "Cloth", "Padded", "Plate" }
+    -- CLOTH
+    { {m="Cloth"} },
+    { {m="Cloth"}, {m="Cloth"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Cloth"} },
+    { {m="Cloth"}, {m="Padded"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Padded"} },
+    { {m="Cloth"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Cloth"}, {m="Quilted", s=1} },
+
+    -- LEATHER
+    { {m="Leather"} },
+    { {m="Cloth"}, {m="Leather"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Leather"} },
+    { {m="Padded"}, {m="Leather"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Leather"} },
+    { {m="Leather"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Leather"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Leather"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Leather"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Leather"}, {m="Cloth", s=1} },
+
+    -- PADDED
+    { {m="Padded"} },
+    { {m="Cloth"}, {m="Padded"} },
+    { {m="Padded"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Kurbul"} },
+    { {m="Padded"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Plate"} },
+    { {m="Padded"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Plate"}, {m="Cloth", s=1} },
+
+    -- QUILTED
+    { {m="Quilted"} },
+    { {m="Cloth"}, {m="Quilted"} },
+    { {m="Quilted"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Quilted"}, {m="Cloth", s=1} },
+    { {m="Quilted"}, {m="Kurbul", s=2} },
+    { {m="Cloth"}, {m="Quilted"}, {m="Kurbul", s=2} },
+    { {m="Quilted"}, {m="Plate", s=2} },
+    { {m="Cloth"}, {m="Quilted"}, {m="Plate", s=2} },
+    { {m="Quilted"}, {m="Kurbul", s=2}, {m="Cloth", s=1} },
+    { {m="Quilted"}, {m="Plate", s=2}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Quilted"}, {m="Plate", s=2}, {m="Cloth", s=1} },
+
+    -- GAMBESON
+    { {m="Gambeson"} },
+    { {m="Cloth"}, {m="Gambeson"} },
+    { {m="Gambeson"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Gambeson"}, {m="Cloth", s=1} },
+
+    -- KURBUL
+    { {m="Cloth"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Kurbul"} },
+    { {m="Padded"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Kurbul"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Kurbul"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Kurbul"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Kurbul"}, {m="Quilted", s=1} },
+
+    -- SCALE
+    { {m="Cloth"}, {m="Scale"} },
+    { {m="Padded"}, {m="Scale"} },
+    { {m="Scale"}, {m="Kurbul", s=2} },
+    { {m="Cloth"}, {m="Scale"}, {m="Kurbul", s=2} },
+    { {m="Padded"}, {m="Scale"}, {m="Kurbul", s=2} },
+    { {m="Scale"}, {m="Plate", s=2} },
+    { {m="Cloth"}, {m="Scale"}, {m="Plate", s=2} },
+    { {m="Padded"}, {m="Scale"}, {m="Plate", s=2} },
+    { {m="Scale"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Scale"}, {m="Cloth", s=1} },
+    { {m="Scale"}, {m="Kurbul", s=2}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Kurbul", s=2}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Scale"}, {m="Kurbul", s=2}, {m="Cloth", s=1} },
+    { {m="Scale"}, {m="Plate", s=2}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Plate", s=2}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Scale"}, {m="Plate", s=2}, {m="Cloth", s=1} },
+    { {m="Scale"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Padded", s=1} },
+    { {m="Scale"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Quilted", s=1} },
+    { {m="Scale"}, {m="Kurbul", s=2}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Kurbul", s=2}, {m="Padded", s=1} },
+    { {m="Scale"}, {m="Kurbul", s=2}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Kurbul", s=2}, {m="Quilted", s=1} },
+    { {m="Scale"}, {m="Plate", s=2}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Plate", s=2}, {m="Padded", s=1} },
+    { {m="Scale"}, {m="Plate", s=2}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Scale"}, {m="Plate", s=2}, {m="Quilted", s=1} },
+
+    -- MAIL
+    { {m="Cloth"}, {m="Mail"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"} },
+    { {m="Padded"}, {m="Mail"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"} },
+    { {m="Cloth"}, {m="Mail"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Kurbul"} },
+    { {m="Padded"}, {m="Mail"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"}, {m="Kurbul"} },
+    { {m="Cloth"}, {m="Mail"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Plate"} },
+    { {m="Padded"}, {m="Mail"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Mail"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Mail"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Mail"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"}, {m="Kurbul"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Mail"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Mail"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Kurbul"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Mail"}, {m="Plate"}, {m="Quilted", s=1} },
+
+    -- PLATE
+    { {m="Cloth"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Plate"} },
+    { {m="Padded"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Padded"}, {m="Plate"} },
+    { {m="Cloth"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Padded"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Padded"}, {m="Plate"}, {m="Cloth", s=1} },
+    { {m="Cloth"}, {m="Plate"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Plate"}, {m="Padded", s=1} },
+    { {m="Cloth"}, {m="Plate"}, {m="Quilted", s=1} },
+    { {m="Cloth"}, {m="Cloth"}, {m="Plate"}, {m="Quilted", s=1} },
 }
 
--- Layering Restrictions (Simplified from ArmorProfiles.csv and rules)
--- Format: Material -> { under = {mat...}, over = {mat...} }
-Layering = {
-    ["Cloth"]    = { under = {"Cloth"}, over = {"Cloth", "Padded", "Leather", "Quilted", "Gambeson", "Kurbul", "Scale", "Mail", "Plate"} },
-    ["Padded"]   = { under = {"Cloth"}, over = {"Cloth", "Leather", "Kurbul", "Scale", "Mail", "Plate"} },
-    ["Leather"]  = { under = {"Cloth", "Padded"}, over = {"Cloth"} },
-    ["Quilted"]  = { under = {"Cloth"}, over = {"Cloth", "Kurbul", "Scale", "Mail", "Plate"} },
-    ["Gambeson"] = { under = {"Cloth"}, over = {"Cloth"} },
-    ["Kurbul"]   = { under = {"Cloth", "Padded"}, over = {"Cloth", "Padded", "Quilted"} },
-    ["Scale"]    = { under = {"Cloth", "Padded"}, over = {"Cloth", "Padded", "Quilted"} },
-    ["Mail"]     = { under = {"Cloth", "Padded"}, over = {"Cloth", "Padded", "Quilted", "Kurbul", "Plate"} },
-    ["Plate"]    = { under = {"Cloth", "Padded"}, over = {"Cloth", "Padded", "Quilted"} },
-}
+-- Special Item Identification
+-- Cloth1/Padded1/Quilted1 must be one of these types
+SpecialTypes1 = { "cloak", "mantle", "vest", "surcoat", "coat", "robe", "cuisse" }
+
+function isSpecialItem1(sItemName)
+    if not sItemName then return false; end
+    local sLower = sItemName:lower();
+    for _, sType in ipairs(SpecialTypes1) do
+        if sLower:find(sType, 1, true) then
+            return true;
+        end
+    end
+    return false;
+end
 
 -- Item Data
 -- Coverage symbols: Y=Yes, R=Rigid (Both), F=Front only, B=Back only
