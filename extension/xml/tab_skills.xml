@@ -512,6 +512,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="socialskills_iadd">
+				<anchored to="socialskills" position="aboveright" offset="2,8" />
+				<target>socialskills</target>
+			</button_iadd>
 
 			<!-- LORE Skills -->
 			<label name="lore_title">
@@ -576,6 +580,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="loreskills_iadd">
+				<anchored to="loreskills" position="aboveright" offset="2,8" />
+				<target>loreskills</target>
+			</button_iadd>
 
 			<!-- PHYSICAL Skills -->
 			<label name="physical_title">
@@ -640,6 +648,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="physicalskills_iadd">
+				<anchored to="physicalskills" position="aboveright" offset="2,8" />
+				<target>physicalskills</target>
+			</button_iadd>
 
 			<!-- NATURE Skills -->
 			<label name="nature_title">
@@ -704,6 +716,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="natureskills_iadd">
+				<anchored to="natureskills" position="aboveright" offset="2,8" />
+				<target>natureskills</target>
+			</button_iadd>
 
 			<!-- CRAFT Skills -->
 			<label name="craft_title">
@@ -768,6 +784,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="craftskills_iadd">
+				<anchored to="craftskills" position="aboveright" offset="2,8" />
+				<target>craftskills</target>
+			</button_iadd>
 
 			<!-- COMBAT Skills -->
 			<label name="combat_title">
@@ -832,6 +852,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="combatskills_iadd">
+				<anchored to="combatskills" position="aboveright" offset="2,8" />
+				<target>combatskills</target>
+			</button_iadd>
 		</sheetdata>
 	</windowclass>
 </root>

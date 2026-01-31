@@ -96,10 +96,9 @@ function onBalanceUpdate()
     
     -- Calculate Total Weight
     local nTotal = nQty * nWt;
-    total_weight.setValue(nTotal);
+    ArmorManager.safeSetValue(node, "total_weight", "number", nTotal);
 
     -- Trigger sheet-wide calculation
-    local node = getDatabaseNode();
     local nodeChar = DB.getParent(DB.getParent(node));
     if nodeChar then
         ArmorManager.calculateGear(nodeChar);

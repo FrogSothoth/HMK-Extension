@@ -7,6 +7,26 @@ function onInit()
     -- Global registry happens in harn_manager.lua
 end
 
+-- Safely set a database value
+function safeSetValue(nodeParent, sPath, sType, vValue)
+    if not nodeParent then return; end
+    
+    -- In FGU, the numeric type is always "number" (which supports decimals in Unity)
+    -- Using "float" or other names will cause type mismatch errors.
+    local sActualType = sType;
+    if sType == "float" then sActualType = "number"; end
+
+    local node = nodeParent.getChild(sPath);
+    if node then
+        if node.getType() ~= sActualType then
+            Debug.console("ArmorManager: Type mismatch for " .. sPath .. " (" .. node.getType() .. " vs " .. sActualType .. "). Deleting.");
+            node.delete();
+        end
+    end
+    
+    DB.setValue(nodeParent, sPath, sActualType, vValue);
+end
+
 -- Calculate Total ARMOR and GEAR
 function calculateArmor(nodeChar)
     if not nodeChar then return; end
@@ -36,10 +56,15 @@ function calculateArmor(nodeChar)
     if nodeArmourList then
         for _, nodeItem in pairs(nodeArmourList.getChildren()) do
             local sItemName = DB.getValue(nodeItem, "name", "");
-            local tItem = ArmorData.lookupItem(sItemName);
+            local nWt = DB.getValue(nodeItem, "weight", 0);
+            
+            -- Increment total weight immediately from what's in the field
+            nArmorWeight = nArmorWeight + nWt;
 
+            local tItem = ArmorData.lookupItem(sItemName);
             if tItem then
-                nArmorWeight = nArmorWeight + (tItem.weight or 0);
+                -- Still use lookup for metadata like AV and ENC penalty
+                -- but we already counted the weight from the field above.
                 nArmorPenalty = nArmorPenalty + (tItem.enc or 0);
                 local tMat = ArmorData.Materials[tItem.material];
 
@@ -74,8 +99,9 @@ function calculateArmor(nodeChar)
     
     -- Update Encumbrance and Bulk
     -- HMK: armour_enc field contains summed ENC from items, Bulk contains penalties
-    DB.setValue(nodeChar, "armour_enc", "number", nArmorPenalty);
-    DB.setValue(nodeChar, "bulk", "number", nTotalBulk);
+    safeSetValue(nodeChar, "armour_enc", "number", nArmorPenalty);
+    safeSetValue(nodeChar, "armour_weight_total", "float", nArmorWeight);
+    safeSetValue(nodeChar, "bulk", "number", nTotalBulk);
 
     -- Ensure gear is also recalculated to get latest total
     calculateGear(nodeChar);
@@ -156,27 +182,33 @@ function calculateGear(nodeChar)
         end
     end
 
+    -- Sum weights: Possessions + Armour
+    local nArmorWeight = DB.getValue(nodeChar, "armour_weight_total", 0);
+    local nTotalWeight = nTotalPossWeight + nArmorWeight;
+
+    Debug.console("Gear: Total weight = " .. tostring(nTotalWeight) .. " (Poss=" .. tostring(nTotalPossWeight) .. ", Armor=" .. tostring(nArmorWeight) .. ")");
+
     -- Gear Encumbrance = floor(Total weight / 20) * 5
-    local nGearEnc = math.floor(nTotalPossWeight / 20) * 5;
-    DB.setValue(nodeChar, "gear_enc", "number", nGearEnc);
+    local nGearEnc = math.floor(nTotalWeight / 20) * 5;
+    safeSetValue(nodeChar, "gear_enc", "number", nGearEnc);
 
     -- Update Totals
     -- Strength Encumbrance Modifier: 25 - (floor(STR / 2) * 5)
     local nStrScore = DB.getValue(nodeChar, "str_score", 10);
     local nStrEncMod = 25 - (math.floor(nStrScore / 2) * 5);
-    DB.setValue(nodeChar, "strmod", "number", nStrEncMod);
+    safeSetValue(nodeChar, "strmod", "number", nStrEncMod);
 
     local nArmorEnc = DB.getValue(nodeChar, "armour_enc", 0);
     local nEncTotal = nArmorEnc + nGearEnc + nStrEncMod;
     
-    DB.setValue(nodeChar, "enc_total", "number", nEncTotal);
+    safeSetValue(nodeChar, "enc_total", "number", nEncTotal);
     
     -- PF is separate from Total ENC as per user's "Bulk handled separately" note?
     -- Actually user says: "ENC entry in Encumbrance, then, is the sum of Armour,Gear,and STR Mod."
     -- In prior code PF was EncTotal + Bulk. I'll keep Bulk (penalties) separate for now.
     -- If user wants PF updated I will, but they didn't mention it in the breakdown.
     local nBulk = DB.getValue(nodeChar, "bulk", 0);
-    DB.setValue(nodeChar, "pf", "number", nEncTotal + nBulk);
+    safeSetValue(nodeChar, "pf", "number", nEncTotal + nBulk);
 end
 
 -- Helper to sum AV values

@@ -182,7 +182,9 @@ Items = {
 function lookupItem(sName)
     if not sName or sName == "" then return nil; end
     
-    local sLowerName = sName:lower();
+    -- Trim whitespace
+    local sTrimmed = sName:gsub("^%s*(.-)%s*$", "%1");
+    local sLowerName = sTrimmed:lower();
     local nLen = #sLowerName;
     
     -- 1. Try exact match (case-insensitive)

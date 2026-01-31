@@ -33,13 +33,13 @@
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			
-			<!-- Weight -->
 			<numberfield name="weight">
 				<anchored to="location" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<decimals>1</decimals>
 			</numberfield>
 
 			<!-- Quantity -->
@@ -59,6 +59,7 @@
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
+				<decimals>1</decimals>
 			</numberfield>
 		</sheetdata>
 	</windowclass>
@@ -85,7 +86,7 @@
 					<left anchor="right" offset="10" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-				<source>weight</source>
+				<decimals>1</decimals>
 			</numberfield>
 		</sheetdata>
 	</windowclass>
@@ -151,44 +152,8 @@
 				<readonly />
 			</numberfield>
 
-			<!-- ARMOUR / CLOTHING Section -->
-			<frame_char name="armour_frame">
-				<anchored position="insidetopleft" offset="290,0" width="300" height="180" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="armour_frame" />
-				<static textres="harn_armour_clothing" />
-			</label_frametop>
+			<!-- ARMOUR / CLOTHING Section (Moved to anchor_column flow) -->
 
-			<!-- Armour list headers -->
-			<label name="armour_name_header">
-				<anchored to="armour_frame" position="insidetopleft" offset="10,28" width="200" height="15" />
-				<static textres="harn_item" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="armour_wt_header">
-				<anchored to="armour_name_header" position="insidetopleft" offset="205,0" width="45" height="15" />
-				<static textres="harn_wt" />
-				<font>sheetlabel</font>
-				<center />
-			</label>
-
-			<windowlist name="armourlist">
-				<anchored to="armour_frame">
-					<top offset="45" />
-					<left offset="5" />
-					<right offset="-5" />
-					<bottom offset="-25" />
-				</anchored>
-				<datasource>.armourlist</datasource>
-				<class>harn_armour_entry</class>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-			<button_iadd name="armour_iadd">
-				<anchored to="armourlist" position="aboveright" offset="2,8" />
-				<target>armourlist</target>
-			</button_iadd>
 
 			<!-- POSSESSIONS Section -->
 			<!-- Use anchor_column for vertical flow below the top row -->
@@ -259,6 +224,54 @@
 			<button_iadd name="poss_iadd">
 				<anchored to="possessions" position="aboveright" offset="5,8" />
 				<target>possessions</target>
+			</button_iadd>
+
+			<!-- ARMOUR / CLOTHING Section -->
+			<label name="armour_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="harn_armour_clothing" />
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
+			<!-- Armour list headers -->
+			<label name="armour_name_header">
+				<anchored height="15">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+					<width>200</width>
+				</anchored>
+				<static textres="harn_item" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_wt_header">
+				<anchored to="armour_name_header" position="insidetopleft" offset="205,0" width="45" height="15" />
+				<static textres="harn_wt" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<windowlist name="armourlist">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<datasource>.armourlist</datasource>
+				<class>harn_armour_entry</class>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			
+			<button_iadd name="armour_iadd">
+				<anchored to="armourlist" position="aboveright" offset="5,8" />
+				<target>armourlist</target>
 			</button_iadd>
 
 			<!-- NOTES Section -->

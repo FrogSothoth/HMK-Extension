@@ -6,79 +6,82 @@
 local bLocked = false;
 
 function onInit()
+    Debug.console("Armour: Entry initialized.");
     local node = getDatabaseNode();
     if not node then return; end
 
-    -- Handle name changes for autofill
-    local sNamePath = DB.getPath(node, "name");
-    DB.addHandler(sNamePath, "onUpdate", onNameUpdate);
+    -- Handle focus for autofill (UI Event instead of Data Handler)
+    if name then
+        name.onLoseFocus = onNameLoseFocus;
+    end
 
-    -- Trigger sheet-wide calculation when name or weight changes
-    DB.addHandler(sNamePath, "onUpdate", onDataUpdate);
+    -- Trigger character-wide armor calculation when weight node changes in DB
     DB.addHandler(DB.getPath(node, "weight"), "onUpdate", onDataUpdate);
 end
 
 function onClose()
     local node = getDatabaseNode();
     if node then
-        local sNamePath = DB.getPath(node, "name");
-        DB.removeHandler(sNamePath, "onUpdate", onNameUpdate);
-        DB.removeHandler(sNamePath, "onUpdate", onDataUpdate);
         DB.removeHandler(DB.getPath(node, "weight"), "onUpdate", onDataUpdate);
     end
 end
 
+function onNameLoseFocus()
+    Debug.console("Armour: Name field lost focus.");
+    onNameUpdate();
+end
+
 function onNameUpdate()
     if bLocked then return; end
-    if not ArmorData then return; end
-    
-    -- Defensive check for control existence
-    if not name or not weight then
-        return;
+    if not ArmorData then 
+        Debug.console("Armour: Error - ArmorData script not found.");
+        return; 
     end
+    
+    if not name or not weight then return; end
 
     local sName = name.getValue();
-    if sName == "" then return; end
-
-    -- Log to console for debugging
-    Debug.console("Armour: Searching for item: " .. sName);
+    if sName == "" then 
+        ArmorManager.safeSetValue(getDatabaseNode(), "weight", "number", 0);
+        onDataUpdate();
+        return; 
+    end
 
     local tItem, sFullName = ArmorData.lookupItem(sName);
     
     if tItem and sFullName then
-        Debug.console("Armour: Found item: " .. sFullName .. " (Weight: " .. tostring(tItem.weight) .. ")");
+        Debug.console("Armour: Match found - " .. sFullName);
+        Debug.console("Armour: Data weight = " .. tostring(tItem.weight));
         
         bLocked = true;
         
-        -- Store hidden attributes on the node for ArmorManager
         local node = getDatabaseNode();
-        DB.setValue(node, "material", "string", tItem.material);
-        DB.setValue(node, "enc_penalty", "number", tItem.enc or 0);
-        DB.setValue(node, "price", "number", tItem.price or 0);
+        ArmorManager.safeSetValue(node, "material", "string", tItem.material);
+        ArmorManager.safeSetValue(node, "enc_penalty", "number", tItem.enc or 0);
+        ArmorManager.safeSetValue(node, "price", "number", tItem.price or 0);
         
-        -- Set weight and autocomplete name
-        weight.setValue(tItem.weight);
+        -- Write the weight and verify immediately
+        Debug.console("Armour: Writing weight " .. tostring(tItem.weight) .. " to DB...");
+        ArmorManager.safeSetValue(node, "weight", "number", tItem.weight);
+        
+        local nDBValue = DB.getValue(node, "weight", -1);
+        Debug.console("Armour: DB verified value = " .. tostring(nDBValue));
+        
         if sName ~= sFullName then
             name.setValue(sFullName);
         end
         
         bLocked = false;
-        
-        -- Trigger calculation since we updated weight/metadata
         onDataUpdate();
     else
-        Debug.console("Armour: No item found for: " .. sName);
+        Debug.console("Armour: No match for '" .. sName .. "'");
     end
 end
 
 function onDataUpdate()
-    -- Only trigger if not locked (to avoid multiple calls during autofill)
     if bLocked then return; end
-
-    -- Trigger character-wide armor calculation
     local node = getDatabaseNode();
     local nodeChar = DB.getParent(DB.getParent(node));
-    
     if nodeChar then
         ArmorManager.calculateArmor(nodeChar);
     end

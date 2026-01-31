@@ -342,6 +342,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="esotericalist_iadd">
+				<anchored to="esotericalist" position="aboveright" offset="2,8" />
+				<target>esotericalist</target>
+			</button_iadd>
 
 			<!-- SPELLS Section -->
 			<label name="spells_title">
@@ -395,6 +399,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="spellslist_iadd">
+				<anchored to="spellslist" position="aboveright" offset="2,8" />
+				<target>spellslist</target>
+			</button_iadd>
 
 			<!-- TALENTS Section -->
 			<label name="talents_title">
@@ -436,6 +444,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="talentslist_iadd">
+				<anchored to="talentslist" position="aboveright" offset="2,8" />
+				<target>talentslist</target>
+			</button_iadd>
 
 			<!-- ALCHEMY Section -->
 			<label name="alchemy_title">
@@ -477,6 +489,10 @@
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<button_iadd name="alchemylist_iadd">
+				<anchored to="alchemylist" position="aboveright" offset="2,8" />
+				<target>alchemylist</target>
+			</button_iadd>
 		</sheetdata>
 	</windowclass>
 </root>
