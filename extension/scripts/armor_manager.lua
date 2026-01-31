@@ -299,7 +299,7 @@ function calculateGear(nodeChar)
     safeSetValue(nodeChar, "strmod", "number", nStrEncMod);
 
     local nArmorEnc = DB.getValue(nodeChar, "armour_enc", 0);
-    local nEncTotal = nArmorEnc + nGearEnc + nStrEncMod;
+    local nEncTotal = math.max(nArmorEnc + nGearEnc + nStrEncMod, 0);
     
     safeSetValue(nodeChar, "enc_total", "number", nEncTotal);
     

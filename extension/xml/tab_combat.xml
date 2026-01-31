@@ -317,6 +317,7 @@
 			<numberfield name="move">
 				<anchored to="move_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="effective_label">

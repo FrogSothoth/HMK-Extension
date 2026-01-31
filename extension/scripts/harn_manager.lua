@@ -140,3 +140,48 @@ function updateNativeLanguage(nodeChar, sLanguage)
 	Debug.console("HarnManager.updateNativeLanguage: No Language skill found to update.")
 	return false
 end
+
+-- Calculate Fate Roll based on AUR score
+-- Formula: floor(AUR / 2) * 5 + 25
+function calculateFate(nodeChar)
+	if not nodeChar then return end
+	local nAUR = DB.getValue(nodeChar, "aur_score", 10)
+	local nFateRoll = math.floor(nAUR / 2) * 5 + 25
+	DB.setValue(nodeChar, "fate_roll", "number", nFateRoll)
+	return nFateRoll
+end
+
+-- Calculate Move based on AGL, STR, and Folk
+-- 1. Get MOVE SB (AGL, STR) using SkillsManager.calculateSB
+-- 2. MOVE = 25 + (floor(MOVE SB / 2) * 5)
+-- 3. If Folk is Kuzhai, subtract 20
+function calculateMove(nodeChar)
+	if not nodeChar then return end
+	
+	-- 1. Calculate the hidden Skill Base (SB) for Move (AGL + STR)
+	local nSB = 0
+	if SkillsManager and SkillsManager.calculateSB then
+		nSB = SkillsManager.calculateSB(nodeChar, "AGL", "STR")
+	else
+		-- Fallback if SkillsManager is not yet loaded or available
+		local nAGL = DB.getValue(nodeChar, "agl_score", 10)
+		local nSTR = DB.getValue(nodeChar, "str_score", 10)
+		if nAGL > nSTR then
+			nSB = math.ceil((nAGL + nSTR) / 2)
+		else
+			nSB = math.floor((nAGL + nSTR) / 2)
+		end
+	end
+
+	-- 2. Base Move Formula
+	local nMove = 25 + (math.floor(nSB / 2) * 5)
+
+	-- 3. Kuzhai Modifier
+	local sFolk = DB.getValue(nodeChar, "folk", "")
+	if sFolk == "Kuzhai" then
+		nMove = nMove - 20
+	end
+
+	DB.setValue(nodeChar, "move", "number", nMove)
+	return nMove
+end

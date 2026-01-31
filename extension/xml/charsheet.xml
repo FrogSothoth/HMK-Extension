@@ -18,7 +18,8 @@
 		<script>
 			local ATTRIBUTE_FIELDS = {
 				"str_score", "end_score", "dex_score", "agl_score", "per_score", "cml_score",
-				"aur_score", "wil_score", "rea_score", "cre_score", "emp_score", "elo_score", "voi_score"
+				"aur_score", "wil_score", "rea_score", "cre_score", "emp_score", "elo_score", "voi_score",
+				"folk"
 			};
 
 			function onInit()
@@ -44,6 +45,12 @@
 					if SkillsManager and SkillsManager.recalculateAllSB then
 						SkillsManager.recalculateAllSB(nodeChar);
 					end
+					if HarnManager and HarnManager.calculateFate then
+						HarnManager.calculateFate(nodeChar);
+					end
+					if HarnManager and HarnManager.calculateMove then
+						HarnManager.calculateMove(nodeChar);
+					end
 				else
 					Debug.console("WARNING: No character node found in charsheet onInit");
 				end
@@ -68,6 +75,15 @@
 						SkillsManager.recalculateAllSB(nodeChar);
 					else
 						Debug.console("  WARNING: SkillsManager.recalculateAllSB not available");
+					end
+
+					-- Recalculate Fate
+					if HarnManager and HarnManager.calculateFate then
+						HarnManager.calculateFate(nodeChar);
+					end
+					-- Recalculate Move
+					if HarnManager and HarnManager.calculateMove then
+						HarnManager.calculateMove(nodeChar);
 					end
 				else
 					Debug.console("  WARNING: Could not get parent node");

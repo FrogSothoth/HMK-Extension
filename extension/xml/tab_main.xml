@@ -10,6 +10,68 @@
 			function onInit()
 				-- Update sunsign on load if we have values
 				updateSunsign();
+
+				-- Update birthplace realms on load if we have a nation
+				local sNation = birthplace.getValue();
+				if sNation and sNation ~= "" then
+					updateBirthplaceRealms(sNation, true);
+				end
+
+				-- Update class options on load if we have a society
+				local sSociety = society.getValue();
+				updateClassOptions(sSociety, true);
+			end
+
+			function updateClassOptions(sSociety, bLoading)
+				local sCurrentClass = class.getValue();
+				
+				if not bLoading then
+					class.clear();
+				end
+
+				local tOptions = {};
+				if sSociety == "Tribal" then
+					tOptions = {"Unfree", "Free", "Priestly", "Noble"};
+				elseif sSociety == "Tribal-Settled" then
+					tOptions = {"Unfree", "Free", "Guilded", "Priestly", "Noble"};
+				elseif sSociety == "Kuzhan" then
+					tOptions = {"Larkuz (Tunnellers)", "Tolkuz (Builders)", "Azkuz (Makers)", "Erkuz (Providers)", "Zerkuz (Wanderers)", "Konkuz (Defenders)", "Yankuz (Rulers)"};
+				elseif sSociety == "Sinain" then
+					tOptions = {"Free", "Crafter", "Military", "Valpalen"};
+				else
+					tOptions = {"Unfree", "Free", "Guilded", "Military", "Priestly", "Noble"};
+				end
+
+				class.addItems(tOptions);
+
+				if bLoading and sCurrentClass ~= "" then
+					class.setValue(sCurrentClass);
+				end
+			end
+
+			function updateBirthplaceRealms(sNation, bLoading)
+				local sCurrentRealm = birthplace_realm.getValue();
+				
+				if not bLoading then
+					birthplace_realm.clear();
+				end
+
+				if BirthData.Nations[sNation] then
+					local tRealms = {};
+					for sRealm, _ in pairs(BirthData.Nations[sNation]) do
+						table.insert(tRealms, sRealm);
+					end
+					table.sort(tRealms);
+					birthplace_realm.addItems(tRealms);
+					birthplace_realm.setReadOnly(false);
+
+					-- If loading, restore the current realm value
+					if bLoading and sCurrentRealm ~= "" then
+						birthplace_realm.setValue(sCurrentRealm);
+					end
+				else
+					birthplace_realm.setReadOnly(true);
+				end
 			end
 
 			function updateSunsign()
@@ -117,19 +179,7 @@
 						addItems({"Altor", "Azeryan", "Byria", "Chogoro-Mafani", "Dalkesh", "Emelrene", "Hacherdad", "Harbaal", "Harn", "Hepekeria", "Hurisea", "Ivinia", "Karejia", "Ketarh-Beshakan", "Northern Anzeloria", "Palithane", "Quarphor", "Reksyna", "Shorkyne", "Thonia", "Trierzon", "Umelria"});
 					end
 					function onValueChanged()
-						window.birthplace_realm.clear();
-						local sNation = getValue();
-						if BirthData.Nations[sNation] then
-							local tRealms = {};
-							for sRealm, _ in pairs(BirthData.Nations[sNation]) do
-								table.insert(tRealms, sRealm);
-							end
-							table.sort(tRealms);
-							window.birthplace_realm.addItems(tRealms);
-							window.birthplace_realm.setReadOnly(false);
-						else
-							window.birthplace_realm.setReadOnly(true);
-						end
+						window.updateBirthplaceRealms(getValue());
 					end
 				</script>
 			</combobox>
@@ -173,16 +223,22 @@
 			<stringfield name="society">
 				<anchored to="society_label" position="righthigh" offset="5,0" width="90" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						window.updateClassOptions(getValue());
+					end
+				</script>
 			</stringfield>
 
 			<label name="class_label">
 				<anchored to="society_label" position="below" offset="0,5" width="80" height="20" />
 				<static textres="harn_class" />
 			</label>
-			<stringfield name="class">
+			<combobox name="class">
 				<anchored to="class_label" position="righthigh" offset="5,0" width="90" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+				<unsorted />
+			</combobox>
 
 			<label name="family_occupation_label">
 				<anchored to="class_label" position="below" offset="0,5" width="80" height="20" />
@@ -410,6 +466,7 @@
 			<numberfield name="fate_roll">
 				<anchored to="roll_label" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<label name="fp_label">
