@@ -35,5 +35,8 @@
 		<script name="EquipmentData" file="scripts/equipment_data.lua" />
 		<script name="ArmorData" file="scripts/armor_data.lua" />
 		<script name="ArmorManager" file="scripts/armor_manager.lua" />
+		<script name="MeleeData" file="scripts/melee_data.lua" />
+		<script name="MissileData" file="scripts/missile_data.lua" />
+		<script name="HMKDice" file="scripts/hmk_dice.lua" />
 	</base>
 </root>

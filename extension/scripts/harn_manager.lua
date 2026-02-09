@@ -8,7 +8,7 @@ function onInit()
 end
 
 function onClose()
-	-- Cleanup
+	-- Cleanup (handlers are managed per-character in charsheet.xml)
 end
 
 --
@@ -29,6 +29,34 @@ local MONTH_VALUES = {
 	["Ilvin"] = 10,
 	["Navek"] = 11,
 	["Morgat"] = 12,
+}
+
+-- Skills affected by each body zone impairment
+-- Head and Torso also affect all Craft skills (handled in isSkillAffectedByZone)
+local ZONE_AFFECTED_SKILLS = {
+	head = {
+		"Acrobatics", "Awareness", "Climbing", "Dancing", "Dodge",
+		"Jumping", "Legerdemain", "Melee", "Riding", "Stealth",
+		"Swimming", "Archery", "Slings", "Throwing"
+		-- Plus all Craft skills (checked separately)
+	},
+	torso = {
+		"Acrobatics", "Climbing", "Dancing", "Dodge", "Jumping",
+		"Melee", "Riding", "Stealth", "Swimming", "Archery",
+		"Slings", "Throwing"
+		-- Plus all Craft skills (checked separately)
+	},
+	legs = {
+		"Acrobatics", "Climbing", "Dancing", "Dodge", "Jumping",
+		"Melee", "Riding", "Stealth", "Swimming", "Archery",
+		"Slings", "Throwing"
+	},
+	arms = {
+		"Acrobatics", "Archery", "Climbing", "Dancing", "Dexterity",
+		"Jumping", "Legerdemain", "Melee", "Riding", "Slings",
+		"Strength", "Swimming", "Throwing"
+		-- Plus all Craft skills (checked separately)
+	}
 }
 
 -- Sunsign data: each entry is {startDay, endDay, sunsignName, mod1, mod2, mod3, mod4, mod5, mod6}
@@ -141,6 +169,21 @@ function updateNativeLanguage(nodeChar, sLanguage)
 	return false
 end
 
+-- Calculate Strength Impact modifier
+-- STR 0-4: (2 * STR) - 12
+-- STR > 4: floor(STR / 2) - 5
+function calculateStrImpact(nodeChar)
+	if not nodeChar then return 0 end
+	local nSTR = DB.getValue(nodeChar, "str_score", 10)
+	local nStrImp
+	if nSTR <= 4 then
+		nStrImp = (2 * nSTR) - 12
+	else
+		nStrImp = math.floor(nSTR / 2) - 5
+	end
+	return nStrImp
+end
+
 -- Calculate Fate Roll based on AUR score
 -- Formula: floor(AUR / 2) * 5 + 25
 function calculateFate(nodeChar)
@@ -183,5 +226,239 @@ function calculateMove(nodeChar)
 	end
 
 	DB.setValue(nodeChar, "move", "number", nMove)
+
+	-- Also update Effective Move when base Move changes
+	calculateEffectiveMove(nodeChar)
+
 	return nMove
+end
+
+-----------------------------------------------------------
+-- EML (Effective Mastery Level) and Effective Move
+-----------------------------------------------------------
+
+-- Calculate total Fatigue penalty (sum of all fatigue levels)
+function calculateFatiguePenalty(nodeChar)
+	if not nodeChar then return 0 end
+	local nWinded = DB.getValue(nodeChar, "winded", 0)
+	local nWeary = DB.getValue(nodeChar, "weary", 0)
+	local nWeak = DB.getValue(nodeChar, "weak", 0)
+	return nWinded + nWeary + nWeak
+end
+
+function isAGLSkill(sSkillName)
+	if not sSkillName or sSkillName == "" then return false end
+	if not SkillsData or not SkillsData.getSkill then return false end
+
+	local tSkill = SkillsData.getSkill(sSkillName)
+	if tSkill then
+		local bIsAGL = tSkill.att1 == "AGL" or tSkill.att2 == "AGL"
+		return bIsAGL
+	end
+	return false
+end
+
+-- Check if a skill is affected by a specific body zone
+function isSkillAffectedByZone(sSkillName, sZone)
+	if not sSkillName or not sZone then return false end
+	
+	-- Special case: All Craft skills are affected by Head, Torso, or Arms
+	if (sZone == "head" or sZone == "torso" or sZone == "arms") then
+		if SkillsData and SkillsData.getSkill then
+			local tSkill = SkillsData.getSkill(sSkillName)
+			if tSkill and tSkill.group == "Craft" then
+				return true
+			end
+		end
+	end
+	
+	-- Check explicit skill list for this zone
+	local tAffectedSkills = ZONE_AFFECTED_SKILLS[sZone]
+	if not tAffectedSkills then return false end
+	
+	for _, sAffectedSkill in ipairs(tAffectedSkills) do
+		if sAffectedSkill == sSkillName then
+			return true
+		end
+	end
+	
+	return false
+end
+
+-- Calculate total zone impairment penalties for a skill
+-- Returns the sum of all applicable zone impairments
+function calculateZoneImpairment(nodeChar, sSkillName)
+	if not nodeChar or not sSkillName then return 0 end
+	
+	local nTotalImpairment = 0
+	
+	-- Check if skill is affected by Head zone
+	if isSkillAffectedByZone(sSkillName, "head") then
+		nTotalImpairment = nTotalImpairment + DB.getValue(nodeChar, "injury_head", 0)
+	end
+	
+	-- Check if skill is affected by Torso zone
+	if isSkillAffectedByZone(sSkillName, "torso") then
+		nTotalImpairment = nTotalImpairment + DB.getValue(nodeChar, "injury_torso", 0)
+	end
+	
+	-- Check if skill is affected by Legs zone (sum both legs)
+	if isSkillAffectedByZone(sSkillName, "legs") then
+		local nLegL = DB.getValue(nodeChar, "injury_legs_l", 0)
+		local nLegR = DB.getValue(nodeChar, "injury_legs_r", 0)
+		nTotalImpairment = nTotalImpairment + nLegL + nLegR
+	end
+	
+	-- Check if skill is affected by Arms zone (sum both arms)
+	if isSkillAffectedByZone(sSkillName, "arms") then
+		local nArmL = DB.getValue(nodeChar, "injury_arms_l", 0)
+		local nArmR = DB.getValue(nodeChar, "injury_arms_r", 0)
+		nTotalImpairment = nTotalImpairment + nArmL + nArmR
+	end
+	
+	return nTotalImpairment
+end
+
+-- Calculate EML (Effective Mastery Level) for a skill
+-- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments
+-- Used for skill tests (not displayed on character sheet)
+function calculateEML(nodeChar, nML, sSkillName)
+	if not nodeChar then return nML end
+
+	local nFatigue = calculateFatiguePenalty(nodeChar)
+	local nPenalty = nFatigue
+
+	-- Add ENC penalty only for AGL-based skills
+	if isAGLSkill(sSkillName) then
+		local nEnc = DB.getValue(nodeChar, "enc_total", 0)
+		nPenalty = nPenalty + nEnc
+	end
+	
+	-- Add zone impairment penalties
+	local nZoneImpairment = calculateZoneImpairment(nodeChar, sSkillName)
+	nPenalty = nPenalty + nZoneImpairment
+
+	return nML - nPenalty
+end
+
+-- Calculate and store Effective Move
+-- Effective Move = Move - Fatigue - ENC - Zone Injuries (Head, Torso, Legs)
+function calculateEffectiveMove(nodeChar)
+	if not nodeChar then return end
+	
+	local nMove = DB.getValue(nodeChar, "move", 0)
+	local nFatigue = calculateFatiguePenalty(nodeChar)
+	local nEnc = DB.getValue(nodeChar, "enc_total", 0)
+	
+	-- Add zone injury impairments (Head, Torso, and Legs all affect Move)
+	local nHead = DB.getValue(nodeChar, "injury_head", 0)
+	local nTorso = DB.getValue(nodeChar, "injury_torso", 0)
+	local nLegL = DB.getValue(nodeChar, "injury_legs_l", 0)
+	local nLegR = DB.getValue(nodeChar, "injury_legs_r", 0)
+	
+	local nEffective = nMove - nFatigue - nEnc - nHead - nTorso - nLegL - nLegR
+	DB.setValue(nodeChar, "move_effective", "number", nEffective)
+
+	return nEffective
+end
+
+-----------------------------------------------------------
+-- Injury Impairment Calculation
+-----------------------------------------------------------
+
+-- Map body locations to injury zones
+-- Returns zone key: "head", "arm_l", "arm_r", "torso", "leg_l", "leg_r"
+local LOCATION_TO_ZONE = {
+	["Skull"] = "head",
+	["Face"] = "head",
+	["Neck"] = "head",
+	["Shoulder"] = "arms",  -- needs side
+	["Upper Arm"] = "arms",
+	["Elbow"] = "arms",
+	["Forearm"] = "arms",
+	["Hand"] = "arms",
+	["Thorax"] = "torso",
+	["Abdomen"] = "torso",
+	["Pelvis"] = "torso",
+	["Thigh"] = "legs",  -- needs side
+	["Knee"] = "legs",
+	["Calf"] = "legs",
+	["Foot"] = "legs",
+}
+
+-- Get the zone key for an injury based on location and side
+function getInjuryZone(sLocation, sSide)
+	if not sLocation then return nil end
+	
+	-- Make lookup case-insensitive by capitalizing first letter
+	local sNormalized = sLocation:sub(1,1):upper() .. sLocation:sub(2):lower()
+	local sBaseZone = LOCATION_TO_ZONE[sNormalized]
+	if not sBaseZone then return nil end
+
+	-- Head and Torso don't use side
+	if sBaseZone == "head" or sBaseZone == "torso" then
+		return sBaseZone
+	end
+
+	-- Arms and Legs use side (default to left if not specified)
+	if sSide == "R" then
+		return sBaseZone .. "_r"
+	else
+		return sBaseZone .. "_l"
+	end
+end
+
+-- Add a delta to a specific zone's impairment
+-- Called when an injury's level changes
+function addImpairment(nodeChar, sLocation, sSide, nDelta)
+	if not nodeChar or nDelta == 0 then return end
+
+	local sZone = getInjuryZone(sLocation, sSide)
+	if not sZone then return end
+
+	local sPath = "injury_" .. sZone
+	local nCurrent = DB.getValue(nodeChar, sPath, 0)
+	local nNew = math.max(0, nCurrent + nDelta)  -- Don't go below 0
+	DB.setValue(nodeChar, sPath, "number", nNew)
+end
+
+-- Recalculate all zone impairments from active injuries (full recalc)
+-- Only used for special cases, not normal injury level changes
+function recalculateImpairments(nodeChar)
+	if not nodeChar then return end
+
+	-- Initialize zone totals (SUM, not MAX)
+	local tZoneSum = {
+		head = 0,
+		arms_l = 0,
+		arms_r = 0,
+		torso = 0,
+		legs_l = 0,
+		legs_r = 0,
+	}
+
+	-- Iterate through all active injuries
+	local nodeInjuries = nodeChar.getChild("activeinjuries")
+	if nodeInjuries then
+		for _, nodeInjury in pairs(nodeInjuries.getChildren()) do
+			local sLocation = DB.getValue(nodeInjury, "location", "")
+			local sSide = DB.getValue(nodeInjury, "side", "-")
+			local sLevel = DB.getValue(nodeInjury, "level", "")
+			local nLevel = tonumber(sLevel) or 0
+
+			local sZone = getInjuryZone(sLocation, sSide)
+			if sZone and tZoneSum[sZone] and nLevel > 0 then
+				local nImpairment = nLevel * 5
+				tZoneSum[sZone] = tZoneSum[sZone] + nImpairment
+			end
+		end
+	end
+
+	-- Update the impairment fields
+	DB.setValue(nodeChar, "injury_head", "number", tZoneSum.head)
+	DB.setValue(nodeChar, "injury_arms_l", "number", tZoneSum.arms_l)
+	DB.setValue(nodeChar, "injury_arms_r", "number", tZoneSum.arms_r)
+	DB.setValue(nodeChar, "injury_torso", "number", tZoneSum.torso)
+	DB.setValue(nodeChar, "injury_legs_l", "number", tZoneSum.legs_l)
+	DB.setValue(nodeChar, "injury_legs_r", "number", tZoneSum.legs_r)
 end

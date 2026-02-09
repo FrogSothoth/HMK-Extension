@@ -21,6 +21,12 @@
 				"aur_score", "wil_score", "rea_score", "cre_score", "emp_score", "elo_score", "voi_score",
 				"folk"
 			};
+			local FATIGUE_FIELDS = { "winded", "weary", "weak" };
+			local INJURY_ZONE_FIELDS = { "injury_head", "injury_torso", "injury_legs_l", "injury_legs_r" };
+			local sMeleeMLHandlerPath = nil;
+			local sPossessionDeletePath = nil;
+			local MISSILE_SKILLS = { "Archery", "Throwing", "Slings" };
+			local aMissileSkillHandlerPaths = {};
 
 			function onInit()
 				WindowTabManager.populate(self);
@@ -51,6 +57,51 @@
 					if HarnManager and HarnManager.calculateMove then
 						HarnManager.calculateMove(nodeChar);
 					end
+
+					-- Register fatigue handlers for Effective Move calculation
+					for _, sField in ipairs(FATIGUE_FIELDS) do
+						local sPath = DB.getPath(nodeChar, sField);
+						DB.addHandler(sPath, "onUpdate", onFatigueChanged);
+						Debug.console("  Added fatigue handler for: " .. sPath);
+					end
+
+					-- Register injury zone handlers for Effective Move calculation
+					for _, sField in ipairs(INJURY_ZONE_FIELDS) do
+						local sPath = DB.getPath(nodeChar, sField);
+						DB.addHandler(sPath, "onUpdate", onInjuryZoneChanged);
+						Debug.console("  Added injury zone handler for: " .. sPath);
+					end
+
+					-- Watch for possession deletions to sync melee weapons
+					sPossessionDeletePath = DB.getPath(nodeChar, "possessions") .. ".*";
+					DB.addHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
+					Debug.console("  Added possession delete handler at: " .. sPossessionDeletePath);
+
+					-- Set up Melee ML handler for auto-updating combat weapon ATK/DEF
+					local nodeCombatSkills = DB.getChild(nodeChar, "combatskills");
+					if nodeCombatSkills then
+						for _, nodeSkill in pairs(DB.getChildList(nodeCombatSkills)) do
+							local sSkillName = DB.getValue(nodeSkill, "name", "");
+							if sSkillName == "Melee" then
+								sMeleeMLHandlerPath = DB.getPath(nodeSkill, "ml");
+								DB.addHandler(sMeleeMLHandlerPath, "onUpdate", onMeleeMLChanged);
+								Debug.console("  Added Melee ML handler at: " .. sMeleeMLHandlerPath);
+							end
+							-- Set up missile skill ML handlers
+							for _, sMissileSkill in ipairs(MISSILE_SKILLS) do
+								if sSkillName == sMissileSkill then
+									local sPath = DB.getPath(nodeSkill, "ml");
+									DB.addHandler(sPath, "onUpdate", onMissileSkillMLChanged);
+									table.insert(aMissileSkillHandlerPaths, sPath);
+									Debug.console("  Added missile skill ML handler at: " .. sPath);
+								end
+							end
+						end
+					end
+					-- Initial missile weapons sync (rebuild from possessions on load)
+					if MissileData and MissileData.syncMissileWeapons then
+						MissileData.syncMissileWeapons(nodeChar);
+					end
 				else
 					Debug.console("WARNING: No character node found in charsheet onInit");
 				end
@@ -62,6 +113,71 @@
 					for _, sField in ipairs(ATTRIBUTE_FIELDS) do
 						DB.removeHandler(DB.getPath(nodeChar, sField), "onUpdate", onAttributeChanged);
 					end
+					-- Remove fatigue handlers
+					for _, sField in ipairs(FATIGUE_FIELDS) do
+						DB.removeHandler(DB.getPath(nodeChar, sField), "onUpdate", onFatigueChanged);
+					end
+					-- Remove injury zone handlers
+					for _, sField in ipairs(INJURY_ZONE_FIELDS) do
+						DB.removeHandler(DB.getPath(nodeChar, sField), "onUpdate", onInjuryZoneChanged);
+					end
+					-- Remove Melee ML handler
+					if sMeleeMLHandlerPath then
+						DB.removeHandler(sMeleeMLHandlerPath, "onUpdate", onMeleeMLChanged);
+					end
+					-- Remove missile skill ML handlers
+					for _, sPath in ipairs(aMissileSkillHandlerPaths) do
+						DB.removeHandler(sPath, "onUpdate", onMissileSkillMLChanged);
+					end
+					-- Remove possession delete handler
+					if sPossessionDeletePath then
+						DB.removeHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
+					end
+				end
+			end
+
+			function onPossessionDeleted(nodeDeleted)
+				Debug.console("onPossessionDeleted fired for: " .. tostring(DB.getPath(nodeDeleted)));
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					if MeleeData and MeleeData.syncMeleeWeapons then
+						MeleeData.syncMeleeWeapons(nodeChar, nodeDeleted);
+					end
+					if MissileData and MissileData.syncMissileWeapons then
+						MissileData.syncMissileWeapons(nodeChar, nodeDeleted);
+					end
+				end
+			end
+
+			function onMeleeMLChanged(nodeField)
+				Debug.console("onMeleeMLChanged fired");
+				local nodeChar = getDatabaseNode();
+				if nodeChar and MeleeData and MeleeData.updateMeleeATKDEF then
+					MeleeData.updateMeleeATKDEF(nodeChar);
+				end
+			end
+
+			function onMissileSkillMLChanged(nodeField)
+				Debug.console("onMissileSkillMLChanged fired for: " .. DB.getPath(nodeField));
+				local nodeChar = getDatabaseNode();
+				if nodeChar and MissileData and MissileData.updateMissileATK then
+					MissileData.updateMissileATK(nodeChar);
+				end
+			end
+
+			function onFatigueChanged(nodeField)
+				Debug.console("onFatigueChanged fired for: " .. DB.getPath(nodeField));
+				local nodeChar = getDatabaseNode();
+				if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+					HarnManager.calculateEffectiveMove(nodeChar);
+				end
+			end
+
+			function onInjuryZoneChanged(nodeField)
+				Debug.console("onInjuryZoneChanged fired for: " .. DB.getPath(nodeField));
+				local nodeChar = getDatabaseNode();
+				if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+					HarnManager.calculateEffectiveMove(nodeChar);
 				end
 			end
 

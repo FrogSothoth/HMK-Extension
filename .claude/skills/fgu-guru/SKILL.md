@@ -49,18 +49,48 @@ This means:
 
 ---
 
+## Common Mistakes from Training Data
+
+Training data often suggests incorrect patterns for FGU. Watch for these specific wrong assumptions:
+
+| Wrong Assumption | Correct Pattern (see layout.md) |
+|------------------|--------------------------------|
+| "Use CSS-like flexbox" | FGU uses anchor-based positioning |
+| "Set width/height for all elements" | Use `<left>` + `<right>` for responsive sizing |
+| "Position with absolute x,y offsets" | Use `to="sibling"` + `position="righthigh"` |
+| "Controls auto-refresh from DB" | Must use `DB.addHandler` + explicit `setValue()` |
+| "Copy patterns from extension/ code" | Verify against `docs/patterns/` or `references/` first |
+
+**Always verify patterns against `docs/patterns/` or `references/` before implementing.**
+
+---
+
+## WARNING: Extension Code May Contain Anti-Patterns
+
+**Do NOT blindly copy from the `extension/` folder.** The extension codebase has evolved over time and may contain:
+
+- Outdated approaches that have been superseded
+- Anti-patterns that work but aren't best practice
+- Incomplete implementations from WIP features
+- Patterns that were never verified against references
+
+**Always verify against `docs/patterns/` or `references/`, not the existing extension code.**
+
+---
+
 ## Step 1: Check Local Documentation
 
 **Primary source:** `docs/patterns/`
 
-| File | Contents |
-|------|----------|
-| `index.md` | Overview, links to all pattern files |
-| `layout.md` | Anchoring, positioning, containers, responsive sizing (8 patterns) |
-| `lifecycle.md` | onInit, onClose, handler cleanup (*not yet documented*) |
-| `database.md` | DB.getValue, DB.setValue, handlers (*not yet documented*) |
-| `windowlist.md` | Dynamic lists, datasource binding (*not yet documented*) |
-| `strings.md` | Localization, string resources (*not yet documented*) |
+| File | Contents | Status |
+|------|----------|--------|
+| `index.md` | Overview, links to all pattern files | Start here |
+| `layout.md` | Anchoring, positioning, containers, responsive sizing, templates, lists, Lua sizing | **30+ patterns** |
+| `database.md` | DB.getValue, DB.setValue, DB.addHandler, cross-field reactivity | **4 patterns** |
+| `lifecycle.md` | Script registration, onInit, onClose, super calls, handler cleanup | **6 patterns** |
+| `game-data.md` | Static game data organization (skills, weapons, lookup tables) | **2 patterns** |
+| `windowlist.md` | Dynamic lists, datasource binding | *not yet documented* |
+| `strings.md` | Localization, string resources | *not yet documented* |
 
 **Search for patterns:**
 ```bash
@@ -72,6 +102,28 @@ grep -i "keyword" docs/patterns/layout.md
 ```
 
 If the pattern is documented, use it and cite the source file mentioned in the docs.
+
+---
+
+## CRITICAL: Handler Cleanup Rule
+
+Every `DB.addHandler()` in `onInit()` **MUST** have a matching `DB.removeHandler()` in `onClose()`.
+
+```lua
+-- In onInit()
+DB.addHandler(sPath, "onUpdate", onFieldChanged);
+
+-- In onClose() - REQUIRED!
+DB.removeHandler(sPath, "onUpdate", onFieldChanged);
+```
+
+**Failure to clean up handlers causes:**
+- Memory leaks
+- Stale callbacks firing on destroyed windows
+- Duplicate callbacks after `/reload`
+- Ghost updates on non-existent UI elements
+
+See `docs/patterns/lifecycle.md` for the complete pattern with examples.
 
 ---
 
@@ -152,9 +204,10 @@ When reviewing this extension's code against patterns:
 
 | Topic | File |
 |-------|------|
-| Positioning, anchors, containers, sizing | `layout.md` |
-| onInit, onClose, handlers | `lifecycle.md` |
-| DB.getValue, DB.setValue, DB.addHandler | `database.md` |
+| Positioning, anchors, containers, sizing, templates | `layout.md` |
+| Script registration, onInit, onClose, super calls | `lifecycle.md` |
+| DB.getValue, DB.setValue, DB.addHandler, reactivity | `database.md` |
+| Static data organization (skills, weapons, lookups) | `game-data.md` |
 | windowlist, datasource, dynamic lists | `windowlist.md` |
 | String resources, localization | `strings.md` |
 | *New category* | Create new file, update `index.md` |
@@ -195,8 +248,10 @@ When reviewing this extension's code against patterns:
 - ❌ Not checking docs/patterns/ first
 - ❌ Using patterns without verifying they exist in references/
 - ❌ Not citing the source file for patterns
-- ❌ Copying from extension/ code without verifying it works
+- ❌ Copying from extension/ code without verifying against docs/patterns/ or references/
+- ❌ Assuming extension/ code is correct (it may contain anti-patterns)
 - ❌ Forgetting to document new patterns
+- ❌ Adding DB.addHandler() without matching DB.removeHandler() in onClose()
 
 ## Green Flags - You're Doing It Right
 

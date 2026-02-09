@@ -116,6 +116,31 @@ function calculateArmor(nodeChar)
     calculateGear(nodeChar);
 end
 
+-- Bulk zone overrides: certain garments are excluded from specific zones
+local BULK_ZONE_LIMITS = {
+    { match = "cloak",    zones = { Head=true, Arms=true, Torso=true } },
+    { match = "coat",     zones = { Head=true, Arms=true, Torso=true } },
+    { match = "surcoat",  zones = { Head=true, Arms=true, Torso=true } },
+    { match = "robe",     zones = { Head=true, Arms=true, Torso=true } },
+    { match = "hauberk",  zones = { Head=true, Arms=true, Torso=true } },
+    { match = "mantle",   zones = { Arms=true } },
+    { match = "breeches", zones = { Legs=true } },
+    { match = "trousers", zones = { Legs=true } },
+}
+
+function getAllowedBulkZones(sName, sMaterial)
+    if sMaterial == "Gambeson" then
+        return { Arms=true, Torso=true };
+    end
+    local sLower = sName:lower();
+    for _, tRule in ipairs(BULK_ZONE_LIMITS) do
+        if sLower:find(tRule.match, 1, true) then
+            return tRule.zones;
+        end
+    end
+    return nil;
+end
+
 -- New matching and bulk logic
 function calculateBulkAndLayering(nodeChar, locData)
     local zones = { "Head", "Arms", "Torso", "Legs" };
@@ -134,17 +159,20 @@ function calculateBulkAndLayering(nodeChar, locData)
             local tItem = ArmorData.lookupItem(sName);
             if tItem then
                 local bSuffix1 = ArmorData.isSpecialItem1(sName);
+                local tAllowed = getAllowedBulkZones(sName, tItem.material);
                 local tZonesSeen = {};
 
                 for sLoc, _ in pairs(tItem.cov) do
                     local sZone = getZoneFromLoc(sLoc);
                     if sZone and not tZonesSeen[sZone] then
-                        tZonesSeen[sZone] = true;
-                        table.insert(zoneItems[sZone], {
-                            mat = tItem.material,
-                            isSuffix1 = bSuffix1,
-                            name = sName
-                        });
+                        if not tAllowed or tAllowed[sZone] then
+                            tZonesSeen[sZone] = true;
+                            table.insert(zoneItems[sZone], {
+                                mat = tItem.material,
+                                isSuffix1 = bSuffix1,
+                                name = sName
+                            });
+                        end
                     end
                 end
             end
@@ -202,19 +230,31 @@ end
 
 function matchProfile(sZone, tItems)
     if #tItems == 0 then return true, false; end
-    
+
     local bIsArmsOrLegs = (sZone == "Arms" or sZone == "Legs");
+
+    -- Two-pass matching: prefer profiles without extra encumbrance.
+    -- Pass 1: find a match with no extra enc (no Padded/Quilted in s=1 slot)
+    -- Pass 2: accept a match with extra enc if no clean match exists
+    local bFallbackMatch = false;
+    local bFallbackExtraEnc = false;
 
     for _, tProfile in ipairs(ArmorData.Profiles) do
         if #tProfile == #tItems then
-            -- Try to match materials and suffixes
-            -- Since the items can be in any order, we try permutations or a greedy match.
-            -- With max 4 items, let's just do a simple recursive match.
             local bMatched, bExtraEnc = checkMatchRecursive(tProfile, tItems, 1, {}, bIsArmsOrLegs);
             if bMatched then
-                return true, bExtraEnc;
+                if not bExtraEnc then
+                    return true, false;
+                elseif not bFallbackMatch then
+                    bFallbackMatch = true;
+                    bFallbackExtraEnc = bExtraEnc;
+                end
             end
         end
+    end
+
+    if bFallbackMatch then
+        return true, bFallbackExtraEnc;
     end
     return false, false;
 end
@@ -278,18 +318,24 @@ function calculateGear(nodeChar)
     local nodeGearList = nodeChar.getChild("possessions");
     if nodeGearList then
         for _, nodeItem in pairs(nodeGearList.getChildren()) do
-            nTotalPossWeight = nTotalPossWeight + DB.getValue(nodeItem, "total_weight", 0);
+            local nItemWt = DB.getValue(nodeItem, "total_weight", 0);
+            local sItemName = DB.getValue(nodeItem, "name", "Unknown");
+            -- Debug.console("ArmorManager: Item " .. sItemName .. " = " .. tostring(nItemWt));
+            nTotalPossWeight = nTotalPossWeight + nItemWt;
         end
     end
 
     -- Sum weights: Possessions + Armour
     local nArmorWeight = DB.getValue(nodeChar, "armour_weight_total", 0);
-    local nTotalWeight = nTotalPossWeight + nArmorWeight;
+    
+    -- Per user request: Gear Encumbrance is calculated ONLY from Possessions weight.
+    -- Armor weight is tracked separately but doesn't contribute to this specific penalty 
+    -- (Armor Encumbrance covers that).
+    
+    Debug.console("Gear: Possessions weight = " .. tostring(nTotalPossWeight));
 
-    Debug.console("Gear: Total weight = " .. tostring(nTotalWeight) .. " (Poss=" .. tostring(nTotalPossWeight) .. ", Armor=" .. tostring(nArmorWeight) .. ")");
-
-    -- Gear Encumbrance = floor(Total weight / 20) * 5
-    local nGearEnc = math.floor(nTotalWeight / 20) * 5;
+    -- Gear Encumbrance = floor(Total Possessions weight / 20) * 5
+    local nGearEnc = math.floor(nTotalPossWeight / 20) * 5;
     safeSetValue(nodeChar, "gear_enc", "number", nGearEnc);
 
     -- Update Totals
@@ -302,7 +348,13 @@ function calculateGear(nodeChar)
     local nEncTotal = math.max(nArmorEnc + nGearEnc + nStrEncMod, 0);
     
     safeSetValue(nodeChar, "enc_total", "number", nEncTotal);
-    
+    safeSetValue(nodeChar, "pf", "number", 5 + nEncTotal);
+
+    -- Update Effective Move when ENC changes
+    if HarnManager and HarnManager.calculateEffectiveMove then
+        HarnManager.calculateEffectiveMove(nodeChar);
+    end
+
     local nBulk = 0;
     local sBulk = DB.getValue(nodeChar, "bulk_str", "0");
     if sBulk == "ERR" then
@@ -310,8 +362,6 @@ function calculateGear(nodeChar)
     else
         nBulk = tonumber(sBulk) or 0;
     end
-    
-    safeSetValue(nodeChar, "pf", "number", nEncTotal + nBulk);
 end
 
 -- Helper to sum AV values

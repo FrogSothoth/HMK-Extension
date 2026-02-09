@@ -17,6 +17,47 @@ This extension provides a custom character sheet for the HarnMaster RPG system r
 - **CoreRPG** - Base ruleset being extended
 - **FGU Runtime** - Fantasy Grounds Unity v5.x
 
+---
+
+## ⚠️ CRITICAL: Consult Pattern Documentation Before Writing Code
+
+**DO NOT rely on training data or assumptions for FGU development.** FGU has a unique layout and API system that differs from standard web/desktop frameworks. Training data is often outdated or incorrect.
+
+### Verified Pattern Documentation
+
+The `docs/patterns/` folder contains **verified patterns extracted from working reference implementations**. Every pattern includes source citations so you can see the code in context.
+
+| Document | Contents | Patterns |
+|----------|----------|----------|
+| [layout.md](docs/patterns/layout.md) | Anchoring, positioning, responsive sizing, templates, lists, Lua sizing | **30+** |
+| [database.md](docs/patterns/database.md) | DB.getValue/setValue, handlers, cross-field reactivity | 4 |
+| [lifecycle.md](docs/patterns/lifecycle.md) | onInit, onClose, script registration, handler cleanup | 6 |
+| [game-data.md](docs/patterns/game-data.md) | Static data organization (skills, weapons, lookups) | 2 |
+
+### Before Writing ANY FGU Code
+
+1. **Check `docs/patterns/`** for the relevant pattern
+2. **If not found**, search `references/` for working examples
+3. **Document new patterns** back to `docs/patterns/` for future use
+4. **NEVER assume** based on training data or existing codebase
+
+### Why This Matters
+
+- **Existing code may be flawed** - The extension codebase has evolved and may contain anti-patterns
+- **Training data is unreliable** - FGU APIs change between versions
+- **Pattern docs are verified** - Every pattern cites a working reference implementation
+
+### Common Mistakes from Training Data
+
+| Wrong Assumption | Correct Pattern (see layout.md) |
+|------------------|--------------------------------|
+| "Use CSS-like flexbox" | FGU uses anchor-based positioning |
+| "Set width/height for all elements" | Use `<left>` + `<right>` for responsive |
+| "Position with absolute x,y offsets" | Use `to="sibling"` + `position="righthigh"` |
+| "Controls auto-refresh from DB" | Must use `DB.addHandler` + explicit `setValue()` |
+
+---
+
 ## Project Structure
 
 ```
@@ -39,9 +80,12 @@ This extension provides a custom character sheet for the HarnMaster RPG system r
 │       └── tab_gear.xml       # Equipment and encumbrance
 │
 ├── docs/                      # Development documentation
-│   ├── patterns/              # FGU patterns (folder with index)
+│   ├── patterns/              # **VERIFIED FGU patterns - CONSULT BEFORE CODING**
 │   │   ├── index.md           # Pattern index and overview
-│   │   └── layout.md          # Anchoring, positioning, responsive sizing
+│   │   ├── layout.md          # Anchoring, positioning, responsive sizing (30+ patterns)
+│   │   ├── database.md        # DB.getValue, DB.setValue, handlers, reactivity
+│   │   ├── lifecycle.md       # onInit, onClose, script registration, handlers
+│   │   └── game-data.md       # Static data organization (skills, weapons, etc.)
 │   ├── macos-development-guide.md
 │   ├── hmk-rules/             # HMK rulebook content
 │   │   ├── extracted-sections/   # 82 markdown files (full rulebook)
@@ -132,9 +176,20 @@ Debug.chat("Message")              -- To chat window
 
 ## Documentation
 
+### FGU Development Patterns (REQUIRED READING)
+
+| Document | Contents | Priority |
+|----------|----------|----------|
+| [docs/patterns/index.md](docs/patterns/index.md) | Pattern index, how to use, rules | Start here |
+| [docs/patterns/layout.md](docs/patterns/layout.md) | Anchoring, positioning, responsive sizing, templates, lists | **High** |
+| [docs/patterns/database.md](docs/patterns/database.md) | DB operations, handlers, reactivity | **High** |
+| [docs/patterns/lifecycle.md](docs/patterns/lifecycle.md) | Script registration, onInit/onClose, cleanup | Medium |
+| [docs/patterns/game-data.md](docs/patterns/game-data.md) | Static data organization | Medium |
+
+### Other Documentation
+
 | Document | Contents |
 |----------|----------|
-| [docs/patterns/](docs/patterns/) | FGU patterns with code examples from references |
 | [docs/macos-development-guide.md](docs/macos-development-guide.md) | macOS setup, config files, debugging |
 
 ## Reference Repositories
@@ -284,26 +339,40 @@ Answer: DEX and AGL (not "Strength and Dexterity" as training data might suggest
 - Any question about XML layouts, Lua scripting, DB operations, windowclasses
 
 **Workflow:**
-1. Check `docs/patterns/` first for documented patterns
+1. **ALWAYS check `docs/patterns/` first** - We have 40+ documented patterns with source citations
 2. If not found, search `references/` for working examples
 3. Document new patterns back to the appropriate file in `docs/patterns/`
+4. **NEVER write FGU code based on assumptions or training data**
 
-**Why this matters:** FGU APIs change between versions. Training data may be outdated. The fgu-guru skill ensures answers come from verified reference implementations in this repository.
+**Why this matters:**
+- FGU APIs change between versions - training data is unreliable
+- The existing codebase may contain anti-patterns - don't copy blindly
+- Pattern docs are verified against working reference implementations
 
-**Example:** If asked "How do I make a field expand to fill space?", don't guess - search references:
-```bash
-grep -r "right offset" references/ --include="*.xml" | head -5
-```
-Then document the pattern in `docs/patterns/layout.md` for future reference.
+**Key Pattern Documents:**
+
+| If you need... | Check this file |
+|----------------|-----------------|
+| Layout, positioning, anchoring | `docs/patterns/layout.md` (30+ patterns) |
+| Database operations, handlers | `docs/patterns/database.md` |
+| Script lifecycle, onInit/onClose | `docs/patterns/lifecycle.md` |
+
+**Example:** If asked "How do I make a field expand to fill space?":
+1. First check `docs/patterns/layout.md` → "Responsive Fill" pattern
+2. If not documented, search references and ADD the pattern to docs
 
 ### General Development Rules
 
-1. **All extension edits go in `extension/`** - Never edit files directly in the FGU data folder.
+1. **Consult patterns before writing code** - Check `docs/patterns/` for verified patterns. Don't assume based on training data or existing code.
 
-2. **Use the appropriate skill for questions:**
+2. **All extension edits go in `extension/`** - Never edit files directly in the FGU data folder.
+
+3. **Use the appropriate skill for questions:**
    - **HMK game rules** → Use harn-guru skill (queries SQLite database)
    - **FGU development** → Use fgu-guru skill (checks docs/patterns/, then references/)
 
-3. **Document as you learn** - When you discover a new FGU pattern from references/, add it to the appropriate file in `docs/patterns/` so future queries are simple lookups.
+4. **Document as you learn** - When you discover a new FGU pattern from references/, add it to the appropriate file in `docs/patterns/` so future agents benefit.
 
-4. **Test with `/reload`** - After changes, user should type `/reload` in FGU chat. If this doesn't reflect changes, the link is likely broken.
+5. **Test with `/reload`** - After changes, user should type `/reload` in FGU chat. If this doesn't reflect changes, the link is likely broken.
+
+6. **Don't trust the existing codebase blindly** - It may contain anti-patterns or outdated approaches. Always verify against `docs/patterns/` or `references/`.

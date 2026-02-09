@@ -28,7 +28,7 @@ This folder contains verified patterns extracted from working reference implemen
 
 | File | Contents | Status |
 |------|----------|--------|
-| [layout.md](layout.md) | Anchoring, positioning, containers, responsive sizing | 8 patterns |
+| [layout.md](layout.md) | Anchoring, positioning, containers, responsive sizing, templates, lists, programmatic layout | 30+ patterns |
 | [lifecycle.md](lifecycle.md) | Script registration, onInit, onClose, super calls, handler cleanup, inline vs external | 6 patterns |
 | [game-data.md](game-data.md) | Static game data organization (skills, weapons, lookup tables) | 2 patterns |
 | [database.md](database.md) | DB.getValue, DB.setValue, DB.addHandler, cross-field reactivity | 4 patterns |

@@ -61,6 +61,18 @@
 				<readonly />
 				<decimals>1</decimals>
 			</numberfield>
+
+			<stringcontrol name="total_weight_display">
+				<anchored to="quantity" width="45" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<font>sheettext</font>
+				<readonly />
+				<invisible />
+			</stringcontrol>
 		</sheetdata>
 	</windowclass>
 

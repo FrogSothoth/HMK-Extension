@@ -6,6 +6,22 @@
 		Melee/Missile weapons on left, Body Location on right
 	-->
 
+	<!-- Delete button icon -->
+	<icon name="delete_injury" file="graphics/charsheet/DELETE.png" />
+
+	<!-- Shock/Bleed/Amputation icons for body locations -->
+	<icon name="shk1" file="graphics/charsheet/SHK1.png" />
+	<icon name="shk2" file="graphics/charsheet/SHK2.png" />
+	<icon name="shk3" file="graphics/charsheet/SHK3.png" />
+	<icon name="shk4" file="graphics/charsheet/SHK4.png" />
+	<icon name="shk5" file="graphics/charsheet/SHK5.png" />
+	<icon name="bld1" file="graphics/charsheet/BLD1.png" />
+	<icon name="bld2" file="graphics/charsheet/BLD2.png" />
+	<icon name="bld3" file="graphics/charsheet/BLD3.png" />
+	<icon name="amp1" file="graphics/charsheet/AMP1.png" />
+	<icon name="amp2" file="graphics/charsheet/AMP2.png" />
+	<icon name="amp3" file="graphics/charsheet/AMP3.png" />
+
 	<!-- Template for melee weapon entry -->
 	<windowclass name="harn_melee_entry">
 		<margins control="0,0,0,2" />
@@ -89,65 +105,79 @@
 				<disabled />
 			</genericcontrol>
 			<stringfield name="name">
-				<anchored to="leftanchor" width="80" height="20">
+				<anchored to="leftanchor" width="110" height="20">
 					<top />
 					<left offset="5" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<numberfield name="wq">
-				<anchored to="name" width="28" height="20">
+				<anchored to="name" width="25" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<numberfield name="drw">
-				<anchored to="wq" width="28" height="20">
+			<stringfield name="drwhft">
+				<anchored to="wq" width="40" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-			<stringfield name="br">
-				<anchored to="drw" width="45" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<numberfield name="atk">
-				<anchored to="br" width="32" height="20">
+			<numberfield name="br">
+				<anchored to="drwhft" width="30" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<stringfield name="prj">
-				<anchored to="atk" width="35" height="20">
+			<numberfield name="vm">
+				<anchored to="br" width="22" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="atk">
+				<anchored to="vm" width="30" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<stringfield name="zd">
-				<anchored to="prj" width="30" height="20">
+			<numberfield name="chg">
+				<anchored to="atk" width="22" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+			<stringfield name="proj">
+				<anchored to="chg" width="120" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="3" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="pbzd">
+				<anchored to="proj" width="32" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<stringfield name="imp">
-				<anchored to="zd" width="30" height="20">
+				<anchored to="pbzd" width="55" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<stringfield name="ta">
-				<anchored to="imp" width="40" height="20">
+				<anchored to="imp" width="22" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="4" />
+					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
@@ -241,9 +271,187 @@
 					end
 				</script>
 			</numberfield>
+			<genericcontrol name="icon_bld">
+				<anchored to="av_f" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="16" />
+				</anchored>
+			</genericcontrol>
+			<genericcontrol name="icon_shk">
+				<anchored to="av_f" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="41" />
+				</anchored>
+				<script>
+					local ICON_DATA = {
+						["Skull"]     = { shk = "shk5", bld = "bld1" },
+						["Face"]      = { shk = "shk4", bld = "bld2" },
+						["Neck"]      = { shk = "shk5", bld = "bld3", amp = "amp1" },
+						["Shoulder"]  = { shk = "shk3", bld = "bld2" },
+						["Upper Arm"] = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["Elbow"]     = { shk = "shk2", bld = "bld1", amp = "amp2" },
+						["Forearm"]   = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["Hand"]      = { shk = "shk2", amp = "amp3" },
+						["Thorax"]    = { shk = "shk4", bld = "bld2" },
+						["Abdomen"]   = { shk = "shk4", bld = "bld3" },
+						["Pelvis"]    = { shk = "shk4", bld = "bld2" },
+						["Thigh"]     = { shk = "shk3", bld = "bld2", amp = "amp1" },
+						["Knee"]      = { shk = "shk2", bld = "bld1", amp = "amp2" },
+						["Calf"]      = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["Foot"]      = { shk = "shk2", amp = "amp2" },
+					};
+
+					function onInit()
+						local sLoc = DB.getValue(window.getDatabaseNode(), "location", "");
+						local tData = ICON_DATA[sLoc];
+						if not tData then return; end
+
+						-- SHK always centered in this control
+						addBitmapWidget(tData.shk);
+
+						-- BLD in left control
+						if tData.bld then
+							window.icon_bld.addBitmapWidget(tData.bld);
+						end
+
+						-- AMP in right control
+						if tData.amp then
+							window.icon_amp.addBitmapWidget(tData.amp);
+						end
+					end
+				</script>
+			</genericcontrol>
+			<genericcontrol name="icon_amp">
+				<anchored to="av_f" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="66" />
+				</anchored>
+			</genericcontrol>
 		</sheetdata>
 	</windowclass>
 
+	<!-- Template for active injury entry -->
+	<windowclass name="harn_injury_entry">
+		<margins control="0,0,0,2" />
+		<script>
+			local _nLastApplied = 0;
+
+			function onInit()
+				_nLastApplied = tonumber(level.getValue()) or 0;
+			end
+
+			function applyImpairment()
+				local nLevel = tonumber(level.getValue()) or 0;
+				local nDelta = nLevel - _nLastApplied;
+				
+				if nDelta ~= 0 and HarnManager and HarnManager.addImpairment then
+					local nodeEntry = getDatabaseNode();
+					if nodeEntry then
+						local sLocation = location.getValue();
+						local sSide = side.getValue();
+						local nodeChar = nodeEntry.getParent().getParent();
+						
+						if nodeChar and sLocation ~= "" then
+							local nValueToAdd = nDelta * 5;
+							Debug.chat("Injury update: " .. sLocation .. " (Level " .. nLevel .. "), adding " .. nValueToAdd .. " to zone.");
+							HarnManager.addImpairment(nodeChar, sLocation, sSide, nValueToAdd);
+							_nLastApplied = nLevel;
+						end
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<!-- Location (text: Skull, Face, etc.) -->
+			<stringfield name="location">
+				<anchored to="leftanchor" width="65" height="20">
+					<top />
+					<left offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						window.applyImpairment();
+					end
+				</script>
+			</stringfield>
+			<!-- Side (L/R/-) -->
+			<stringfield name="side">
+				<anchored to="location" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						window.applyImpairment();
+					end
+				</script>
+			</stringfield>
+			<!-- Severity (M/S/G) -->
+			<stringfield name="severity">
+				<anchored to="side" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<!-- Level (1-5) -->
+			<stringfield name="level">
+				<anchored to="severity" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						window.applyImpairment();
+					end
+				</script>
+			</stringfield>
+			<!-- Aspect (B/E/P/F) -->
+			<stringfield name="aspect">
+				<anchored to="level" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<!-- Delete button -->
+			<buttoncontrol name="idelete">
+				<anchored to="aspect" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<icon>delete_injury</icon>
+				<script>
+					function onButtonPress()
+						local node = window.getDatabaseNode();
+						if node then
+							-- Subtract impairment first
+							local nLevel = tonumber(window.level.getValue()) or 0;
+							if nLevel > 0 and HarnManager and HarnManager.addImpairment then
+								local sLocation = DB.getValue(node, "location", "");
+								local sSide = DB.getValue(node, "side", "-");
+								local nodeChar = node.getParent().getParent();
+								if nodeChar and sLocation ~= "" then
+									HarnManager.addImpairment(nodeChar, sLocation, sSide, -nLevel * 5);
+								end
+							end
+							-- Then delete the record
+							node.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Main combat tab -->
 	<windowclass name="harn_tab_combat">
 		<script>
 			function onInit()
@@ -252,7 +460,7 @@
 				if not nodeChar then return; end
 
 				local nodeList = DB.createChild(nodeChar, "bodylocations");
-				
+
 				-- Consolidation Logic: If Hip or Groin exist, rename/merge them to Pelvis
 				local nodePelvis = nil;
 				local nodesToMerge = {};
@@ -295,6 +503,7 @@
 					end
 				end
 			end
+
 		</script>
 		<sheetdata>
 			<!-- ============================================ -->
@@ -458,66 +667,13 @@
 			</numberfield>
 
 			<!-- ============================================ -->
-			<!-- BOTTOM AREA: Weapons (left) + Body Loc (right) -->
+			<!-- BOTTOM AREA: Weapons then Body Location    -->
 			<!-- ============================================ -->
 
-			<!-- BODY LOCATION - Right side, fixed width, responsive height -->
-			<frame_char name="bodyloc_frame">
-				<anchored position="insidetopright" offset="0,120" width="160">
-					<bottom offset="0" />
-				</anchored>
-			</frame_char>
-			<label_frametop>
-				<anchored to="bodyloc_frame" />
-				<static textres="harn_body_location" />
-			</label_frametop>
-
-			<label name="loc_h">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="55" height="15" />
-				<static textres="harn_location" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="h_b">
-				<anchored to="loc_h" position="righthigh" offset="1,0" width="22" height="15" />
-				<static>B</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="h_e">
-				<anchored to="h_b" position="righthigh" offset="1,0" width="22" height="15" />
-				<static>E</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="h_p">
-				<anchored to="h_e" position="righthigh" offset="1,0" width="22" height="15" />
-				<static>P</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="h_f">
-				<anchored to="h_p" position="righthigh" offset="1,0" width="22" height="15" />
-				<static>F</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-
-			<windowlist name="bodylocations">
-				<anchored to="bodyloc_frame">
-					<top offset="42" />
-					<left offset="3" />
-					<right offset="-3" />
-					<bottom offset="-5" />
-				</anchored>
-				<datasource>.bodylocations</datasource>
-				<class>harn_bodyloc_entry</class>
-				<noscroll />
-			</windowlist>
-
-			<!-- MELEE WEAPONS - Left side, responsive width -->
+			<!-- MELEE WEAPONS - Full width -->
 			<frame_char name="melee_frame">
 				<anchored position="insidetopleft" offset="0,120" height="140">
-					<right offset="-165" />
+					<right offset="0" />
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -600,11 +756,11 @@
 				</script>
 			</button_iadd>
 
-			<!-- MISSILE WEAPONS - Below melee, responsive width -->
+			<!-- MISSILE WEAPONS - Below melee, full width, fixed height -->
+			<!-- y=265 = 120 (top row height) + 140 (melee height) + 5 (gap) -->
 			<frame_char name="missile_frame">
-				<anchored to="melee_frame" position="below" offset="0,5">
-					<right offset="-165" />
-					<bottom offset="0" />
+				<anchored position="insidetopleft" offset="0,265" height="140">
+					<right offset="0" />
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -614,47 +770,57 @@
 
 			<!-- Missile headers -->
 			<label name="missile_name_h">
-				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="80" height="15" />
+				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="110" height="15" />
 				<static>Weapon</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="missile_wq_h">
-				<anchored to="missile_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<anchored to="missile_name_h" position="righthigh" offset="4,0" width="25" height="15" />
 				<static textres="harn_wq" />
 				<font>sheetlabel</font>
 			</label>
-			<label name="missile_drw_h">
-				<anchored to="missile_wq_h" position="righthigh" offset="4,0" width="28" height="15" />
-				<static textres="harn_drw" />
+			<label name="missile_drwhft_h">
+				<anchored to="missile_wq_h" position="righthigh" offset="3,0" width="40" height="15" />
+				<static textres="harn_drwhft" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="missile_br_h">
-				<anchored to="missile_drw_h" position="righthigh" offset="4,0" width="45" height="15" />
+				<anchored to="missile_drwhft_h" position="righthigh" offset="3,0" width="30" height="15" />
 				<static textres="harn_br" />
 				<font>sheetlabel</font>
 			</label>
+			<label name="missile_vm_h">
+				<anchored to="missile_br_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<static textres="harn_vm" />
+				<font>sheetlabel</font>
+			</label>
 			<label name="missile_atk_h">
-				<anchored to="missile_br_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<anchored to="missile_vm_h" position="righthigh" offset="3,0" width="30" height="15" />
 				<static textres="harn_atk" />
 				<font>sheetlabel</font>
 			</label>
-			<label name="missile_prj_h">
-				<anchored to="missile_atk_h" position="righthigh" offset="4,0" width="35" height="15" />
-				<static textres="harn_prj" />
+			<label name="missile_chg_h">
+				<anchored to="missile_atk_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<static textres="harn_chg" />
 				<font>sheetlabel</font>
 			</label>
-			<label name="missile_zd_h">
-				<anchored to="missile_prj_h" position="righthigh" offset="4,0" width="30" height="15" />
-				<static textres="harn_zd" />
+			<label name="missile_proj_h">
+				<anchored to="missile_chg_h" position="righthigh" offset="3,0" width="120" height="15" />
+				<static textres="harn_proj" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_pbzd_h">
+				<anchored to="missile_proj_h" position="righthigh" offset="3,0" width="32" height="15" />
+				<static textres="harn_pbzd" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="missile_imp_h">
-				<anchored to="missile_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<anchored to="missile_pbzd_h" position="righthigh" offset="3,0" width="55" height="15" />
 				<static textres="harn_imp" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="missile_ta_h">
-				<anchored to="missile_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<anchored to="missile_imp_h" position="righthigh" offset="3,0" width="22" height="15" />
 				<static textres="harn_ta" />
 				<font>sheetlabel</font>
 			</label>
@@ -686,6 +852,233 @@
 					end
 				</script>
 			</button_iadd>
+
+			<!-- BODY LOCATION - Below missile weapons, full width, fixed height -->
+			<!-- y=410 = 120 (top row) + 140 (melee) + 5 (gap) + 140 (missile) + 5 (gap) -->
+			<!-- height=450 = 42 (header) + 15 rows * 24px each + 50px extra space -->
+			<frame_char name="bodyloc_frame">
+				<anchored position="insidetopleft" offset="0,410" height="450">
+					<right offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="bodyloc_frame" />
+				<static textres="harn_body_location" />
+			</label_frametop>
+
+			<label name="loc_h">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="55" height="15" />
+				<static textres="harn_location" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="h_b">
+				<anchored to="loc_h" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>B</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_e">
+				<anchored to="h_b" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>E</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_p">
+				<anchored to="h_e" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>P</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_f">
+				<anchored to="h_p" position="righthigh" offset="1,0" width="22" height="15" />
+				<static>F</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_shk">
+				<anchored to="h_f" position="righthigh" offset="1,0" width="100" height="15" />
+				<static>SHK</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<button_text name="recalc_injuries">
+				<anchored to="bodyloc_frame" position="insidetopright" offset="115,22" width="60" height="20" />
+				<state>
+					<label>Recalc</label>
+				</state>
+				<script>
+					function onButtonPress()
+						local nodeChar = window.getDatabaseNode();
+						if nodeChar and HarnManager and HarnManager.recalculateImpairments then
+							HarnManager.recalculateImpairments(nodeChar);
+						end
+					end
+				</script>
+			</button_text>
+
+			<!-- Injury Zone Frames - 4 vertical frames aligned with body location groups -->
+			<!-- Each row is ~22px. List starts at y=42 from bodyloc_frame top -->
+			<!-- 8px vertical gap between frames to account for frame graphic borders -->
+			<!-- Frame 1: Head (Skull-Neck) - rows 1-3, single field centered -->
+			<frame_char name="injury_head_frame">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,42" width="100" height="66" />
+			</frame_char>
+			<numberfield name="injury_head">
+				<anchored to="injury_head_frame" width="28" height="20">
+					<top offset="23" />
+					<left offset="36" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Head Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+			<!-- Frame 2: Arms (Shoulder-Hand) - rows 4-8, two side-by-side fields -->
+			<frame_char name="injury_arms_frame">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,116" width="100" height="110" />
+			</frame_char>
+			<numberfield name="injury_arms_l">
+				<anchored to="injury_arms_frame" width="28" height="20">
+					<top offset="45" />
+					<left offset="18" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Left Arm Impairment</tooltip>
+			</numberfield>
+			<numberfield name="injury_arms_r">
+				<anchored to="injury_arms_frame" width="28" height="20">
+					<top offset="45" />
+					<left offset="54" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Right Arm Impairment</tooltip>
+			</numberfield>
+			<!-- Frame 3: Torso (Thorax-Pelvis) - rows 9-11, single field centered -->
+			<frame_char name="injury_torso_frame">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,234" width="100" height="66" />
+			</frame_char>
+			<numberfield name="injury_torso">
+				<anchored to="injury_torso_frame" width="28" height="20">
+					<top offset="23" />
+					<left offset="36" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Torso Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+			<!-- Frame 4: Legs (Thigh-Foot) - rows 12-15, two side-by-side fields -->
+			<frame_char name="injury_legs_frame">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,308" width="100" height="88" />
+			</frame_char>
+			<numberfield name="injury_legs_l">
+				<anchored to="injury_legs_frame" width="28" height="20">
+					<top offset="34" />
+					<left offset="18" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Left Leg Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+			<numberfield name="injury_legs_r">
+				<anchored to="injury_legs_frame" width="28" height="20">
+					<top offset="34" />
+					<left offset="54" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Right Leg Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+
+			<!-- Active Injuries List - to the right of injury zone frames -->
+			<label name="injuries_h_loc">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="370,25" width="65" height="15" />
+				<static>Location</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_side">
+				<anchored to="injuries_h_loc" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>Side</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_sev">
+				<anchored to="injuries_h_side" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>Sev</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_lvl">
+				<anchored to="injuries_h_sev" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>Lvl</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_asp">
+				<anchored to="injuries_h_lvl" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>Asp</static>
+				<font>sheetlabel</font>
+			</label>
+			<windowlist name="activeinjuries">
+				<anchored to="bodyloc_frame">
+					<top offset="42" />
+					<left offset="368" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.activeinjuries</datasource>
+				<class>harn_injury_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="injuries_iadd">
+				<anchored to="activeinjuries" position="aboveright" offset="0,8" />
+				<target>activeinjuries</target>
+				<script>
+					function onButtonPress()
+						local list = window.activeinjuries;
+						if list then
+							list.createWindow();
+						else
+							Debug.console("ERROR: activeinjuries list not found");
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<windowlist name="bodylocations">
+				<anchored to="bodyloc_frame" width="250">
+					<top offset="42" />
+					<left offset="3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.bodylocations</datasource>
+				<class>harn_bodyloc_entry</class>
+				<noscroll />
+			</windowlist>
 		</sheetdata>
 	</windowclass>
 </root>

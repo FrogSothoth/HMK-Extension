@@ -134,8 +134,13 @@
 	<string name="harn_imp">IMP</string>
 	<string name="harn_ta">TA</string>
 	<string name="harn_drw">DRW</string>
+	<string name="harn_drwhft">DRW/HFT</string>
 	<string name="harn_br">BR</string>
+	<string name="harn_vm">VM</string>
+	<string name="harn_chg">CHG</string>
 	<string name="harn_prj">PRJ</string>
+	<string name="harn_proj">PROJ</string>
+	<string name="harn_pbzd">PB-ZD</string>
 
 	<string name="harn_body_location">BODY LOCATION / INJURY</string>
 	<string name="harn_injury">INJURY</string>

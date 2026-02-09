@@ -321,9 +321,34 @@
 				<anchored to="home_label" position="below" offset="0,5" width="70" height="20" />
 				<static textres="harn_wealth" />
 			</label>
-			<stringfield name="wealth">
-				<anchored to="wealth_label" position="righthigh" offset="5,0" width="100" height="20" />
+			<numberfield name="wealth">
+				<anchored to="wealth_label" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<max>149</max>
+				<script>
+					function onValueChanged()
+						local n = getValue();
+						local sLevel;
+						if n >= 50 then
+							sLevel = "Ostentatious";
+						elseif n >= 20 then
+							sLevel = "Affluent";
+						elseif n >= 10 then
+							sLevel = "Comfortable";
+						elseif n >= 5 then
+							sLevel = "Meagre";
+						else
+							sLevel = "Poor";
+						end
+						window.wealth_level.setValue(sLevel);
+					end
+				</script>
+			</numberfield>
+			<stringfield name="wealth_level">
+				<anchored to="wealth" position="righthigh" offset="5,0" width="80" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</stringfield>
 
 			<label name="coin_label">
