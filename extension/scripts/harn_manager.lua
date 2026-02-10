@@ -125,6 +125,17 @@ function getSunsignData(nDayOfYear)
 	return "Unknown", 0, 0, 0, 0, 0, 0
 end
 
+-- Look up sunsign modifiers by name
+-- Returns: {social, lore, physical, nature, craft, combat}
+function getSunsignModifiers(sSunsign)
+	for _, entry in ipairs(SUNSIGN_DATA) do
+		if entry[3] == sSunsign then
+			return { entry[4], entry[5], entry[6], entry[7], entry[8], entry[9] }
+		end
+	end
+	return { 0, 0, 0, 0, 0, 0 }
+end
+
 -- Get just the sunsign name from month name and day
 function getSunsign(sMonthName, nDay)
 	local nMonth = getMonthValue(sMonthName)

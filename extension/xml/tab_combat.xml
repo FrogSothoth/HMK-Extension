@@ -504,6 +504,15 @@
 				end
 			end
 
+			function updateShockUI()
+				local nState = shock_state.getValue();
+				shock_none_btn.setValue(nState == 0 and 1 or 0);
+				shock_stn_btn.setValue(nState == 1 and 1 or 0);
+				shock_inc_btn.setValue(nState == 2 and 1 or 0);
+				shock_unc_btn.setValue(nState == 3 and 1 or 0);
+				shock_kia_btn.setValue(nState == 4 and 1 or 0);
+			end
+
 		</script>
 		<sheetdata>
 			<!-- ============================================ -->
@@ -556,32 +565,87 @@
 				<static textres="harn_shockstate" />
 			</label_frametop>
 
-			<label name="stunned_label">
-				<anchored to="shock_frame" position="insidetopleft" offset="10,28" width="55" height="20" />
-				<static textres="harn_stunned" />
-			</label>
-			<numberfield name="stunned">
-				<anchored to="stunned_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+			<numberfield name="shock_state">
+				<anchored to="shock_frame" position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onInit()
+						window.updateShockUI();
+					end
+					function onValueChanged()
+						window.updateShockUI();
+					end
+				</script>
 			</numberfield>
 
-			<label name="incap_label">
-				<anchored to="stunned_label" position="below" offset="0,3" width="55" height="20" />
-				<static textres="harn_incapacitated" />
+			<buttoncontrol name="shock_none_btn">
+				<anchored to="shock_frame" position="insidetopleft" offset="15,25" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(0); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_none_label">
+				<anchored to="shock_none_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>[NONE]</static>
 			</label>
-			<numberfield name="incapacitated">
-				<anchored to="incap_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
 
-			<label name="dead_label">
-				<anchored to="incap_label" position="below" offset="0,3" width="55" height="20" />
-				<static textres="harn_deceased" />
+			<buttoncontrol name="shock_stn_btn">
+				<anchored to="shock_none_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(1); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_stn_label">
+				<anchored to="shock_stn_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>STN</static>
+				<tooltip textres="shock_stn_tooltip" />
 			</label>
-			<numberfield name="deceased">
-				<anchored to="dead_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
+
+			<buttoncontrol name="shock_inc_btn">
+				<anchored to="shock_stn_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(2); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_inc_label">
+				<anchored to="shock_inc_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>INC</static>
+				<tooltip textres="shock_inc_tooltip" />
+			</label>
+
+			<buttoncontrol name="shock_unc_btn">
+				<anchored to="shock_inc_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(3); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_unc_label">
+				<anchored to="shock_unc_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>UNC</static>
+				<tooltip textres="shock_unc_tooltip" />
+			</label>
+
+			<buttoncontrol name="shock_kia_btn">
+				<anchored to="shock_unc_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(4); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_kia_label">
+				<anchored to="shock_kia_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>KIA</static>
+			</label>
 
 			<!-- FATIGUE Section - to right of Shock -->
 			<frame_char name="fatigue_frame">

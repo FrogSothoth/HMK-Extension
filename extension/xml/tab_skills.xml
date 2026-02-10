@@ -58,6 +58,10 @@
 				deity_value.setVisible(false);
 				type_label.setVisible(false);
 				type_value.setVisible(false);
+				instrument_label.setVisible(false);
+				instrument_value.setVisible(false);
+				style_label.setVisible(false);
+				style_value.setVisible(false);
 
 				-- Show VOI field for Singing skill
 				if sName == "Singing" then
@@ -88,6 +92,16 @@
 					Debug.console("Showing Type field for Script skill");
 					type_label.setVisible(true);
 					type_value.setVisible(true);
+				-- Show Instrument field for Musician skill (matches "Musician" or "Musician: X")
+				elseif sName == "Musician" or string.sub(sName, 1, 10) == "Musician: " then
+					Debug.console("Showing Instrument field for Musician skill");
+					instrument_label.setVisible(true);
+					instrument_value.setVisible(true);
+				-- Show Style field for Shipwright skill (matches "Shipwright" or "Shipwright: X")
+				elseif sName == "Shipwright" or string.sub(sName, 1, 12) == "Shipwright: " then
+					Debug.console("Showing Style field for Shipwright skill");
+					style_label.setVisible(true);
+					style_value.setVisible(true);
 				end
 			end
 		</script>
@@ -281,6 +295,38 @@
 				<source>scripttype</source>
 				<invisible />
 			</stringfield>
+
+			<!-- Instrument field for Musician skill (stores on skill node) -->
+			<label name="instrument_label">
+				<anchored position="insidetopleft" offset="305,0" width="60" height="20" />
+				<static>Instrument</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<stringfield name="instrument_value">
+				<anchored position="insidetopleft" offset="370,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<maxchars>15</maxchars>
+				<source>instrument</source>
+				<invisible />
+			</stringfield>
+
+			<!-- Style field for Shipwright skill (stores on skill node) -->
+			<label name="style_label">
+				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
+				<static>Style</static>
+				<font>sheetlabel</font>
+				<invisible />
+			</label>
+			<stringfield name="style_value">
+				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<maxchars>15</maxchars>
+				<source>style</source>
+				<invisible />
+			</stringfield>
 		</sheetdata>
 	</windowclass>
 
@@ -381,11 +427,52 @@
 						end
 					end
 				end
+
+				-- Update sunsign modifiers in category labels
+				updateCategoryLabels();
+			end
+
+			function updateCategoryLabels()
+				local nodeChar = getDatabaseNode();
+				if not nodeChar then return; end
+
+				local sSunsign = DB.getValue(nodeChar, "birth_sunsign", "");
+				local tMods = HarnManager.getSunsignModifiers(sSunsign);
+				-- tMods is {social, lore, physical, nature, craft, combat}
+
+				local function formatMod(n)
+					if n &gt; 0 then return "[+" .. n .. "]"; end
+					if 0 &gt; n then return "[" .. n .. "]"; end
+					return "[0]";
+				end
+
+				if social_title then
+					social_title.setValue(Interface.getString("harn_skill_social") .. " " .. formatMod(tMods[1]));
+				end
+				if lore_title then
+					lore_title.setValue(Interface.getString("harn_skill_lore") .. " " .. formatMod(tMods[2]));
+				end
+				if physical_title then
+					physical_title.setValue(Interface.getString("harn_skill_physical") .. " " .. formatMod(tMods[3]));
+				end
+				if nature_title then
+					nature_title.setValue(Interface.getString("harn_skill_nature") .. " " .. formatMod(tMods[4]));
+				end
+				if craft_title then
+					craft_title.setValue(Interface.getString("harn_skill_craft") .. " " .. formatMod(tMods[5]));
+				end
+				if combat_title then
+					combat_title.setValue(Interface.getString("harn_skill_combat") .. " " .. formatMod(tMods[6]));
+				end
 			end
 
 			function onInit()
 				-- Auto-populate default skills (sm > 0) for new characters
 				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					DB.addHandler(nodeChar.getPath() .. ".birth_sunsign", "onUpdate", updateCategoryLabels);
+				end
+				updateCategoryLabels();
 				if not nodeChar then return; end
 
 				-- Check if skills have already been initialized using a flag
@@ -485,6 +572,13 @@
 				end
 
 				Debug.console("Default skills auto-population complete");
+			end
+
+			function onClose()
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					DB.removeHandler(nodeChar.getPath() .. ".birth_sunsign", "onUpdate", updateCategoryLabels);
+				end
 			end
 		</script>
 		<sheetdata>
