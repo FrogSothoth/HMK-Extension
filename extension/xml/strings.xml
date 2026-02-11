@@ -78,13 +78,18 @@
 	<string name="harn_morality">Morality</string>
 	<string name="harn_psyche">Psyche</string>
 	<string name="harn_blessing">Blessing</string>
+	<string name="harn_doctrine">Doctrine</string>
 
 	<!-- Main tab - Fate -->
-	<string name="harn_fate">FATE</string>
-	<string name="harn_roll">Roll</string>
+	<string name="harn_fate">FATE/GRACE/PIETY</string>
+	<string name="harn_fate_row">Fate</string>
+	<string name="harn_roll">ROLL</string>
 	<string name="harn_fp">FP</string>
 	<string name="harn_grace">Grace</string>
 	<string name="harn_piety">Piety</string>
+	<string name="harn_total">TOTAL</string>
+	<string name="harn_left">LEFT</string>
+	<string name="harn_max">MAX</string>
 
 	<!-- Skills -->
 	<string name="harn_skills">SKILLS</string>

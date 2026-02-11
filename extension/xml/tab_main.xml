@@ -362,7 +362,7 @@
 
 			<!-- TRAITS Section -->
 			<frame_char name="traits_frame">
-				<anchored position="insidetopleft" offset="210,145" width="200" height="130" />
+				<anchored position="insidetopleft" offset="210,145" width="200" height="285" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="traits_frame" />
@@ -408,7 +408,44 @@
 				<static textres="harn_blessing" />
 			</label>
 			<stringfield name="blessing">
-				<anchored to="blessing_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<anchored to="blessing_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script><![CDATA[
+					function onValueChanged()
+						local sValue = getValue();
+						-- Allow empty or non-negative integers only
+						if sValue ~= "" then
+							local nValue = tonumber(sValue);
+							if not nValue or nValue < 0 or math.floor(nValue) ~= nValue then
+								setValue("");
+							end
+						end
+					end
+				]]></script>
+			</stringfield>
+
+			<label name="doctrine_label">
+				<anchored to="blessing_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_doctrine" />
+			</label>
+			<stringfield name="doctrine1">
+				<anchored to="doctrine_label" position="righthigh" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine2">
+				<anchored to="doctrine1" position="below" offset="0,5" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine3">
+				<anchored to="doctrine2" position="below" offset="0,5" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine4">
+				<anchored to="doctrine3" position="below" offset="0,5" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine5">
+				<anchored to="doctrine4" position="below" offset="0,5" width="100" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 
@@ -475,50 +512,97 @@
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 
-			<!-- FATE Section -->
+			<!-- FATE/GRACE/PIETY Section -->
 			<frame_char name="fate_frame">
-				<anchored position="insidetopleft" offset="210,280" width="200" height="120" />
+				<anchored position="insidetopleft" offset="420,205" width="180" height="175" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="fate_frame" />
 				<static textres="harn_fate" />
 			</label_frametop>
 
-			<label name="roll_label">
-				<anchored to="fate_frame" position="insidetopleft" offset="10,30" width="40" height="20" />
+			<!-- Fate column headers -->
+			<label name="fate_roll_header">
+				<anchored to="fate_frame" position="insidetopleft" offset="55,30" width="35" height="14" />
 				<static textres="harn_roll" />
+				<font>sheetlabelinline</font>
+			</label>
+			<label name="fate_fp_header">
+				<anchored to="fate_roll_header" position="righthigh" offset="5,0" width="35" height="14" />
+				<static textres="harn_fp" />
+				<font>sheetlabelinline</font>
+			</label>
+
+			<!-- Fate row -->
+			<label name="fate_label">
+				<anchored to="fate_frame" position="insidetopleft" offset="10,45" width="40" height="20" />
+				<static textres="harn_fate_row" />
 			</label>
 			<numberfield name="fate_roll">
-				<anchored to="roll_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="fate_label" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
 			</numberfield>
-
-			<label name="fp_label">
-				<anchored to="roll_label" position="righthigh" offset="50,0" width="25" height="20" />
-				<static textres="harn_fp" />
-			</label>
 			<numberfield name="fate_fp">
-				<anchored to="fp_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="fate_roll" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
 			</numberfield>
 
+			<!-- Grace column headers -->
+			<label name="grace_total_header">
+				<anchored to="fate_frame" position="insidetopleft" offset="55,70" width="35" height="14" />
+				<static textres="harn_total" />
+				<font>sheetlabelinline</font>
+			</label>
+			<label name="grace_left_header">
+				<anchored to="grace_total_header" position="righthigh" offset="5,0" width="35" height="14" />
+				<static textres="harn_left" />
+				<font>sheetlabelinline</font>
+			</label>
+
+			<!-- Grace row -->
 			<label name="grace_label">
-				<anchored to="roll_label" position="below" offset="0,5" width="40" height="20" />
+				<anchored to="fate_frame" position="insidetopleft" offset="10,85" width="40" height="20" />
 				<static textres="harn_grace" />
 			</label>
-			<numberfield name="grace">
+			<numberfield name="grace_total">
 				<anchored to="grace_label" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+			</numberfield>
+			<numberfield name="grace_left">
+				<anchored to="grace_total" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
 			</numberfield>
 
+			<!-- Piety column headers -->
+			<label name="piety_max_header">
+				<anchored to="fate_frame" position="insidetopleft" offset="55,110" width="35" height="14" />
+				<static textres="harn_max" />
+				<font>sheetlabelinline</font>
+			</label>
+			<label name="piety_left_header">
+				<anchored to="piety_max_header" position="righthigh" offset="5,0" width="35" height="14" />
+				<static textres="harn_left" />
+				<font>sheetlabelinline</font>
+			</label>
+
+			<!-- Piety row -->
 			<label name="piety_label">
-				<anchored to="grace_label" position="below" offset="0,5" width="40" height="20" />
+				<anchored to="fate_frame" position="insidetopleft" offset="10,125" width="40" height="20" />
 				<static textres="harn_piety" />
 			</label>
-			<numberfield name="piety">
+			<numberfield name="piety_max">
 				<anchored to="piety_label" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+			</numberfield>
+			<numberfield name="piety_left">
+				<anchored to="piety_max" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
 			</numberfield>
 		</sheetdata>
 	</windowclass>
