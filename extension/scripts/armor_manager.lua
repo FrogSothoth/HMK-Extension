@@ -114,6 +114,9 @@ function calculateArmor(nodeChar)
 
     -- Ensure gear is also recalculated to get latest total
     calculateGear(nodeChar);
+
+    -- Calculate Area Attack
+    calculateAreaAttack(nodeChar);
 end
 
 -- Bulk zone overrides: certain garments are excluded from specific zones
@@ -440,4 +443,64 @@ function formatAVPipe(nFront, nBack)
     else
         return string.format("%d|%d", nFront, nBack);
     end
+end
+
+-- AREA ATTACK WEIGHTS
+local AREA_ATTACK_WEIGHTS = {
+    ["Skull"]      = 0.04,
+    ["Face"]       = 0.03,
+    ["Neck"]       = 0.02,
+    ["Shoulder"]   = 0.03,
+    ["Upper Arm"]  = 0.06,
+    ["Elbow"]      = 0.02,
+    ["Forearm"]    = 0.05,
+    ["Hand"]       = 0.05,
+    ["Thorax"]     = 0.12,
+    ["Abdomen"]    = 0.12,
+    ["Pelvis"]     = 0.1,
+    ["Thigh"]      = 0.14,
+    ["Knee"]       = 0.03,
+    ["Calf"]       = 0.12,
+    ["Foot"]       = 0.07,
+    ["Feet"]       = 0.07 -- Supporting both names just in case
+};
+
+function calculateAreaAttack(nodeChar)
+    if not nodeChar then return; end
+
+    local nSum = 0;
+    local nodeList = nodeChar.getChild("bodylocations");
+    if not nodeList then return; end
+
+    -- Debug.console("ArmorManager: Starting Area Attack calculation...");
+
+    for _, nodeLoc in pairs(nodeList.getChildren()) do
+        local sLoc = DB.getValue(nodeLoc, "location", "");
+        local sAVF = DB.getValue(nodeLoc, "av_f", "0");
+        
+        -- The "F" column in HM is for Fire/Frost protection.
+        -- If it's a pipe string (e.g. "2|1"), the first value represents the protection.
+        local nVal = tonumber(sAVF) or 0;
+        local nPipe = sAVF:find("|", 1, true);
+        if nPipe then
+            nVal = tonumber(sAVF:sub(1, nPipe - 1)) or 0;
+        end
+
+        local nWeight = AREA_ATTACK_WEIGHTS[sLoc] or 0;
+        -- Fallback for name variation
+        if nWeight == 0 and sLoc == "Foot" then
+            nWeight = AREA_ATTACK_WEIGHTS["Feet"] or 0;
+        end
+
+        nSum = nSum + (nVal * nWeight);
+        -- Debug.console("ArmorManager: Loc " .. sLoc .. ", F-Val " .. nVal .. ", Weight " .. nWeight .. ", Weighted Sum: " .. tostring(nSum));
+    end
+
+    -- Rounding: if tenths decimal place is 3 or greater, round up, else round down.
+    -- math.floor(nSum + 0.7) achieves this (e.g., 1.29 + 0.7 = 1.99 -> 1; 1.3 + 0.7 = 2.0 -> 2)
+    local nFinal = math.floor(nSum + 0.7);
+    if nFinal < 0 then nFinal = 0; end
+
+    -- Debug.console("ArmorManager: Final Area Attack Value = " .. nFinal);
+    DB.setValue(nodeChar, "area_attack_value", "number", nFinal);
 end

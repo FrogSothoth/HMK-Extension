@@ -15,6 +15,7 @@
 	<icon name="shk3" file="graphics/charsheet/SHK3.png" />
 	<icon name="shk4" file="graphics/charsheet/SHK4.png" />
 	<icon name="shk5" file="graphics/charsheet/SHK5.png" />
+	<icon name="shk6" file="graphics/charsheet/SHK6.png" />
 	<icon name="bld1" file="graphics/charsheet/BLD1.png" />
 	<icon name="bld2" file="graphics/charsheet/BLD2.png" />
 	<icon name="bld3" file="graphics/charsheet/BLD3.png" />
@@ -253,6 +254,12 @@
 					function onValueChanged()
 						local bRigid = window.is_rigid.getValue() == 1;
 						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+
+						-- Recalculate Area Attack if armor values change
+						local nodeChar = window.getDatabaseNode().getParent().getParent();
+						if ArmorManager and ArmorManager.calculateAreaAttack then
+							ArmorManager.calculateAreaAttack(nodeChar);
+						end
 					end
 				</script>
 			</stringfield>
@@ -614,6 +621,11 @@
 						DB.setValue(node, "av_f", "string", "0");
 						DB.setValue(node, "is_rigid", "number", 0);
 					end
+				end
+
+				-- Initial Area Attack Calculation
+				if ArmorManager and ArmorManager.calculateAreaAttack then
+					ArmorManager.calculateAreaAttack(nodeChar);
 				end
 			end
 
@@ -1307,12 +1319,28 @@
 				<anchored to="bodyloc_frame" width="250">
 					<top offset="42" />
 					<left offset="3" />
-					<bottom offset="-5" />
+					<bottom offset="-30" />
 				</anchored>
 				<datasource>.bodylocations</datasource>
 				<class>harn_bodyloc_entry</class>
 				<noscroll />
 			</windowlist>
+
+			<label name="area_attack_label">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="10,405" width="70" height="20" />
+				<static>Area Attack</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="area_attack_value">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="133,405" width="22" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<readonly />
+			</numberfield>
+			<genericcontrol name="area_attack_shk_icon">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="196,405" width="20" height="20" />
+				<icon>shk6</icon>
+			</genericcontrol>
 		</sheetdata>
 	</windowclass>
 </root>
