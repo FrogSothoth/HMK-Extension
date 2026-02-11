@@ -150,6 +150,11 @@
 	<string name="harn_body_location">BODY LOCATION / INJURY</string>
 	<string name="harn_injury">INJURY</string>
 	<string name="harn_location">Location</string>
+	<string name="harn_hb">HB</string>
+	<string name="harn_inj_bld">BLD</string>
+	<string name="harn_inj_inf">INF</string>
+	<string name="harn_inj_hr">HR</string>
+	<string name="harn_inj_heal">Heal</string>
 	<string name="harn_m1">M1</string>
 	<string name="harn_s2">S2</string>
 	<string name="harn_s3">S3</string>

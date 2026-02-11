@@ -205,6 +205,23 @@ function calculateFate(nodeChar)
 	return nFateRoll
 end
 
+-- Calculate Healing Base based on END and WIL
+-- HB = average of END and WIL
+-- Round up if END > WIL, else round down
+function calculateHealingBase(nodeChar)
+	if not nodeChar then return end
+	local nEND = DB.getValue(nodeChar, "end_score", 10)
+	local nWIL = DB.getValue(nodeChar, "wil_score", 10)
+	local nHB
+	if nEND > nWIL then
+		nHB = math.ceil((nEND + nWIL) / 2)
+	else
+		nHB = math.floor((nEND + nWIL) / 2)
+	end
+	DB.setValue(nodeChar, "healing_base", "number", nHB)
+	return nHB
+end
+
 -- Calculate Move based on AGL, STR, and Folk
 -- 1. Get MOVE SB (AGL, STR) using SkillsManager.calculateSB
 -- 2. MOVE = 25 + (floor(MOVE SB / 2) * 5)
@@ -371,8 +388,29 @@ function calculateShadowPenalty(nodeChar, sSkillName)
 	return 0
 end
 
+-- Calculate Doctrine Bonus for a skill
+-- If the skill name matches any of the 5 doctrine entries, return the Blessing value
+-- Otherwise return 0
+function calculateDoctrineBonus(nodeChar, sSkillName)
+	if not nodeChar or not sSkillName or sSkillName == "" then return 0 end
+
+	local nBlessing = tonumber(DB.getValue(nodeChar, "blessing", "")) or 0
+	if nBlessing == 0 then return 0 end
+
+	local sSkillLower = string.lower(sSkillName)
+
+	for i = 1, 5 do
+		local sDoctrine = DB.getValue(nodeChar, "doctrine" .. i, "")
+		if sDoctrine ~= "" and string.lower(sDoctrine) == sSkillLower then
+			return nBlessing
+		end
+	end
+
+	return 0
+end
+
 -- Calculate EML (Effective Mastery Level) for a skill
--- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments - Shadow Penalty
+-- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments - Shadow Penalty + Doctrine Bonus
 -- Used for skill tests (not displayed on character sheet)
 function calculateEML(nodeChar, nML, sSkillName)
 	if not nodeChar then return nML end
@@ -385,7 +423,7 @@ function calculateEML(nodeChar, nML, sSkillName)
 		local nEnc = DB.getValue(nodeChar, "enc_total", 0)
 		nPenalty = nPenalty + nEnc
 	end
-	
+
 	-- Add zone impairment penalties
 	local nZoneImpairment = calculateZoneImpairment(nodeChar, sSkillName)
 	nPenalty = nPenalty + nZoneImpairment
@@ -394,7 +432,10 @@ function calculateEML(nodeChar, nML, sSkillName)
 	local nShadowPenalty = calculateShadowPenalty(nodeChar, sSkillName)
 	nPenalty = nPenalty + nShadowPenalty
 
-	return nML - nPenalty
+	-- Add doctrine bonus (if skill matches a doctrine entry)
+	local nDoctrineBonus = calculateDoctrineBonus(nodeChar, sSkillName)
+
+	return nML - nPenalty + nDoctrineBonus
 end
 
 -- Calculate and store Effective Move

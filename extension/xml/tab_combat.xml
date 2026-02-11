@@ -345,19 +345,20 @@
 
 			function onInit()
 				_nLastApplied = tonumber(level.getValue()) or 0;
+				updateHeal();
 			end
 
 			function applyImpairment()
 				local nLevel = tonumber(level.getValue()) or 0;
 				local nDelta = nLevel - _nLastApplied;
-				
+
 				if nDelta ~= 0 and HarnManager and HarnManager.addImpairment then
 					local nodeEntry = getDatabaseNode();
 					if nodeEntry then
 						local sLocation = location.getValue();
 						local sSide = side.getValue();
 						local nodeChar = nodeEntry.getParent().getParent();
-						
+
 						if nodeChar and sLocation ~= "" then
 							local nValueToAdd = nDelta * 5;
 							Debug.chat("Injury update: " .. sLocation .. " (Level " .. nLevel .. "), adding " .. nValueToAdd .. " to zone.");
@@ -366,6 +367,21 @@
 						end
 					end
 				end
+			end
+
+			function updateHeal()
+				local nodeEntry = getDatabaseNode();
+				if not nodeEntry then return end
+
+				local nInjuryHR = DB.getValue(nodeEntry, "injury_hr", 0);
+				local nodeChar = nodeEntry.getParent().getParent();
+				local nHB = 0;
+				if nodeChar then
+					nHB = DB.getValue(nodeChar, "healing_base", 0);
+				end
+
+				local nHeal = nInjuryHR * nHB;
+				heal.setValue(nHeal);
 			end
 		</script>
 		<sheetdata>
@@ -428,9 +444,51 @@
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
+			<!-- BLD checkbox -->
+			<buttoncontrol name="bleeding">
+				<anchored to="aspect" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<!-- INF checkbox -->
+			<buttoncontrol name="infected">
+				<anchored to="bleeding" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<!-- HR (1-6) -->
+			<numberfield name="injury_hr">
+				<anchored to="infected" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>1</min>
+				<max>6</max>
+				<script>
+					function onValueChanged()
+						window.updateHeal();
+					end
+				</script>
+			</numberfield>
+			<!-- Heal (HR x HB) - readonly display -->
+			<numberfield name="heal">
+				<anchored to="injury_hr" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
 			<!-- Delete button -->
 			<buttoncontrol name="idelete">
-				<anchored to="aspect" width="15" height="15">
+				<anchored to="heal" width="15" height="15">
 					<top parent="leftanchor" offset="2" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -439,7 +497,6 @@
 					function onButtonPress()
 						local node = window.getDatabaseNode();
 						if node then
-							-- Subtract impairment first
 							local nLevel = tonumber(window.level.getValue()) or 0;
 							if nLevel > 0 and HarnManager and HarnManager.addImpairment then
 								local sLocation = DB.getValue(node, "location", "");
@@ -449,7 +506,6 @@
 									HarnManager.addImpairment(nodeChar, sLocation, sSide, -nLevel * 5);
 								end
 							end
-							-- Then delete the record
 							node.delete();
 						end
 					end
@@ -1147,6 +1203,18 @@
 				<font>sheetlabel</font>
 				<center />
 			</label>
+			<label name="h_hb">
+				<anchored to="h_shk" position="righthigh" offset="5,0" width="20" height="15" />
+				<static textres="harn_hb" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="healing_base">
+				<anchored to="h_hb" position="righthigh" offset="2,0" width="28" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<default>0</default>
+				<tooltip>Healing Base = Avg(END, WIL), rounded up if END > WIL</tooltip>
+			</numberfield>
 			<button_text name="recalc_injuries">
 				<anchored to="bodyloc_frame" position="insidetopright" offset="115,22" width="60" height="20" />
 				<state>
@@ -1286,6 +1354,26 @@
 			<label name="injuries_h_asp">
 				<anchored to="injuries_h_lvl" position="righthigh" offset="2,0" width="22" height="15" />
 				<static>Asp</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_bld">
+				<anchored to="injuries_h_asp" position="righthigh" offset="2,0" width="22" height="15" />
+				<static textres="harn_inj_bld" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_inf">
+				<anchored to="injuries_h_bld" position="righthigh" offset="2,0" width="22" height="15" />
+				<static textres="harn_inj_inf" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_hr">
+				<anchored to="injuries_h_inf" position="righthigh" offset="2,0" width="22" height="15" />
+				<static textres="harn_inj_hr" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="injuries_h_heal">
+				<anchored to="injuries_h_hr" position="righthigh" offset="2,0" width="28" height="15" />
+				<static textres="harn_inj_heal" />
 				<font>sheetlabel</font>
 			</label>
 			<windowlist name="activeinjuries">
