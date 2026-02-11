@@ -330,8 +330,49 @@ function calculateZoneImpairment(nodeChar, sSkillName)
 	return nTotalImpairment
 end
 
+-- Calculate Shadow penalty for a skill or Move test
+function calculateShadowPenalty(nodeChar, sSkillName)
+	if not nodeChar then return 0 end
+	
+	local nShadow = DB.getValue(nodeChar, "shadow", 0)
+	if nShadow == 0 then return 0 end
+
+	-- 1. Check for -10 per point: Move, Dodge, Stealth
+	if sSkillName == "Move" or sSkillName == "Dodge" or sSkillName == "Stealth" then
+		return nShadow * 10
+	end
+
+	-- 2. Check for -0: Melee
+	if sSkillName == "Melee" then
+		return 0
+	end
+
+	-- 3. Check for -5 per point:
+	-- Specific list (includes attributes like Agility and Perception)
+	local tSpecialSkills = {
+		["Mercantilism"] = true, ["Physician"] = true, ["Script"] = true, ["Agriculture"] = true,
+		["Fishing"] = true, ["Mineralogy"] = true, ["Piloting"] = true, ["Seamanship"] = true,
+		["Timbercraft"] = true, ["Tracking"] = true, ["Awareness"] = true, ["Legerdemain"] = true,
+		["Archery"] = true, ["Slings"] = true, ["Throwing"] = true, ["Ceramics"] = true,
+		["Fletching"] = true, ["Glassworking"] = true, ["Hideworking"] = true, ["Jewelcraft"] = true,
+		["Lockcraft"] = true, ["Milling"] = true, ["Textilecraft"] = true, ["PERCEPTION"] = true,
+		["Perception"] = true, ["Agility"] = true
+	}
+
+	if tSpecialSkills[sSkillName] then
+		return nShadow * 5
+	end
+
+	-- Any other AGL-based skill
+	if isAGLSkill(sSkillName) then
+		return nShadow * 5
+	end
+
+	return 0
+end
+
 -- Calculate EML (Effective Mastery Level) for a skill
--- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments
+-- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments - Shadow Penalty
 -- Used for skill tests (not displayed on character sheet)
 function calculateEML(nodeChar, nML, sSkillName)
 	if not nodeChar then return nML end
@@ -349,11 +390,15 @@ function calculateEML(nodeChar, nML, sSkillName)
 	local nZoneImpairment = calculateZoneImpairment(nodeChar, sSkillName)
 	nPenalty = nPenalty + nZoneImpairment
 
+	-- Add shadow penalty
+	local nShadowPenalty = calculateShadowPenalty(nodeChar, sSkillName)
+	nPenalty = nPenalty + nShadowPenalty
+
 	return nML - nPenalty
 end
 
 -- Calculate and store Effective Move
--- Effective Move = Move - Fatigue - ENC - Zone Injuries (Head, Torso, Legs)
+-- Effective Move = Move - Fatigue - ENC - Zone Injuries (Head, Torso, Legs) - Shadow Penalty (10/pt)
 function calculateEffectiveMove(nodeChar)
 	if not nodeChar then return end
 	
@@ -366,9 +411,16 @@ function calculateEffectiveMove(nodeChar)
 	local nTorso = DB.getValue(nodeChar, "injury_torso", 0)
 	local nLegL = DB.getValue(nodeChar, "injury_legs_l", 0)
 	local nLegR = DB.getValue(nodeChar, "injury_legs_r", 0)
+
+	-- Add Shadow penalty (Move is in the -10 list)
+	local nShadowPenalty = calculateShadowPenalty(nodeChar, "Move")
 	
-	local nEffective = nMove - nFatigue - nEnc - nHead - nTorso - nLegL - nLegR
+	local nEffective = nMove - nFatigue - nEnc - nHead - nTorso - nLegL - nLegR - nShadowPenalty
 	DB.setValue(nodeChar, "move_effective", "number", nEffective)
+
+	-- Update dependent move fields
+	DB.setValue(nodeChar, "move_half", "number", math.floor(nEffective / 2))
+	DB.setValue(nodeChar, "move_double", "number", nEffective * 2)
 
 	return nEffective
 end
@@ -472,4 +524,17 @@ function recalculateImpairments(nodeChar)
 	DB.setValue(nodeChar, "injury_torso", "number", tZoneSum.torso)
 	DB.setValue(nodeChar, "injury_legs_l", "number", tZoneSum.legs_l)
 	DB.setValue(nodeChar, "injury_legs_r", "number", tZoneSum.legs_r)
+end
+
+-- Add a delta to Weakness fatigue
+-- Called when a psyche stress level changes
+function addWeaknessFatigue(nodeChar, nDelta)
+	if not nodeChar or nDelta == 0 then return end
+
+	local nCurrent = DB.getValue(nodeChar, "weak", 0)
+	local nNew = math.max(0, nCurrent + nDelta)  -- Don't go below 0
+	DB.setValue(nodeChar, "weak", "number", nNew)
+	
+	-- Fatigue change affects effective move
+	calculateEffectiveMove(nodeChar)
 end

@@ -190,4 +190,9 @@
 	<string name="shock_stn_tooltip">STUNNED\r- All movement is Difficult\r- No Double Move\r- Impaired tests reduced by 1 Success Level\r- Successful SHOCK test at END of NEXT turn to recover. (Retest each round.)\r- Suffering new STN while STN'd moves to INC.</string>
 	<string name="shock_inc_tooltip">INCAPACITATED\r- Falls PRONE\r- Only Assisted Difficult Half-Move (ie, 1/4 Move)\r- No independent actions\r- Unaware (ie, Ignore defense only)\r- SHOCK REROLL at END of NEXT turn\r  = SHK - 20 - FATIGUE\r  = [CF] Extended Shock with HR4\r     [F] Extended Shock with HR5\r     [S] Shock State to STN\r     [CS] Shock State to [NONE]\r- Suffering new INC while INC'd moves to UNC.</string>
 	<string name="shock_unc_tooltip">UNCONSCIOUS\r- Falls Unconscious and PRONE\r- Unaware (ie, Helpless), and no actions\r- SHOCK REROLL in 10 minutes\r  = SHK - 20 - FATIGUE\r  = [CF] Extended Shock with HR4 and enters Coma\r     [F] Extended Shock with HR5\r     [S] Shock State to STN\r     [CS] Shock State to [NONE]</string>
+
+	<!-- Psyche Intensity -->
+	<string name="harn_trait">Trait</string>
+	<string name="harn_impulse">Impulse</string>
+	<string name="harn_disorder">Disorder</string>
 </root>

@@ -123,6 +123,11 @@ function processHMKRoll(sCommand, sParams)
 			return;
 		end
 
+		-- Apply HarnMaster penalties (Fatigue, Injury, Shadow, ENC)
+		if HarnManager and HarnManager.calculateEML then
+			nML = HarnManager.calculateEML(nodeChar, nML, sDisplayName);
+		end
+
 		nTarget = nML;
 		sSkillName = sDisplayName;
 	end

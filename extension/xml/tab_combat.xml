@@ -451,6 +451,119 @@
 		</sheetdata>
 	</windowclass>
 
+	<!-- Template for psyche stress entry -->
+	<windowclass name="harn_psyche_entry">
+		<margins control="0,0,0,2" />
+		<script>
+			local _nLastApplied = 0;
+
+			function onInit()
+				_nLastApplied = tonumber(level.getValue()) or 0;
+				updateDeleteButton();
+			end
+
+			function updateDeleteButton()
+				local bPerm = is_perm.getValue() == 1;
+				idelete.setVisible(not bPerm);
+			end
+
+			function applyFatigueDelta()
+				local nLevel = tonumber(level.getValue()) or 0;
+				local nDelta = (nLevel - _nLastApplied) * 5;
+				
+				if nDelta ~= 0 and HarnManager and HarnManager.addWeaknessFatigue then
+					local nodeChar = getDatabaseNode().getParent().getParent();
+					if nodeChar then
+						HarnManager.addWeaknessFatigue(nodeChar, nDelta);
+						_nLastApplied = nLevel;
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="trait">
+				<anchored to="leftanchor" width="75" height="20">
+					<top />
+					<left offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<maxchars>20</maxchars>
+			</stringfield>
+			<!-- Using stringcycler to avoid dropdown bugs in lists -->
+			<button_stringcycler name="intensity">
+				<anchored to="trait" width="60" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<parameters>
+					<labelsres>harn_trait|harn_impulse|harn_disorder</labelsres>
+					<values>Trait|Impulse|Disorder</values>
+					<default>Trait</default>
+				</parameters>
+			</button_stringcycler>
+			<numberfield name="level">
+				<anchored to="intensity" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<min>0</min>
+				<max>6</max>
+				<script>
+					function onValueChanged()
+						local nVal = getValue();
+						if nVal &lt; 0 then
+							setValue(0);
+							return;
+						elseif nVal &gt; 6 then
+							setValue(6);
+							return;
+						end
+						window.applyFatigueDelta();
+					end
+				</script>
+			</numberfield>
+			<buttoncontrol name="is_perm">
+				<anchored to="level" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state icon="button_checkoff" tooltip="Permanent (Lock)" />
+				<state icon="button_checkon" tooltip="Permanent (Lock)" />
+				<script>
+					function onValueChanged()
+						window.updateDeleteButton();
+					end
+				</script>
+			</buttoncontrol>
+			<buttoncontrol name="idelete">
+				<anchored to="is_perm" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="3" />
+				</anchored>
+				<icon>delete_injury</icon>
+				<script>
+					function onButtonPress()
+						local nLevel = tonumber(window.level.getValue()) or 0;
+						if nLevel > 0 and HarnManager and HarnManager.addWeaknessFatigue then
+							local nodeChar = window.getDatabaseNode().getParent().getParent();
+							if nodeChar then
+								HarnManager.addWeaknessFatigue(nodeChar, -nLevel * 5);
+							end
+						end
+						window.getDatabaseNode().delete();
+					end
+				</script>
+			</buttoncontrol>
+		</sheetdata>
+	</windowclass>
+
 	<!-- Main combat tab -->
 	<windowclass name="harn_tab_combat">
 		<script>
@@ -521,7 +634,7 @@
 
 			<!-- MOVEMENT Section - anchored left -->
 			<frame_char name="movement_frame">
-				<anchored position="insidetopleft" offset="0,0" width="140" height="115" />
+				<anchored position="insidetopleft" offset="0,0" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="movement_frame" />
@@ -554,11 +667,22 @@
 			<numberfield name="move_half">
 				<anchored to="half_label" position="righthigh" offset="5,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="double_label">
+				<anchored to="half_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_double" />
+			</label>
+			<numberfield name="move_double">
+				<anchored to="double_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
 			</numberfield>
 
 			<!-- SHOCK STATE Section - to right of Movement -->
 			<frame_char name="shock_frame">
-				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="115" />
+				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="shock_frame" />
@@ -649,7 +773,7 @@
 
 			<!-- FATIGUE Section - to right of Shock -->
 			<frame_char name="fatigue_frame">
-				<anchored to="shock_frame" position="righthigh" offset="5,0" width="140" height="115" />
+				<anchored to="shock_frame" position="righthigh" offset="5,0" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="fatigue_frame" />
@@ -663,15 +787,6 @@
 			<numberfield name="winded">
 				<anchored to="winded_label" position="righthigh" offset="3,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-			<label name="pf_label">
-				<anchored to="winded" position="righthigh" offset="3,0" width="20" height="20" />
-				<static textres="harn_pf" />
-			</label>
-			<numberfield name="pf">
-				<anchored to="pf_label" position="righthigh" offset="0,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
 			</numberfield>
 
 			<label name="weary_label">
@@ -692,9 +807,19 @@
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
 
+			<label name="pf_label">
+				<anchored to="weak_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_pf" />
+			</label>
+			<numberfield name="pf">
+				<anchored to="pf_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
 			<!-- STRESS Section - anchored to right edge, responsive -->
 			<frame_char name="stress_frame">
-				<anchored position="insidetopright" offset="0,0" height="115">
+				<anchored position="insidetopright" offset="0,0" height="140">
 					<left parent="fatigue_frame" anchor="right" offset="5" />
 				</anchored>
 			</frame_char>
@@ -704,31 +829,76 @@
 			</label_frametop>
 
 			<label name="psyche_label">
-				<anchored to="stress_frame" position="insidetopleft" offset="10,28" width="65" height="20" />
+				<anchored to="stress_frame" position="insidetopleft" offset="10,25" width="45" height="20" />
 				<static textres="harn_psyche" />
 			</label>
-			<numberfield name="psyche_stress">
-				<anchored to="psyche_label" position="righthigh" offset="3,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
+			<button_iadd name="psyche_iadd">
+				<anchored to="psyche_label" position="righthigh" offset="5,0" />
+				<target>psyche_list</target>
+				<script>
+					function onButtonPress()
+						window.psyche_list.createWindow();
+					end
+				</script>
+			</button_iadd>
 
+			<!-- RIGHT COLUMN: Aural Shock and Shadow -->
 			<label name="auralshock_label">
-				<anchored to="psyche_label" position="below" offset="0,3" width="65" height="20" />
+				<anchored to="stress_frame" position="insidetopright" offset="10,25" width="65" height="20" />
 				<static textres="harn_auralshock" />
 			</label>
 			<numberfield name="auralshock">
-				<anchored to="auralshock_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<anchored to="auralshock_label" position="left" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<max>6</max>
+				<script>
+					function onValueChanged()
+						local nVal = getValue();
+						if nVal &lt; 0 then
+							setValue(0);
+						elseif nVal &gt; 6 then
+							setValue(6);
+						end
+					end
+				</script>
 			</numberfield>
 
 			<label name="shadow_label">
-				<anchored to="auralshock_label" position="below" offset="0,3" width="65" height="20" />
+				<anchored to="auralshock_label" position="below" offset="0,5" width="65" height="20" />
 				<static textres="harn_shadow" />
 			</label>
 			<numberfield name="shadow">
-				<anchored to="shadow_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<anchored to="shadow_label" position="left" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<script>
+					function onValueChanged()
+						local nVal = getValue();
+						if nVal &lt; 0 then
+							setValue(0);
+							return;
+						end
+						if HarnManager and HarnManager.calculateEffectiveMove then
+							local nodeChar = window.getDatabaseNode();
+							HarnManager.calculateEffectiveMove(nodeChar);
+						end
+					end
+				</script>
 			</numberfield>
+
+			<windowlist name="psyche_list">
+				<anchored to="stress_frame">
+					<top offset="50" />
+					<left offset="10" />
+					<right offset="-120" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.psyche_stress_list</datasource>
+				<class>harn_psyche_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 
 			<!-- ============================================ -->
 			<!-- BOTTOM AREA: Weapons then Body Location    -->
@@ -736,7 +906,7 @@
 
 			<!-- MELEE WEAPONS - Full width -->
 			<frame_char name="melee_frame">
-				<anchored position="insidetopleft" offset="0,120" height="140">
+				<anchored position="insidetopleft" offset="0,145" height="140">
 					<right offset="0" />
 				</anchored>
 			</frame_char>
