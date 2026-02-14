@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster NPC Sheet Definition
+		Completely redefines the npc windowclass to use HarnMaster tabs
+	-->
+
+	<windowclass name="npc">
+		<frame>charsheet</frame>
+		<sizelimits>
+			<minimum width="500" height="450" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_npc</minimize>
+		<tooltip field="name" />
+		<softclose />
+		<script>
+			function onInit()
+				WindowTabManager.populate(self);
+			end
+		</script>
+		<sheetdata>
+			<windowmenubar_charsheet name="menubar" />
+
+			<anchor_content_charsheet_tabbed_top />
+			<anchor_content_charsheet_bottom />
+
+			<!-- NPC name and portrait header -->
+			<sub_content_top name="overview">
+				<class>harn_npc_overview</class>
+			</sub_content_top>
+
+			<resize_charsheet />
+		</sheetdata>
+
+		<!-- Define our 3 HarnMaster NPC tabs -->
+		<tab>
+			<name>main</name>
+			<text>Main</text>
+			<class>harn_npc_tab_main</class>
+		</tab>
+		<tab merge="add">
+			<name>combat</name>
+			<text>Combat</text>
+			<class>harn_npc_tab_combat</class>
+		</tab>
+		<tab merge="add">
+			<name>gear</name>
+			<text>Gear</text>
+			<class>harn_npc_tab_gear</class>
+		</tab>
+	</windowclass>
+
+	<!-- NPC header/overview (name + portrait) -->
+	<windowclass name="harn_npc_overview">
+		<frame>groupbox</frame>
+		<margins control="0,0,0,15" />
+		<sheetdata>
+			<anchor_content_charsheet_header_top />
+			<anchor_content_charsheet_header_left />
+			<anchor_content_charsheet_header_right />
+
+			<!-- Portrait -->
+			<picture_charsheet_v2 name="portrait" />
+
+			<!-- NPC Name -->
+			<string_labeled name="name">
+				<anchored to="rightanchor" height="30">
+					<top offset="5" />
+					<right relation="current" offset="-5" />
+					<left parent="leftanchor" relation="current" offset="5" />
+				</anchored>
+				<labelres>harn_npc_name</labelres>
+				<font>charsheet_header</font>
+			</string_labeled>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Empty tab windowclasses for NPC -->
+	<windowclass name="harn_npc_tab_main">
+		<margins control="0,0,0,5" />
+		<sheetdata>
+			<!-- Placeholder for future Main tab content -->
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_npc_tab_combat">
+		<margins control="0,0,0,5" />
+		<sheetdata>
+			<!-- Placeholder for future Combat tab content -->
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_npc_tab_gear">
+		<margins control="0,0,0,5" />
+		<sheetdata>
+			<!-- Placeholder for future Gear tab content -->
+		</sheetdata>
+	</windowclass>
+</root>

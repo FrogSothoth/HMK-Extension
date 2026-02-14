@@ -19,6 +19,9 @@
 		<!-- Character sheet definition -->
 		<includefile source="xml/charsheet.xml" />
 
+		<!-- NPC sheet definition -->
+		<includefile source="xml/npc.xml" />
+
 		<!-- Tab content windowclasses -->
 		<includefile source="xml/tab_attributes.xml" />
 		<includefile source="xml/tab_main.xml" />

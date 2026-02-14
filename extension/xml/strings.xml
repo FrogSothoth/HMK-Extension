@@ -7,6 +7,9 @@
 	<string name="harn_tab_combat">Combat</string>
 	<string name="harn_tab_gear">Gear</string>
 
+	<!-- NPC Sheet -->
+	<string name="harn_npc_name">Name</string>
+
 	<!-- Attributes - Physical -->
 	<string name="harn_attr_physical">PHYSICAL</string>
 	<string name="harn_attr_str">Strength</string>

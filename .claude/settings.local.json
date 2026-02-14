@@ -8,7 +8,8 @@
       "Bash(choco install:*)",
       "Bash(tail:*)",
       "Bash(git commit:*)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(dir:*)"
     ]
   }
 }

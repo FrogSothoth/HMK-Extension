@@ -28,7 +28,9 @@ function safeSetValue(nodeParent, sPath, sType, vValue)
 end
 
 -- Calculate Total ARMOR and GEAR
-function calculateArmor(nodeChar)
+-- nodeExclude: optional node to skip during calculation (used when called from onDelete handler,
+-- since the deleted node is still visible during the handler)
+function calculateArmor(nodeChar, nodeExclude)
     if not nodeChar then return; end
 
     -- 1. Initialize Body Locations Data Structures
@@ -55,32 +57,37 @@ function calculateArmor(nodeChar)
     local nodeArmourList = nodeChar.getChild("armourlist");
     if nodeArmourList then
         for _, nodeItem in pairs(nodeArmourList.getChildren()) do
-            local sItemName = DB.getValue(nodeItem, "name", "");
-            local nWt = DB.getValue(nodeItem, "weight", 0);
-            
-            -- Increment total weight immediately from what's in the field
-            nArmorWeight = nArmorWeight + nWt;
+            -- Skip the node being deleted (still visible during onDelete handler)
+            if nodeExclude and nodeItem == nodeExclude then
+                -- skip this item
+            else
+                local sItemName = DB.getValue(nodeItem, "name", "");
+                local nWt = DB.getValue(nodeItem, "weight", 0);
 
-            local tItem = ArmorData.lookupItem(sItemName);
-            if tItem then
-                -- Still use lookup for metadata like AV and ENC penalty
-                -- but we already counted the weight from the field above.
-                nArmorPenalty = nArmorPenalty + (tItem.enc or 0);
-                local tMat = ArmorData.Materials[tItem.material];
+                -- Increment total weight immediately from what's in the field
+                nArmorWeight = nArmorWeight + nWt;
 
-                for sLoc, sCov in pairs(tItem.cov) do
-                    if locData[sLoc] then
-                        table.insert(locData[sLoc].materials, tItem.material);
-                        locData[sLoc].layerCount = locData[sLoc].layerCount + 1;
+                local tItem = ArmorData.lookupItem(sItemName);
+                if tItem then
+                    -- Still use lookup for metadata like AV and ENC penalty
+                    -- but we already counted the weight from the field above.
+                    nArmorPenalty = nArmorPenalty + (tItem.enc or 0);
+                    local tMat = ArmorData.Materials[tItem.material];
 
-                        local bRigid = (sCov == "R");
-                        if sCov == "Y" or sCov == "R" then
-                            applyAV(locData[sLoc].front, tMat, bRigid);
-                            applyAV(locData[sLoc].back, tMat, bRigid);
-                        elseif sCov == "F" then
-                            applyAV(locData[sLoc].front, tMat, bRigid);
-                        elseif sCov == "B" then
-                            applyAV(locData[sLoc].back, tMat, bRigid);
+                    for sLoc, sCov in pairs(tItem.cov) do
+                        if locData[sLoc] then
+                            table.insert(locData[sLoc].materials, tItem.material);
+                            locData[sLoc].layerCount = locData[sLoc].layerCount + 1;
+
+                            local bRigid = (sCov == "R");
+                            if sCov == "Y" or sCov == "R" then
+                                applyAV(locData[sLoc].front, tMat, bRigid);
+                                applyAV(locData[sLoc].back, tMat, bRigid);
+                            elseif sCov == "F" then
+                                applyAV(locData[sLoc].front, tMat, bRigid);
+                            elseif sCov == "B" then
+                                applyAV(locData[sLoc].back, tMat, bRigid);
+                            end
                         end
                     end
                 end
@@ -89,7 +96,7 @@ function calculateArmor(nodeChar)
     end
 
         -- 3. Calculate Bulk and Layering Encumbrance
-    local nBulk, nExtraEnc, bError = calculateBulkAndLayering(nodeChar, locData);
+    local nBulk, nExtraEnc, bError = calculateBulkAndLayering(nodeChar, locData, nodeExclude);
     
     -- 4. Update Database
     updateBodyLocations(nodeChar, locData);
@@ -145,7 +152,8 @@ function getAllowedBulkZones(sName, sMaterial)
 end
 
 -- New matching and bulk logic
-function calculateBulkAndLayering(nodeChar, locData)
+-- nodeExclude: optional node to skip (used when called from onDelete handler)
+function calculateBulkAndLayering(nodeChar, locData, nodeExclude)
     local zones = { "Head", "Arms", "Torso", "Legs" };
     local zoneItems = {};
     for _, z in ipairs(zones) do zoneItems[z] = {}; end
@@ -154,27 +162,32 @@ function calculateBulkAndLayering(nodeChar, locData)
     -- We need to know which items are in which zone to check suffixes correctly.
     -- We'll use the materials collected in locData but with more metadata.
     -- To avoid duplicates in a zone (same item covering multiple locs in same zone), we track by item node path.
-    
+
     local nodeArmourList = nodeChar.getChild("armourlist");
     if nodeArmourList then
         for _, nodeItem in pairs(nodeArmourList.getChildren()) do
-            local sName = DB.getValue(nodeItem, "name", "");
-            local tItem = ArmorData.lookupItem(sName);
-            if tItem then
-                local bSuffix1 = ArmorData.isSpecialItem1(sName);
-                local tAllowed = getAllowedBulkZones(sName, tItem.material);
-                local tZonesSeen = {};
+            -- Skip the node being deleted
+            if nodeExclude and nodeItem == nodeExclude then
+                -- skip this item
+            else
+                local sName = DB.getValue(nodeItem, "name", "");
+                local tItem = ArmorData.lookupItem(sName);
+                if tItem then
+                    local bSuffix1 = ArmorData.isSpecialItem1(sName);
+                    local tAllowed = getAllowedBulkZones(sName, tItem.material);
+                    local tZonesSeen = {};
 
-                for sLoc, _ in pairs(tItem.cov) do
-                    local sZone = getZoneFromLoc(sLoc);
-                    if sZone and not tZonesSeen[sZone] then
-                        if not tAllowed or tAllowed[sZone] then
-                            tZonesSeen[sZone] = true;
-                            table.insert(zoneItems[sZone], {
-                                mat = tItem.material,
-                                isSuffix1 = bSuffix1,
-                                name = sName
-                            });
+                    for sLoc, _ in pairs(tItem.cov) do
+                        local sZone = getZoneFromLoc(sLoc);
+                        if sZone and not tZonesSeen[sZone] then
+                            if not tAllowed or tAllowed[sZone] then
+                                tZonesSeen[sZone] = true;
+                                table.insert(zoneItems[sZone], {
+                                    mat = tItem.material,
+                                    isSuffix1 = bSuffix1,
+                                    name = sName
+                                });
+                            end
                         end
                     end
                 end
@@ -416,8 +429,26 @@ end
 
 -- Update tab_combat bodylocations
 function updateBodyLocations(nodeChar, locData)
+    -- Create bodylocations if it doesn't exist
     local nodeList = nodeChar.getChild("bodylocations");
-    if not nodeList then return; end
+    if not nodeList then
+        nodeList = DB.createChild(nodeChar, "bodylocations");
+        -- Initialize with standard locations
+        local locations = {
+            "Skull", "Face", "Neck", "Shoulder", "Upper Arm",
+            "Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
+            "Pelvis", "Thigh", "Knee", "Calf", "Foot"
+        };
+        for _, loc in ipairs(locations) do
+            local node = DB.createChild(nodeList);
+            DB.setValue(node, "location", "string", loc);
+            DB.setValue(node, "av_b", "string", "0");
+            DB.setValue(node, "av_e", "string", "0");
+            DB.setValue(node, "av_p", "string", "0");
+            DB.setValue(node, "av_f", "string", "0");
+            DB.setValue(node, "is_rigid", "number", 0);
+        end
+    end
 
     for _, nodeLoc in pairs(nodeList.getChildren()) do
         local sLocName = DB.getValue(nodeLoc, "location", "");

@@ -25,6 +25,7 @@
 			local INJURY_ZONE_FIELDS = { "injury_head", "injury_torso", "injury_legs_l", "injury_legs_r" };
 			local sMeleeMLHandlerPath = nil;
 			local sPossessionDeletePath = nil;
+			local sArmourDeletePath = nil;
 			local sHealingBaseHandlerPath = nil;
 			local MISSILE_SKILLS = { "Archery", "Throwing", "Slings" };
 			local aMissileSkillHandlerPaths = {};
@@ -86,6 +87,11 @@
 					DB.addHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
 					Debug.console("  Added possession delete handler at: " .. sPossessionDeletePath);
 
+					-- Watch for armour deletions to recalculate BEPF and encumbrance
+					sArmourDeletePath = DB.getPath(nodeChar, "armourlist") .. ".*";
+					DB.addHandler(sArmourDeletePath, "onDelete", onArmourDeleted);
+					Debug.console("  Added armour delete handler at: " .. sArmourDeletePath);
+
 					-- Set up Melee ML handler for auto-updating combat weapon ATK/DEF
 					local nodeCombatSkills = DB.getChild(nodeChar, "combatskills");
 					if nodeCombatSkills then
@@ -142,6 +148,10 @@
 					if sPossessionDeletePath then
 						DB.removeHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
 					end
+					-- Remove armour delete handler
+					if sArmourDeletePath then
+						DB.removeHandler(sArmourDeletePath, "onDelete", onArmourDeleted);
+					end
 					-- Remove healing_base handler
 					if sHealingBaseHandlerPath then
 						DB.removeHandler(sHealingBaseHandlerPath, "onUpdate", onHealingBaseChanged);
@@ -175,6 +185,16 @@
 					if MissileData and MissileData.syncMissileWeapons then
 						MissileData.syncMissileWeapons(nodeChar, nodeDeleted);
 					end
+				end
+			end
+
+			function onArmourDeleted(nodeDeleted)
+				Debug.console("onArmourDeleted fired for: " .. tostring(DB.getPath(nodeDeleted)));
+				local nodeChar = getDatabaseNode();
+				if nodeChar and ArmorManager then
+					-- Recalculate armor values and encumbrance after deletion
+					-- Pass nodeDeleted so it can be excluded (still visible during handler)
+					ArmorManager.calculateArmor(nodeChar, nodeDeleted);
 				end
 			end
 
