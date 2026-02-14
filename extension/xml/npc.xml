@@ -5,6 +5,154 @@
 		Completely redefines the npc windowclass to use HarnMaster tabs
 	-->
 
+	<!-- NPC Skill Entry - simplified version without SM or special fields -->
+	<windowclass name="harn_npc_skill_entry">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				-- Set up handler to recalculate SB when attributes change
+				local node = getDatabaseNode();
+				if node then
+					DB.addHandler(node.getPath() .. ".att1", "onUpdate", recalculateSB);
+					DB.addHandler(node.getPath() .. ".att2", "onUpdate", recalculateSB);
+				end
+			end
+
+			function onClose()
+				local node = getDatabaseNode();
+				if node then
+					DB.removeHandler(node.getPath() .. ".att1", "onUpdate", recalculateSB);
+					DB.removeHandler(node.getPath() .. ".att2", "onUpdate", recalculateSB);
+				end
+			end
+
+			function recalculateSB()
+				local node = getDatabaseNode();
+				if not node then return; end
+
+				local sAtt1 = DB.getValue(node, "att1", "");
+				local sAtt2 = DB.getValue(node, "att2", "");
+				if sAtt1 == "" or sAtt2 == "" then return; end
+
+				-- Navigate to NPC node (skill -> skills -> npc)
+				local nodeNPC = node.getParent().getParent();
+				if not nodeNPC then return; end
+
+				-- Use SkillsManager if available
+				if SkillsManager and SkillsManager.calculateSB then
+					local nSB = SkillsManager.calculateSB(nodeNPC, sAtt1, sAtt2);
+					DB.setValue(node, "sb", "number", nSB);
+				end
+			end
+		</script>
+		<sheetdata>
+			<!-- Skill Name (100px to match charsheet) -->
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onLoseFocus()
+						local sName = getValue();
+						if sName == "" then return; end
+
+						Debug.console("NPC Skill name entered: " .. sName);
+
+						-- Look up skill data from database
+						local nodeSkillsRef = DB.findNode("harnmaster.skills");
+						if nodeSkillsRef then
+							for _, nodeRefSkill in pairs(DB.getChildren(nodeSkillsRef)) do
+								if DB.getValue(nodeRefSkill, "name", "") == sName then
+									local sAtt1 = DB.getValue(nodeRefSkill, "att1", "");
+									local sAtt2 = DB.getValue(nodeRefSkill, "att2", "");
+
+									Debug.console("Found skill: att1=" .. sAtt1 .. ", att2=" .. sAtt2);
+
+									-- Update att1, att2 fields in NPC's skill entry
+									local nodeSkill = window.getDatabaseNode();
+									if nodeSkill then
+										DB.setValue(nodeSkill, "att1", "string", sAtt1);
+										DB.setValue(nodeSkill, "att2", "string", sAtt2);
+
+										-- Navigate to NPC node and calculate SB directly
+										local nodeNPC = nodeSkill.getParent().getParent();
+										Debug.console("nodeSkill path: " .. DB.getPath(nodeSkill));
+										Debug.console("nodeNPC path: " .. DB.getPath(nodeNPC));
+
+										-- Get attribute values directly
+										local sAtt1Field = string.lower(sAtt1) .. "_score";
+										local sAtt2Field = string.lower(sAtt2) .. "_score";
+										local nAtt1 = DB.getValue(nodeNPC, sAtt1Field, 0);
+										local nAtt2 = DB.getValue(nodeNPC, sAtt2Field, 0);
+
+										Debug.console(sAtt1 .. " (" .. sAtt1Field .. ") = " .. tostring(nAtt1));
+										Debug.console(sAtt2 .. " (" .. sAtt2Field .. ") = " .. tostring(nAtt2));
+
+										-- Calculate SB: average, round up if att1 > att2, else round down
+										local nSB = 0;
+										if nAtt1 > 0 or nAtt2 > 0 then
+											local nSum = nAtt1 + nAtt2;
+											if nAtt1 > nAtt2 then
+												nSB = math.ceil(nSum / 2);
+											else
+												nSB = math.floor(nSum / 2);
+											end
+										end
+
+										Debug.console("Calculated SB: " .. tostring(nSB));
+										DB.setValue(nodeSkill, "sb", "number", nSB);
+									end
+									return;
+								end
+							end
+							Debug.console("NPC Skill not found in harnmaster.skills: " .. sName);
+						else
+							Debug.console("ERROR: harnmaster.skills node not found");
+						end
+					end
+				</script>
+			</stringfield>
+
+			<!-- ATT1 (readonly) -->
+			<stringfield name="att1">
+				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att1</source>
+			</stringfield>
+
+			<!-- ATT2 (readonly) -->
+			<stringfield name="att2">
+				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>att2</source>
+			</stringfield>
+
+			<!-- SB (readonly, auto-calculated) -->
+			<numberfield name="sb">
+				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<readonly />
+				<source>sb</source>
+			</numberfield>
+
+			<!-- ML (editable) -->
+			<numberfield name="ml">
+				<anchored position="insidetopleft" offset="225,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<source>ml</source>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
 	<windowclass name="npc">
 		<frame>charsheet</frame>
 		<sizelimits>
@@ -76,11 +224,545 @@
 		</sheetdata>
 	</windowclass>
 
-	<!-- Empty tab windowclasses for NPC -->
+	<!-- NPC Main tab with attributes -->
 	<windowclass name="harn_npc_tab_main">
 		<margins control="0,0,0,5" />
+		<script>
+			-- Recalculate all NPC skill SBs when attributes change
+			function recalculateNPCSkills()
+				local nodeNPC = getDatabaseNode();
+				if not nodeNPC then return; end
+
+				local nodeSkillsList = DB.getChild(nodeNPC, "skills");
+				if not nodeSkillsList then return; end
+
+				for _, nodeSkill in ipairs(DB.getChildList(nodeSkillsList)) do
+					local sAtt1 = DB.getValue(nodeSkill, "att1", "");
+					local sAtt2 = DB.getValue(nodeSkill, "att2", "");
+
+					if sAtt1 ~= "" and sAtt2 ~= "" then
+						local sAtt1Field = string.lower(sAtt1) .. "_score";
+						local sAtt2Field = string.lower(sAtt2) .. "_score";
+						local nAtt1 = DB.getValue(nodeNPC, sAtt1Field, 0);
+						local nAtt2 = DB.getValue(nodeNPC, sAtt2Field, 0);
+
+						local nSB = 0;
+						if nAtt1 > 0 or nAtt2 > 0 then
+							local nSum = nAtt1 + nAtt2;
+							if nAtt1 > nAtt2 then
+								nSB = math.ceil(nSum / 2);
+							else
+								nSB = math.floor(nSum / 2);
+							end
+						end
+
+						DB.setValue(nodeSkill, "sb", "number", nSB);
+					end
+				end
+			end
+		</script>
 		<sheetdata>
-			<!-- Placeholder for future Main tab content -->
+			<!-- PHYSICAL ATTRIBUTES -->
+			<frame_char name="physical_frame">
+				<anchored position="insidetopleft" offset="0,0" width="240" height="220" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="physical_frame" />
+				<static textres="harn_attr_physical" />
+			</label_frametop>
+
+			<!-- Physical header row -->
+			<label name="phys_score_header">
+				<anchored to="physical_frame" position="insidetopleft" offset="140,30" width="40" height="20" />
+				<static textres="harn_score" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="phys_ml_header">
+				<anchored to="phys_score_header" position="righthigh" offset="5,0" width="30" height="20" />
+				<static textres="harn_ml" />
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- STR -->
+			<label name="str_label">
+				<anchored to="physical_frame" position="insidetopleft" offset="15,55" width="70" height="20" />
+				<static textres="harn_attr_str" />
+			</label>
+			<label name="str_abbr">
+				<anchored to="str_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_str_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="str_score">
+				<anchored to="str_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>str_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.str_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="str_ml">
+				<anchored to="str_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- END -->
+			<label name="end_label">
+				<anchored to="str_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_end" />
+			</label>
+			<label name="end_abbr">
+				<anchored to="end_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_end_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="end_score">
+				<anchored to="end_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>end_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.end_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="end_ml">
+				<anchored to="end_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- DEX -->
+			<label name="dex_label">
+				<anchored to="end_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_dex" />
+			</label>
+			<label name="dex_abbr">
+				<anchored to="dex_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_dex_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="dex_score">
+				<anchored to="dex_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>dex_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.dex_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="dex_ml">
+				<anchored to="dex_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- AGL -->
+			<label name="agl_label">
+				<anchored to="dex_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_agl" />
+			</label>
+			<label name="agl_abbr">
+				<anchored to="agl_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_agl_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="agl_score">
+				<anchored to="agl_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>agl_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.agl_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="agl_ml">
+				<anchored to="agl_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- PER -->
+			<label name="per_label">
+				<anchored to="agl_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_per" />
+			</label>
+			<label name="per_abbr">
+				<anchored to="per_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_per_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="per_score">
+				<anchored to="per_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>per_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.per_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="per_ml">
+				<anchored to="per_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- CML -->
+			<label name="cml_label">
+				<anchored to="per_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_cml" />
+			</label>
+			<label name="cml_abbr">
+				<anchored to="cml_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_cml_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="cml_score">
+				<anchored to="cml_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cml_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.cml_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="cml_ml">
+				<anchored to="cml_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- Aberrance (NPC trait) - aligned with physical attributes above -->
+			<label name="abe_label">
+				<anchored to="cml_label" position="below" offset="0,20" width="70" height="20" />
+				<static textres="harn_npc_aberrance" />
+			</label>
+			<label name="abe_abbr">
+				<anchored to="cml_abbr" position="below" offset="0,20" width="35" height="20" />
+				<static textres="harn_npc_aberrance_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="aberrance">
+				<anchored to="cml_score" position="below" offset="0,20" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+			</numberfield>
+
+			<!-- MENTAL ATTRIBUTES -->
+			<frame_char name="mental_frame">
+				<anchored position="insidetopleft" offset="250,0" width="240" height="220" />
+			</frame_char>
+			<label_frametop name="mental_title">
+				<anchored to="mental_frame" />
+				<static textres="harn_attr_mental" />
+			</label_frametop>
+
+			<!-- Mental header row -->
+			<label name="ment_score_header">
+				<anchored to="mental_frame" position="insidetopleft" offset="140,30" width="40" height="20" />
+				<static textres="harn_score" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="ment_ml_header">
+				<anchored to="ment_score_header" position="righthigh" offset="5,0" width="30" height="20" />
+				<static textres="harn_ml" />
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- AUR -->
+			<label name="aur_label">
+				<anchored to="mental_frame" position="insidetopleft" offset="15,55" width="70" height="20" />
+				<static textres="harn_attr_aur" />
+			</label>
+			<label name="aur_abbr">
+				<anchored to="aur_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_aur_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="aur_score">
+				<anchored to="aur_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>aur_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.aur_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="aur_ml">
+				<anchored to="aur_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- WIL -->
+			<label name="wil_label">
+				<anchored to="aur_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_wil" />
+			</label>
+			<label name="wil_abbr">
+				<anchored to="wil_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_wil_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="wil_score">
+				<anchored to="wil_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>wil_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.wil_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="wil_ml">
+				<anchored to="wil_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- REA -->
+			<label name="rea_label">
+				<anchored to="wil_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_rea" />
+			</label>
+			<label name="rea_abbr">
+				<anchored to="rea_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_rea_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="rea_score">
+				<anchored to="rea_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>rea_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.rea_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="rea_ml">
+				<anchored to="rea_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- CRE -->
+			<label name="cre_label">
+				<anchored to="rea_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_cre" />
+			</label>
+			<label name="cre_abbr">
+				<anchored to="cre_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_cre_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="cre_score">
+				<anchored to="cre_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>cre_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.cre_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="cre_ml">
+				<anchored to="cre_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- EMP -->
+			<label name="emp_label">
+				<anchored to="cre_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_emp" />
+			</label>
+			<label name="emp_abbr">
+				<anchored to="emp_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_emp_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="emp_score">
+				<anchored to="emp_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>emp_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.emp_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="emp_ml">
+				<anchored to="emp_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- ELO -->
+			<label name="elo_label">
+				<anchored to="emp_label" position="below" offset="0,5" width="70" height="20" />
+				<static textres="harn_attr_elo" />
+			</label>
+			<label name="elo_abbr">
+				<anchored to="elo_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<static textres="harn_attr_elo_abbr" />
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="elo_score">
+				<anchored to="elo_abbr" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>elo_score</source>
+				<script>
+					function onValueChanged()
+						local nScore = getValue() or 0;
+						window.elo_ml.setValue(nScore * 5);
+						window.recalculateNPCSkills();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="elo_ml">
+				<anchored to="elo_score" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- Morality - aligned with mental attributes above -->
+			<label name="morality_label">
+				<anchored to="elo_label" position="below" offset="0,20" width="70" height="20" />
+				<static textres="harn_morality" />
+			</label>
+			<numberfield name="morality">
+				<anchored to="elo_score" position="below" offset="0,20" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<script>
+					function onValueChanged()
+						if window.morality_display then
+							window.morality_display.updateDisplay();
+						end
+					end
+				</script>
+			</numberfield>
+			<stringfield name="morality_display">
+				<anchored to="morality" position="righthigh" offset="2,0" width="75" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<script>
+					function onInit()
+						updateDisplay();
+					end
+					function updateDisplay()
+						local nMorality = 0;
+						if window.morality then
+							nMorality = window.morality.getValue() or 0;
+						end
+						local sText = "";
+						if nMorality >= 17 then
+							sText = "Exemplary";
+						elseif nMorality >= 14 then
+							sText = "Principled";
+						elseif nMorality >= 11 then
+							sText = "Dutiful";
+						elseif nMorality >= 8 then
+							sText = "Corruptible";
+						elseif nMorality >= 5 then
+							sText = "Unscrupulous";
+						elseif nMorality >= 1 then
+							sText = "Diabolical";
+						end
+						setValue(sText);
+					end
+				</script>
+			</stringfield>
+
+			<!-- SKILLS Section -->
+			<label name="skills_title">
+				<anchored to="abe_label" position="below" offset="0,25" width="490" height="20" />
+				<static textres="harn_skills" />
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
+			<!-- Skills column headers -->
+			<label name="skills_h_skill">
+				<anchored to="skills_title" position="below" offset="5,5" width="100" height="15" />
+				<static>Skill</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="skills_h_att1">
+				<anchored to="skills_h_skill" position="righthigh" offset="25,0" width="35" height="15" />
+				<static>ATT1</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="skills_h_att2">
+				<anchored to="skills_h_att1" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>ATT2</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="skills_h_sb">
+				<anchored to="skills_h_att2" position="righthigh" offset="5,0" width="30" height="15" />
+				<static>SB</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="skills_h_ml">
+				<anchored to="skills_h_sb" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>ML</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<!-- Skills windowlist -->
+			<windowlist name="skills">
+				<anchored to="skills_h_skill" position="below" offset="0,2">
+					<left parent="" offset="5" />
+					<right parent="" offset="-5" />
+				</anchored>
+				<datasource>.skills</datasource>
+				<class>harn_npc_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<button_iadd name="skills_iadd">
+				<anchored to="skills" position="aboveright" offset="5,8" />
+				<target>skills</target>
+			</button_iadd>
 		</sheetdata>
 	</windowclass>
 

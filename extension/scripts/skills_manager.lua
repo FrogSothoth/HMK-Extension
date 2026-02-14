@@ -26,6 +26,7 @@ SkillsManager.GROUP_NODES = {
 	["Talents"] = "talents",
 	["Spells"] = "spells",
 	["Rituals"] = "rituals",
+	["NPC"] = "skills",  -- NPC flat skills list
 };
 
 -- Get the database node name for a skill group

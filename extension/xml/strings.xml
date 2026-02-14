@@ -9,6 +9,8 @@
 
 	<!-- NPC Sheet -->
 	<string name="harn_npc_name">Name</string>
+	<string name="harn_npc_aberrance">Aberrance</string>
+	<string name="harn_npc_aberrance_abbr">ABE</string>
 
 	<!-- Attributes - Physical -->
 	<string name="harn_attr_physical">PHYSICAL</string>
