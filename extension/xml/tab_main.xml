@@ -382,17 +382,49 @@
 				<anchored to="trait_sunsign_label" position="below" offset="0,5" width="70" height="20" />
 				<static textres="harn_morality" />
 			</label>
-			<combobox name="morality">
-				<anchored to="morality_label" position="righthigh" offset="5,0" width="100" height="20" />
+			<numberfield name="morality">
+				<anchored to="morality_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
-				<unsorted />
+				<min>0</min>
 				<script>
-					function onInit()
-						super.onInit();
-						addItems({"Diabolical", "Unscrupulous", "Corruptible", "Dutiful", "Principled", "Exemplary"});
+					function onValueChanged()
+						if window.morality_display then
+							window.morality_display.updateDisplay();
+						end
 					end
 				</script>
-			</combobox>
+			</numberfield>
+			<stringfield name="morality_display">
+				<anchored to="morality" position="righthigh" offset="5,0" width="80" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<script>
+					function onInit()
+						updateDisplay();
+					end
+					function updateDisplay()
+						local nMorality = 0;
+						if window.morality then
+							nMorality = window.morality.getValue() or 0;
+						end
+						local sText = "";
+						if nMorality >= 17 then
+							sText = "Exemplary";
+						elseif nMorality >= 14 then
+							sText = "Principled";
+						elseif nMorality >= 11 then
+							sText = "Dutiful";
+						elseif nMorality >= 8 then
+							sText = "Corruptible";
+						elseif nMorality >= 5 then
+							sText = "Unscrupulous";
+						elseif nMorality >= 1 then
+							sText = "Diabolical";
+						end
+						setValue(sText);
+					end
+				</script>
+			</stringfield>
 
 			<label name="psyche_label">
 				<anchored to="morality_label" position="below" offset="0,5" width="70" height="20" />
