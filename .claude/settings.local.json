@@ -9,7 +9,8 @@
       "Bash(tail:*)",
       "Bash(git commit:*)",
       "Bash(git status:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(grep:*)"
     ]
   }
 }

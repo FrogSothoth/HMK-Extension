@@ -8,6 +8,52 @@
 	-->
 
 	<windowclass name="harn_tab_attributes">
+		<script>
+			-- Skill category nodes for character sheets
+			local SKILL_CATEGORIES = {
+				"socialskills",
+				"loreskills",
+				"physicalskills",
+				"natureskills",
+				"craftskills",
+				"combatskills"
+			};
+
+			function recalculateCharSkills()
+				local nodeChar = getDatabaseNode();
+				if not nodeChar then return; end
+
+				-- Iterate through all skill categories
+				for _, sCategory in ipairs(SKILL_CATEGORIES) do
+					local nodeSkillsList = DB.getChild(nodeChar, sCategory);
+					if nodeSkillsList then
+						for _, nodeSkill in ipairs(DB.getChildList(nodeSkillsList)) do
+							local sAtt1 = DB.getValue(nodeSkill, "att1", "");
+							local sAtt2 = DB.getValue(nodeSkill, "att2", "");
+
+							if sAtt1 ~= "" and sAtt2 ~= "" then
+								local sAtt1Field = string.lower(sAtt1) .. "_score";
+								local sAtt2Field = string.lower(sAtt2) .. "_score";
+								local nAtt1 = DB.getValue(nodeChar, sAtt1Field, 0);
+								local nAtt2 = DB.getValue(nodeChar, sAtt2Field, 0);
+
+								local nSB = 0;
+								if nAtt1 > 0 or nAtt2 > 0 then
+									local nSum = nAtt1 + nAtt2;
+									if nAtt1 > nAtt2 then
+										nSB = math.ceil(nSum / 2);
+									else
+										nSB = math.floor(nSum / 2);
+									end
+								end
+
+								DB.setValue(nodeSkill, "sb", "number", nSB);
+							end
+						end
+					end
+				end
+			end
+		</script>
 		<sheetdata>
 			<!-- PHYSICAL ATTRIBUTES -->
 			<frame_char name="physical_frame">
@@ -48,16 +94,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.str_ml.setValue(nScore * 5);
-						-- Recalculate all skill bases
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar then
-							if SkillsManager and SkillsManager.recalculateAllSB then
-								SkillsManager.recalculateAllSB(nodeChar);
-							end
-							if ArmorManager and ArmorManager.calculateGear then
-								ArmorManager.calculateGear(nodeChar);
-							end
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -86,10 +123,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.end_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -118,10 +152,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.dex_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -150,10 +181,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.agl_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -182,10 +210,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.per_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -214,10 +239,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.cml_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -267,10 +289,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.aur_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -299,10 +318,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.wil_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -331,10 +347,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.rea_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -363,10 +376,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.cre_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -395,10 +405,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.emp_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>
@@ -427,10 +434,7 @@
 					function onValueChanged()
 						local nScore = getValue() or 0;
 						window.elo_ml.setValue(nScore * 5);
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
-							SkillsManager.recalculateAllSB(nodeChar);
-						end
+						window.recalculateCharSkills();
 					end
 				</script>
 			</numberfield>

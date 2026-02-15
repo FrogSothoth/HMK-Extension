@@ -771,8 +771,15 @@
 				</script>
 			</numberfield>
 
+			<!-- BLD column header -->
+			<label name="shock_bld_label">
+				<anchored to="shock_frame" position="insidetopleft" offset="90,25" width="25" height="15" />
+				<static>BLD</static>
+				<font>sheetlabel</font>
+			</label>
+
 			<buttoncontrol name="shock_none_btn">
-				<anchored to="shock_frame" position="insidetopleft" offset="15,25" width="15" height="15" />
+				<anchored to="shock_frame" position="insidetopleft" offset="15,40" width="15" height="15" />
 				<state icon="button_checkoff" />
 				<state icon="button_checkon" />
 				<script>
@@ -838,6 +845,28 @@
 				<anchored to="shock_kia_btn" position="righthigh" offset="5,-2" width="60" height="20" />
 				<static>KIA</static>
 			</label>
+
+			<!-- BLD checkboxes - aligned with each shock state row -->
+			<buttoncontrol name="bld_stn">
+				<anchored to="shock_stn_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_inc">
+				<anchored to="shock_inc_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_unc">
+				<anchored to="shock_unc_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_kia">
+				<anchored to="shock_kia_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
 
 			<!-- FATIGUE Section - to right of Shock -->
 			<frame_char name="fatigue_frame">

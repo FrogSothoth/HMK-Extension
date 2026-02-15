@@ -460,7 +460,8 @@ function calculateEffectiveMove(nodeChar)
 	DB.setValue(nodeChar, "move_effective", "number", nEffective)
 
 	-- Update dependent move fields
-	DB.setValue(nodeChar, "move_half", "number", math.floor(nEffective / 2))
+	-- Half Move = Effective Move / 2, rounded down to nearest multiple of 5
+	DB.setValue(nodeChar, "move_half", "number", math.floor((nEffective / 2) / 5) * 5)
 	DB.setValue(nodeChar, "move_double", "number", nEffective * 2)
 
 	return nEffective
