@@ -461,11 +461,11 @@
 				<static textres="harn_npc_aberrance_abbr" />
 				<font>sheetlabel</font>
 			</label>
-			<numberfield name="aberrance">
+			<stringfield name="aberrance">
 				<anchored to="cml_score" position="below" offset="0,20" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
-				<min>0</min>
-			</numberfield>
+				<center />
+			</stringfield>
 
 			<!-- MENTAL ATTRIBUTES -->
 			<frame_char name="mental_frame">

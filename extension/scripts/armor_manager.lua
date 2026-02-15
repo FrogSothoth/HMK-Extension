@@ -452,6 +452,15 @@ function updateBodyLocations(nodeChar, locData)
 
     for _, nodeLoc in pairs(nodeList.getChildren()) do
         local sLocName = DB.getValue(nodeLoc, "location", "");
+        
+        -- Add Hit Range Information
+        if ArmorData.BodyLocationRanges and ArmorData.BodyLocationRanges[sLocName] then
+            local tRanges = ArmorData.BodyLocationRanges[sLocName];
+            DB.setValue(nodeLoc, "zone_range", "string", tRanges.zr);
+            DB.setValue(nodeLoc, "zone_name", "string", tRanges.zn);
+            DB.setValue(nodeLoc, "loc_range", "string", tRanges.lr);
+        end
+
         local tData = locData[sLocName];
         if tData then
             -- Format AV strings for B, E, P, F
@@ -460,9 +469,30 @@ function updateBodyLocations(nodeChar, locData)
             DB.setValue(nodeLoc, "av_p", "string", formatAVPipe(tData.front.p, tData.back.p));
             DB.setValue(nodeLoc, "av_f", "string", formatAVPipe(tData.front.f, tData.back.f));
             
+            -- Calculate highest armor tier for styling
+            -- 3: Plate (Rigid3, White Font)
+            -- 2: Scale/Mail (Rigid2)
+            -- 1: Kurbul (Rigid1)
+            -- 0: Other
+            local nTier = 0;
+            for _, sMat in ipairs(tData.materials) do
+                if sMat == "Plate" then
+                    nTier = 3;
+                    break; -- Plate is highest
+                elseif sMat == "Scale" or sMat == "Mail" then
+                    if nTier < 2 then nTier = 2; end
+                elseif sMat == "Kurbul" then
+                    if nTier < 1 then nTier = 1; end
+                end
+            end
+            DB.setValue(nodeLoc, "armor_tier", "number", nTier);
+
             -- Set rigid flag for bolding
             local bIsRigid = tData.front.rigid or tData.back.rigid;
             DB.setValue(nodeLoc, "is_rigid", "number", bIsRigid and 1 or 0);
+        else
+            DB.setValue(nodeLoc, "armor_tier", "number", 0);
+            DB.setValue(nodeLoc, "is_rigid", "number", 0);
         end
     end
 end

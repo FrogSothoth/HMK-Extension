@@ -24,6 +24,26 @@ BodyZones = {
     ["Legs"]  = { "Thigh", "Knee", "Calf", "Foot" },
 }
 
+-- Hit Range Metadata
+-- ZR = Zone Range, ZN = Zone Name, LR = Location Range
+BodyLocationRanges = {
+    ["Skull"]     = { zr = "1",    zn = "HEAD",  lr = "1-5" },
+    ["Face"]      = { zr = "1",    zn = "HEAD",  lr = "6-8" },
+    ["Neck"]      = { zr = "1",    zn = "HEAD",  lr = "9-10" },
+    ["Shoulder"]  = { zr = "2-3",  zn = "ARMS",  lr = "1-3" },
+    ["Upper Arm"] = { zr = "2-3",  zn = "ARMS",  lr = "4-6" },
+    ["Elbow"]     = { zr = "2-3",  zn = "ARMS",  lr = "7" },
+    ["Forearm"]   = { zr = "2-3",  zn = "ARMS",  lr = "8-9" },
+    ["Hand"]      = { zr = "2-3",  zn = "ARMS",  lr = "10" },
+    ["Thorax"]    = { zr = "4-7",  zn = "TORSO", lr = "1-4" },
+    ["Abdomen"]   = { zr = "4-7",  zn = "TORSO", lr = "5-7" },
+    ["Pelvis"]    = { zr = "4-7",  zn = "TORSO", lr = "8-10" },
+    ["Thigh"]     = { zr = "8-10", zn = "LEGS",  lr = "1-4" },
+    ["Knee"]      = { zr = "8-10", zn = "LEGS",  lr = "5" },
+    ["Calf"]      = { zr = "8-10", zn = "LEGS",  lr = "6-8" },
+    ["Foot"]      = { zr = "8-10", zn = "LEGS",  lr = "9-10" },
+}
+
 -- Layering Profiles (from ArmorProfiles.csv and user requirements)
 -- Sequences that result in 0 Bulk penalty.
 -- m = material name

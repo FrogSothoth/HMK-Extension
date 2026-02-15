@@ -23,6 +23,11 @@
 	<icon name="amp2" file="graphics/charsheet/AMP2.png" />
 	<icon name="amp3" file="graphics/charsheet/AMP3.png" />
 
+	<!-- Rigid armor indicators -->
+	<icon name="rigid1" file="graphics/charsheet/Rigid1.png" />
+	<icon name="rigid2" file="graphics/charsheet/Rigid2.png" />
+	<icon name="rigid3" file="graphics/charsheet/Rigid3.png" />
+
 	<!-- Template for melee weapon entry -->
 	<windowclass name="harn_melee_entry">
 		<margins control="0,0,0,2" />
@@ -188,15 +193,79 @@
 	<!-- Template for body location entry -->
 	<windowclass name="harn_bodyloc_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			function updateFonts()
+				local nTier = math.floor(armor_tier.getValue());
+				local bRigid = is_rigid.getValue() == 1;
+				local sFont = bRigid and "sheetlabelbold" or "sheetlabel";
+				
+				-- av_b and av_f: Always black (FF000000)
+				-- User said "no modifications", so we'll stick to sheetlabel for these
+				av_b.setFont("sheetlabel");
+				av_b.setColor("FF000000");
+				av_f.setFont("sheetlabel");
+				av_f.setColor("FF000000");
+
+				-- av_e and av_p: White (FFFFFFFF) only for Plate (Tier 3)
+				local sColor = (nTier == 3) and "FFFFFFFF" or "FF000000";
+				av_e.setFont(sFont);
+				av_e.setColor(sColor);
+				av_p.setFont(sFont);
+				av_p.setColor(sColor);
+			end
+		</script>
 		<sheetdata>
 			<genericcontrol name="leftanchor">
 				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
 				<disabled />
 			</genericcontrol>
-			<stringfield name="location">
-				<anchored to="leftanchor" width="55" height="20">
+			<genericcontrol name="armor_bg_e">
+				<anchored to="leftanchor" width="22" height="20">
 					<top />
-					<left offset="5" />
+					<left offset="189" />
+				</anchored>
+				<icon>rigid1</icon>
+				<invisible />
+			</genericcontrol>
+			<genericcontrol name="armor_bg_p">
+				<anchored to="leftanchor" width="22" height="20">
+					<top />
+					<left offset="212" />
+				</anchored>
+				<icon>rigid1</icon>
+				<invisible />
+			</genericcontrol>
+			<stringfield name="zone_range">
+				<anchored to="leftanchor" width="20" height="20">
+					<top />
+					<left offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<center />
+			</stringfield>
+			<stringfield name="zone_name">
+				<anchored to="zone_range" width="45" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<center />
+			</stringfield>
+			<stringfield name="loc_range">
+				<anchored to="zone_name" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<center />
+			</stringfield>
+			<stringfield name="location">
+				<anchored to="loc_range" width="60" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
@@ -206,12 +275,10 @@
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<script>
 					function onValueChanged()
-						local bRigid = window.is_rigid.getValue() == 1;
-						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+						window.updateFonts();
 					end
 				</script>
 			</stringfield>
@@ -220,12 +287,10 @@
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<script>
 					function onValueChanged()
-						local bRigid = window.is_rigid.getValue() == 1;
-						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+						window.updateFonts();
 					end
 				</script>
 			</stringfield>
@@ -234,12 +299,10 @@
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<script>
 					function onValueChanged()
-						local bRigid = window.is_rigid.getValue() == 1;
-						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
+						window.updateFonts();
 					end
 				</script>
 			</stringfield>
@@ -248,13 +311,10 @@
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<script>
 					function onValueChanged()
-						local bRigid = window.is_rigid.getValue() == 1;
-						setFont(bRigid and "sheetlabelbold" or "sheetlabel");
-
+						window.updateFonts();
 						-- Recalculate Area Attack if armor values change
 						local nodeChar = window.getDatabaseNode().getParent().getParent();
 						if ArmorManager and ArmorManager.calculateAreaAttack then
@@ -271,10 +331,42 @@
 				<invisible />
 				<script>
 					function onValueChanged()
-						window.av_b.onValueChanged();
-						window.av_e.onValueChanged();
-						window.av_p.onValueChanged();
-						window.av_f.onValueChanged();
+						window.updateFonts();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="armor_tier">
+				<anchored to="location" width="0" height="0">
+					<top />
+					<left />
+				</anchored>
+				<invisible />
+				<script>
+					function onInit()
+						onValueChanged();
+					end
+					function onValueChanged()
+						local nTier = getValue();
+						if nTier == 1 then
+							window.armor_bg_e.setIcon("rigid1");
+							window.armor_bg_p.setIcon("rigid1");
+							window.armor_bg_e.setVisible(true);
+							window.armor_bg_p.setVisible(true);
+						elseif nTier == 2 then
+							window.armor_bg_e.setIcon("rigid2");
+							window.armor_bg_p.setIcon("rigid2");
+							window.armor_bg_e.setVisible(true);
+							window.armor_bg_p.setVisible(true);
+						elseif nTier == 3 then
+							window.armor_bg_e.setIcon("rigid3");
+							window.armor_bg_p.setIcon("rigid3");
+							window.armor_bg_e.setVisible(true);
+							window.armor_bg_p.setVisible(true);
+						else
+							window.armor_bg_e.setVisible(false);
+							window.armor_bg_p.setVisible(false);
+						end
+						window.updateFonts();
 					end
 				</script>
 			</numberfield>
@@ -677,6 +769,12 @@
 						DB.setValue(node, "av_f", "string", "0");
 						DB.setValue(node, "is_rigid", "number", 0);
 					end
+				end
+
+				-- Initial Body Location Update to populate ranges
+				if ArmorManager and ArmorManager.updateBodyLocations then
+					local locData = {}; -- Empty data just to trigger range population
+					ArmorManager.updateBodyLocations(nodeChar, locData);
 				end
 
 				-- Initial Area Attack Calculation
@@ -1197,8 +1295,26 @@
 				<static textres="harn_body_location" />
 			</label_frametop>
 
+			<label name="h_zr">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="20" height="15" />
+				<static>ZR</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_zone">
+				<anchored to="h_zr" position="righthigh" offset="1,0" width="45" height="15" />
+				<static>Zone</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_lr">
+				<anchored to="h_zone" position="righthigh" offset="1,0" width="35" height="15" />
+				<static>LR</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
 			<label name="loc_h">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="8,25" width="55" height="15" />
+				<anchored to="h_lr" position="righthigh" offset="1,0" width="60" height="15" />
 				<static textres="harn_location" />
 				<font>sheetlabel</font>
 			</label>
@@ -1264,7 +1380,7 @@
 			<!-- 8px vertical gap between frames to account for frame graphic borders -->
 			<!-- Frame 1: Head (Skull-Neck) - rows 1-3, single field centered -->
 			<frame_char name="injury_head_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,42" width="100" height="66" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,42" width="100" height="66" />
 			</frame_char>
 			<numberfield name="injury_head">
 				<anchored to="injury_head_frame" width="28" height="20">
@@ -1284,7 +1400,7 @@
 			</numberfield>
 			<!-- Frame 2: Arms (Shoulder-Hand) - rows 4-8, two side-by-side fields -->
 			<frame_char name="injury_arms_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,116" width="100" height="110" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,116" width="100" height="110" />
 			</frame_char>
 			<numberfield name="injury_arms_l">
 				<anchored to="injury_arms_frame" width="28" height="20">
@@ -1304,7 +1420,7 @@
 			</numberfield>
 			<!-- Frame 3: Torso (Thorax-Pelvis) - rows 9-11, single field centered -->
 			<frame_char name="injury_torso_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,234" width="100" height="66" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,234" width="100" height="66" />
 			</frame_char>
 			<numberfield name="injury_torso">
 				<anchored to="injury_torso_frame" width="28" height="20">
@@ -1324,7 +1440,7 @@
 			</numberfield>
 			<!-- Frame 4: Legs (Thigh-Foot) - rows 12-15, two side-by-side fields -->
 			<frame_char name="injury_legs_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="260,308" width="100" height="88" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,308" width="100" height="88" />
 			</frame_char>
 			<numberfield name="injury_legs_l">
 				<anchored to="injury_legs_frame" width="28" height="20">
@@ -1361,7 +1477,7 @@
 
 			<!-- Active Injuries List - to the right of injury zone frames -->
 			<label name="injuries_h_loc">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="370,25" width="65" height="15" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="470,25" width="65" height="15" />
 				<static>Location</static>
 				<font>sheetlabel</font>
 			</label>
@@ -1408,7 +1524,7 @@
 			<windowlist name="activeinjuries">
 				<anchored to="bodyloc_frame">
 					<top offset="42" />
-					<left offset="368" />
+					<left offset="468" />
 					<right offset="-5" />
 					<bottom offset="-5" />
 				</anchored>
@@ -1433,7 +1549,7 @@
 			</button_iadd>
 
 			<windowlist name="bodylocations">
-				<anchored to="bodyloc_frame" width="250">
+				<anchored to="bodyloc_frame" width="460">
 					<top offset="42" />
 					<left offset="3" />
 					<bottom offset="-30" />
@@ -1449,13 +1565,13 @@
 				<font>sheetlabel</font>
 			</label>
 			<numberfield name="area_attack_value">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="133,405" width="22" height="20" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="235,405" width="22" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<readonly />
 			</numberfield>
 			<genericcontrol name="area_attack_shk_icon">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="196,405" width="20" height="20" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="298,405" width="20" height="20" />
 				<icon>shk6</icon>
 			</genericcontrol>
 		</sheetdata>
