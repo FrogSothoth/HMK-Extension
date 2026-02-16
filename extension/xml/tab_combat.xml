@@ -771,10 +771,9 @@
 					end
 				end
 
-				-- Initial Body Location Update to populate ranges
-				if ArmorManager and ArmorManager.updateBodyLocations then
-					local locData = {}; -- Empty data just to trigger range population
-					ArmorManager.updateBodyLocations(nodeChar, locData);
+				-- Initial Body Location Update to populate ranges and restore icons
+				if ArmorManager and ArmorManager.calculateArmor then
+					ArmorManager.calculateArmor(nodeChar);
 				end
 
 				-- Initial Area Attack Calculation

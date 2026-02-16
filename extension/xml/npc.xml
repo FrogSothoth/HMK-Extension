@@ -163,8 +163,65 @@
 		<tooltip field="name" />
 		<softclose />
 		<script>
+			local sPossessionDeletePath = nil;
+			local sArmourDeletePath = nil;
+			local sStrScorePath = nil;
+
 			function onInit()
 				WindowTabManager.populate(self);
+
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					-- Watch for possession deletions
+					sPossessionDeletePath = DB.getPath(nodeChar, "possessions") .. ".*";
+					DB.addHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
+
+					-- Watch for armour deletions
+					sArmourDeletePath = DB.getPath(nodeChar, "armourlist") .. ".*";
+					DB.addHandler(sArmourDeletePath, "onDelete", onArmourDeleted);
+
+					-- Watch for STR changes (affects Str Mod and Total ENC)
+					sStrScorePath = DB.getPath(nodeChar, "str_score");
+					DB.addHandler(sStrScorePath, "onUpdate", onStrScoreChanged);
+				end
+			end
+
+			function onClose()
+				local nodeChar = getDatabaseNode();
+				if nodeChar then
+					if sPossessionDeletePath then
+						DB.removeHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
+					end
+					if sArmourDeletePath then
+						DB.removeHandler(sArmourDeletePath, "onDelete", onArmourDeleted);
+					end
+					if sStrScorePath then
+						DB.removeHandler(sStrScorePath, "onUpdate", onStrScoreChanged);
+					end
+				end
+			end
+
+			function onPossessionDeleted(nodeDeleted)
+				local nodeChar = getDatabaseNode();
+				if nodeChar and ArmorManager then
+					ArmorManager.calculateGear(nodeChar);
+				end
+			end
+
+			function onArmourDeleted(nodeDeleted)
+				local nodeChar = getDatabaseNode();
+				if nodeChar and ArmorManager then
+					-- Pass nodeDeleted to avoid its values in recalc (it's still in DB during handler)
+					ArmorManager.calculateArmor(nodeChar, nodeDeleted);
+				end
+			end
+
+			function onStrScoreChanged(nodeField)
+				local nodeChar = getDatabaseNode();
+				if nodeChar and ArmorManager then
+					-- Str Mod logic is inside calculateGear
+					ArmorManager.calculateGear(nodeChar);
+				end
 			end
 		</script>
 		<sheetdata>
@@ -774,9 +831,184 @@
 	</windowclass>
 
 	<windowclass name="harn_npc_tab_gear">
-		<margins control="0,0,0,5" />
+		<script file="scripts/tab_gear.lua" />
 		<sheetdata>
-			<!-- Placeholder for future Gear tab content -->
+			<!-- ENCUMBRANCE Section -->
+			<frame_char name="enc_frame">
+				<anchored position="insidetopleft" offset="0,0" width="280" height="180" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="enc_frame" />
+				<static textres="harn_encumbrance" />
+			</label_frametop>
+
+			<label name="armour_enc_label">
+				<anchored to="enc_frame" position="insidetopleft" offset="15,35" width="80" height="20" />
+				<static textres="harn_armour" />
+			</label>
+			<numberfield name="armour_enc">
+				<anchored to="armour_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="gear_enc_label">
+				<anchored to="armour_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_gear" />
+			</label>
+			<numberfield name="gear_enc">
+				<anchored to="gear_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="strmod_label">
+				<anchored to="gear_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_strmod" />
+			</label>
+			<numberfield name="strmod">
+				<anchored to="strmod_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="enc_label">
+				<anchored to="strmod_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_enc" />
+			</label>
+			<numberfield name="enc_total">
+				<anchored to="enc_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="bulk_label">
+				<anchored to="enc_label" position="below" offset="0,5" width="80" height="20" />
+				<static textres="harn_bulk" />
+			</label>
+			<stringfield name="bulk_str">
+				<anchored to="bulk_label" position="righthigh" offset="5,0" width="50" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+				<center />
+			</stringfield>
+
+			<!-- POSSESSIONS Section -->
+			<anchor_column name="columnanchor">
+				<anchored position="insidetopleft" offset="0,185" width="0" height="0" />
+			</anchor_column>
+
+			<label name="poss_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="harn_possessions" />
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
+			<!-- Possessions list headers -->
+			<label name="poss_name_header">
+				<anchored height="15">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+					<width>135</width>
+				</anchored>
+				<static>Item</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_loc_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="120" height="15" />
+				<static>Location</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_wt_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="263,0" width="35" height="15" />
+				<static>Wt</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="poss_qty_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="302,0" width="35" height="15" />
+				<static>Qty</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="poss_total_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="341,0" width="45" height="15" />
+				<static>Total</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<windowlist name="possessions">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<datasource>.possessions</datasource>
+				<class>harn_possession_entry</class>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			
+			<button_iadd name="poss_iadd">
+				<anchored to="possessions" position="aboveright" offset="5,8" />
+				<target>possessions</target>
+			</button_iadd>
+
+			<!-- ARMOUR / CLOTHING Section -->
+			<label name="armour_title">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="harn_armour_clothing" />
+				<font>sheetlabel</font>
+				<center />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+
+			<!-- Armour list headers -->
+			<label name="armour_name_header">
+				<anchored height="15">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="15" />
+					<width>200</width>
+				</anchored>
+				<static textres="harn_item" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_wt_header">
+				<anchored to="armour_name_header" position="insidetopleft" offset="205,0" width="45" height="15" />
+				<static textres="harn_wt" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<windowlist name="armourlist">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+				<datasource>.armourlist</datasource>
+				<class>harn_armour_entry</class>
+				<noscroll />
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			
+			<button_iadd name="armour_iadd">
+				<anchored to="armourlist" position="aboveright" offset="5,8" />
+				<target>armourlist</target>
+			</button_iadd>
 		</sheetdata>
 	</windowclass>
 </root>

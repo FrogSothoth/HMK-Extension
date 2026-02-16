@@ -33,6 +33,12 @@ end
 function calculateArmor(nodeChar, nodeExclude)
     if not nodeChar then return; end
 
+    -- Check if it's an NPC (path starts with npc.)
+    local bIsNPC = string.match(DB.getPath(nodeChar), "npc%.") ~= nil;
+    if bIsNPC then
+        return calculateArmorNPC(nodeChar, nodeExclude);
+    end
+
     -- 1. Initialize Body Locations Data Structures
     local locations = {
         "Skull", "Face", "Neck", "Shoulder", "Upper Arm",
@@ -124,6 +130,53 @@ function calculateArmor(nodeChar, nodeExclude)
 
     -- Calculate Area Attack
     calculateAreaAttack(nodeChar);
+end
+
+-- NPC Specific Armor Calculation
+-- Skips body location AV updates to preserve manual entries
+function calculateArmorNPC(nodeChar, nodeExclude)
+    if not nodeChar then return; end
+
+    local nArmorWeight = 0;
+    local nArmorPenalty = 0;
+
+    -- 1. Process Armor Items for Metadata Penalty and Weight Sum
+    local nodeArmourList = nodeChar.getChild("armourlist");
+    if nodeArmourList then
+        for _, nodeItem in pairs(nodeArmourList.getChildren()) do
+            if not(nodeExclude and nodeItem == nodeExclude) then
+                local sItemName = DB.getValue(nodeItem, "name", "");
+                local nWt = DB.getValue(nodeItem, "weight", 0);
+
+                -- Weight sum for display only
+                nArmorWeight = nArmorWeight + nWt;
+
+                local tItem = ArmorData.lookupItem(sItemName);
+                if tItem then
+                    -- Use metadata ENC penalty
+                    nArmorPenalty = nArmorPenalty + (tItem.enc or 0);
+                end
+            end
+        end
+    end
+
+    -- 2. Calculate Bulk and Layering Encumbrance (NPCs still use standard layering rules)
+    local nBulk, nExtraEnc, bError = calculateBulkAndLayering(nodeChar, nil, nodeExclude);
+    
+    -- 3. Update Database
+    local nFinalArmorPenalty = nArmorPenalty + nExtraEnc;
+    
+    safeSetValue(nodeChar, "armour_enc", "number", nFinalArmorPenalty);
+    safeSetValue(nodeChar, "armour_weight_total", "number", nArmorWeight);
+    
+    if bError then
+        safeSetValue(nodeChar, "bulk_str", "string", "ERR");
+    else
+        safeSetValue(nodeChar, "bulk_str", "string", tostring(nBulk));
+    end
+
+    -- Ensure gear is also recalculated to get latest total
+    calculateGear(nodeChar);
 end
 
 -- Bulk zone overrides: certain garments are excluded from specific zones
