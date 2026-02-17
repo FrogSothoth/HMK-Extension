@@ -254,7 +254,15 @@ function getSkillML(nodeChar, sSkillName)
     if not nodeChar then return 0; end
 
     local sActual = getActualSkillName(sSkillName);
+    
+    -- Try standard character path first
     local nodeList = DB.getChild(nodeChar, "combatskills");
+    
+    -- If not found (NPC), try the flat skills list
+    if not nodeList then
+        nodeList = DB.getChild(nodeChar, "skills");
+    end
+
     if not nodeList then return 0; end
 
     for _, nodeSkill in pairs(DB.getChildList(nodeList)) do

@@ -823,10 +823,617 @@
 		</sheetdata>
 	</windowclass>
 
-	<windowclass name="harn_npc_tab_combat">
-		<margins control="0,0,0,5" />
+	<!-- NPC Body Location Entry - Manual entry version -->
+	<windowclass name="harn_npc_bodyloc_entry">
+		<margins control="0,0,0,2" />
 		<sheetdata>
-			<!-- Placeholder for future Combat tab content -->
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<stringfield name="zone_range">
+				<anchored to="leftanchor" width="20" height="20">
+					<top />
+					<left offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<stringfield name="zone_name">
+				<anchored to="zone_range" width="45" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<stringfield name="loc_range">
+				<anchored to="zone_name" width="35" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<stringfield name="location">
+				<anchored to="loc_range" width="60" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="av_b">
+				<anchored to="location" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<center />
+			</stringfield>
+			<stringfield name="av_e">
+				<anchored to="av_b" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<center />
+			</stringfield>
+			<stringfield name="av_p">
+				<anchored to="av_e" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<center />
+			</stringfield>
+			<stringfield name="av_f">
+				<anchored to="av_p" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<center />
+			</stringfield>
+			
+			<!-- Delete button -->
+			<button_idelete name="idelete">
+				<anchored to="av_f" position="righthigh" offset="5,0" width="20" height="20" />
+			</button_idelete>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="harn_npc_tab_combat">
+		<script>
+			function onInit()
+				local nodeChar = getDatabaseNode();
+				-- Handler for skill updates (ML changes)
+				DB.addHandler(DB.getPath(nodeChar, "skills"), "onChildUpdate", onSkillUpdate);
+
+				-- Initial sync of weapons from gear
+				if MeleeData and MeleeData.syncMeleeWeapons then
+					MeleeData.syncMeleeWeapons(nodeChar);
+				end
+				if MissileData and MissileData.syncMissileWeapons then
+					MissileData.syncMissileWeapons(nodeChar);
+				end
+			end
+
+			function onClose()
+				local nodeChar = getDatabaseNode();
+				DB.removeHandler(DB.getPath(nodeChar, "skills"), "onChildUpdate", onSkillUpdate);
+			end
+
+			function onSkillUpdate()
+				local nodeChar = getDatabaseNode();
+				if MeleeData and MeleeData.updateMeleeATKDEF then
+					MeleeData.updateMeleeATKDEF(nodeChar);
+				end
+				if MissileData and MissileData.updateMissileATK then
+					MissileData.updateMissileATK(nodeChar);
+				end
+			end
+
+			function updateShockUI()
+				local nState = shock_state.getValue();
+				shock_none_btn.setValue(nState == 0 and 1 or 0);
+				shock_stn_btn.setValue(nState == 1 and 1 or 0);
+				shock_inc_btn.setValue(nState == 2 and 1 or 0);
+				shock_unc_btn.setValue(nState == 3 and 1 or 0);
+				shock_kia_btn.setValue(nState == 4 and 1 or 0);
+			end
+
+			function updateMoveCalculations()
+				local nEff = move_effective.getValue();
+				-- Half Move = sum / 2, rounded down to nearest multiple of 5
+				move_half.setValue(math.floor((nEff / 2) / 5) * 5);
+				-- Double Move = sum * 2
+				move_double.setValue(nEff * 2);
+			end
+		</script>
+		<sheetdata>
+			<!-- MOVEMENT Section -->
+			<frame_char name="movement_frame">
+				<anchored position="insidetopleft" offset="0,0" width="140" height="140" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="movement_frame" />
+				<static textres="harn_movement" />
+			</label_frametop>
+
+			<label name="move_label">
+				<anchored to="movement_frame" position="insidetopleft" offset="10,28" width="60" height="20" />
+				<static textres="harn_move" />
+			</label>
+			<numberfield name="move">
+				<anchored to="move_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="effective_label">
+				<anchored to="move_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_effective" />
+			</label>
+			<numberfield name="move_effective">
+				<anchored to="effective_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						window.updateMoveCalculations();
+					end
+				</script>
+			</numberfield>
+
+			<label name="half_label">
+				<anchored to="effective_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_half" />
+			</label>
+			<numberfield name="move_half">
+				<anchored to="half_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="double_label">
+				<anchored to="half_label" position="below" offset="0,3" width="60" height="20" />
+				<static textres="harn_double" />
+			</label>
+			<numberfield name="move_double">
+				<anchored to="double_label" position="righthigh" offset="5,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- SHOCK STATE Section -->
+			<frame_char name="shock_frame">
+				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="140" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="shock_frame" />
+				<static textres="harn_shockstate" />
+			</label_frametop>
+
+			<numberfield name="shock_state">
+				<anchored to="shock_frame" position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onInit()
+						window.updateShockUI();
+					end
+					function onValueChanged()
+						window.updateShockUI();
+					end
+				</script>
+			</numberfield>
+
+			<label name="shock_bld_label">
+				<anchored to="shock_frame" position="insidetopleft" offset="90,25" width="25" height="15" />
+				<static>BLD</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<buttoncontrol name="shock_none_btn">
+				<anchored to="shock_frame" position="insidetopleft" offset="15,40" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(0); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_none_label">
+				<anchored to="shock_none_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>[NONE]</static>
+			</label>
+
+			<buttoncontrol name="shock_stn_btn">
+				<anchored to="shock_none_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(1); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_stn_label">
+				<anchored to="shock_stn_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>STN</static>
+				<tooltip textres="shock_stn_tooltip" />
+			</label>
+
+			<buttoncontrol name="shock_inc_btn">
+				<anchored to="shock_stn_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(2); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_inc_label">
+				<anchored to="shock_inc_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>INC</static>
+				<tooltip textres="shock_inc_tooltip" />
+			</label>
+
+			<buttoncontrol name="shock_unc_btn">
+				<anchored to="shock_inc_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(3); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_unc_label">
+				<anchored to="shock_unc_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>UNC</static>
+				<tooltip textres="shock_unc_tooltip" />
+			</label>
+
+			<buttoncontrol name="shock_kia_btn">
+				<anchored to="shock_unc_btn" position="below" offset="0,3" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<script>
+					function onButtonPress() window.shock_state.setValue(4); end
+				</script>
+			</buttoncontrol>
+			<label name="shock_kia_label">
+				<anchored to="shock_kia_btn" position="righthigh" offset="5,-2" width="60" height="20" />
+				<static>KIA</static>
+			</label>
+
+			<buttoncontrol name="bld_stn">
+				<anchored to="shock_stn_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_inc">
+				<anchored to="shock_inc_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_unc">
+				<anchored to="shock_unc_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<buttoncontrol name="bld_kia">
+				<anchored to="shock_kia_btn" position="righthigh" offset="65,0" width="15" height="15" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+
+			<!-- FATIGUE Section -->
+			<frame_char name="fatigue_frame">
+				<anchored to="shock_frame" position="righthigh" offset="5,0" width="140" height="140" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="fatigue_frame" />
+				<static textres="harn_fatigue" />
+			</label_frametop>
+
+			<label name="winded_label">
+				<anchored to="fatigue_frame" position="insidetopleft" offset="10,28" width="50" height="20" />
+				<static textres="harn_winded" />
+			</label>
+			<numberfield name="winded">
+				<anchored to="winded_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weary_label">
+				<anchored to="winded_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_weary" />
+			</label>
+			<numberfield name="weary">
+				<anchored to="weary_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weak_label">
+				<anchored to="weary_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_weak" />
+			</label>
+			<numberfield name="weak">
+				<anchored to="weak_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="pf_label">
+				<anchored to="weak_label" position="below" offset="0,3" width="50" height="20" />
+				<static textres="harn_pf" />
+			</label>
+			<numberfield name="pf">
+				<anchored to="pf_label" position="righthigh" offset="3,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- MELEE WEAPONS -->
+			<frame_char name="melee_frame">
+				<anchored position="insidetopleft" offset="0,145" height="140">
+					<right offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="melee_frame" />
+				<static textres="harn_melee_weapons" />
+			</label_frametop>
+
+			<!-- Melee headers -->
+			<label name="melee_name_h">
+				<anchored to="melee_frame" position="insidetopleft" offset="8,25" width="80" height="15" />
+				<static>Weapon</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_wq_h">
+				<anchored to="melee_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<static textres="harn_wq" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_hft_h">
+				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="35" height="15" />
+				<static textres="harn_hft" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_rch_h">
+				<anchored to="melee_hft_h" position="righthigh" offset="4,0" width="28" height="15" />
+				<static textres="harn_rch" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_atk_h">
+				<anchored to="melee_rch_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<static textres="harn_atk" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_def_h">
+				<anchored to="melee_atk_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<static textres="harn_def" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_zd_h">
+				<anchored to="melee_def_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_zd" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_imp_h">
+				<anchored to="melee_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<static textres="harn_imp" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="melee_ta_h">
+				<anchored to="melee_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<static textres="harn_ta" />
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="meleeweapons">
+				<anchored to="melee_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.meleeweapons</datasource>
+				<class>harn_melee_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="melee_iadd">
+				<anchored to="meleeweapons" position="aboveright" offset="0,8" />
+				<target>meleeweapons</target>
+				<script>
+					function onButtonPress()
+						local list = window.meleeweapons;
+						if list then
+							list.createWindow();
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<!-- MISSILE WEAPONS -->
+			<frame_char name="missile_frame">
+				<anchored position="insidetopleft" offset="0,290" height="140">
+					<right offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="missile_frame" />
+				<static textres="harn_missile_weapons" />
+			</label_frametop>
+
+			<!-- Missile headers -->
+			<label name="missile_name_h">
+				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="110" height="15" />
+				<static>Weapon</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_wq_h">
+				<anchored to="missile_name_h" position="righthigh" offset="4,0" width="25" height="15" />
+				<static textres="harn_wq" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_drwhft_h">
+				<anchored to="missile_wq_h" position="righthigh" offset="3,0" width="40" height="15" />
+				<static textres="harn_drwhft" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_br_h">
+				<anchored to="missile_drwhft_h" position="righthigh" offset="3,0" width="30" height="15" />
+				<static textres="harn_br" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_vm_h">
+				<anchored to="missile_br_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<static textres="harn_vm" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_atk_h">
+				<anchored to="missile_vm_h" position="righthigh" offset="3,0" width="30" height="15" />
+				<static textres="harn_atk" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_chg_h">
+				<anchored to="missile_atk_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<static textres="harn_chg" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_proj_h">
+				<anchored to="missile_chg_h" position="righthigh" offset="3,0" width="120" height="15" />
+				<static textres="harn_proj" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_pbzd_h">
+				<anchored to="missile_proj_h" position="righthigh" offset="3,0" width="32" height="15" />
+				<static textres="harn_pbzd" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_imp_h">
+				<anchored to="missile_pbzd_h" position="righthigh" offset="3,0" width="55" height="15" />
+				<static textres="harn_imp" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="missile_ta_h">
+				<anchored to="missile_imp_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<static textres="harn_ta" />
+				<font>sheetlabel</font>
+			</label>
+
+			<windowlist name="missileweapons">
+				<anchored to="missile_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.missileweapons</datasource>
+				<class>harn_missile_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="missile_iadd">
+				<anchored to="missileweapons" position="aboveright" offset="0,8" />
+				<target>missileweapons</target>
+				<script>
+					function onButtonPress()
+						local list = window.missileweapons;
+						if list then
+							list.createWindow();
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<!-- BODY LOCATION Section -->
+			<frame_char name="bodyloc_frame">
+				<anchored position="insidetopleft" offset="0,435" height="400">
+					<right offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="bodyloc_frame" />
+				<static textres="harn_body_location" />
+			</label_frametop>
+
+			<!-- Headers -->
+			<label name="h_zr">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="20" height="15" />
+				<static>ZR</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_zn">
+				<anchored to="h_zr" position="righthigh" offset="5,0" width="45" height="15" />
+				<static>Zone</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_lr">
+				<anchored to="h_zn" position="righthigh" offset="5,0" width="35" height="15" />
+				<static>LR</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_loc">
+				<anchored to="h_lr" position="righthigh" offset="5,0" width="60" height="15" />
+				<static>Location</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="h_b">
+				<anchored to="h_loc" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>B</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_e">
+				<anchored to="h_b" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>E</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_p">
+				<anchored to="h_e" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>P</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_f">
+				<anchored to="h_p" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>F</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<!-- Body Locations List -->
+			<windowlist name="bodylocations">
+				<anchored to="bodyloc_frame">
+					<top offset="42" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-40" />
+				</anchored>
+				<datasource>.bodylocations</datasource>
+				<class>harn_npc_bodyloc_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="bodyloc_iadd">
+				<anchored to="bodylocations" position="aboveright" offset="0,8" />
+				<target>bodylocations</target>
+				<script>
+					function onButtonPress()
+						local list = window.bodylocations;
+						if list then
+							list.createWindow();
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<!-- AREA ATTACK - Always visible, at the bottom of the body location frame -->
+			<label name="area_attack_label">
+				<anchored to="bodyloc_frame" position="insidebottomleft" offset="10,-35" width="80" height="20" />
+				<static>AREA ATTACK</static>
+				<font>sheetlabelbold</font>
+			</label>
+			<numberfield name="area_attack">
+				<anchored to="area_attack_label" position="righthigh" offset="10,0" width="40" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
 		</sheetdata>
 	</windowclass>
 
