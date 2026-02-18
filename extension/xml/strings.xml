@@ -152,7 +152,8 @@
 	<string name="harn_proj">PROJ</string>
 	<string name="harn_pbzd">PB-ZD</string>
 
-	<string name="harn_body_location">BODY LOCATION / INJURY</string>
+	<string name="harn_body_location">BODY LOCATIONS</string>
+	<string name="harn_injuries">INJURIES</string>
 	<string name="harn_injury">INJURY</string>
 	<string name="harn_location">Location</string>
 	<string name="harn_hb">HB</string>

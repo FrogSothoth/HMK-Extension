@@ -823,9 +823,121 @@
 		</sheetdata>
 	</windowclass>
 
-	<!-- NPC Body Location Entry - Manual entry version -->
+	<!-- NPC Body Location Entry - Manual entry version with edit mode support -->
 	<windowclass name="harn_npc_bodyloc_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			local bEditMode = false;
+
+			function onInit()
+				updateAllVisuals();
+				-- Disable status icon buttons by default (only clickable in edit mode)
+				icon_bld.setEnabled(false);
+				icon_shk.setEnabled(false);
+				icon_amp.setEnabled(false);
+			end
+
+			function setEditMode(bMode)
+				Debug.console("Entry setEditMode called with: " .. tostring(bMode));
+				bEditMode = bMode;
+				Debug.console("Entry bEditMode now: " .. tostring(bEditMode));
+				-- Toggle field editability (disabled when in edit mode so clicks cycle instead)
+				zone_range.setEnabled(not bMode);
+				zone_name.setEnabled(not bMode);
+				loc_range.setEnabled(not bMode);
+				location.setEnabled(not bMode);
+				av_b.setEnabled(not bMode);
+				av_e.setEnabled(not bMode);
+				av_p.setEnabled(not bMode);
+				av_f.setEnabled(not bMode);
+				-- Toggle delete button visibility
+				idelete.setVisible(bMode);
+				-- Enable/disable status icon buttons (only clickable in edit mode)
+				icon_bld.setEnabled(bMode);
+				icon_shk.setEnabled(bMode);
+				icon_amp.setEnabled(bMode);
+			end
+
+			function isEditMode()
+				return bEditMode;
+			end
+
+			-- Armor tier cycling for BEPF fields
+			function cycleArmorB()
+				Debug.console("cycleArmorB called, bEditMode=" .. tostring(bEditMode));
+				if not bEditMode then return; end
+				local n = (tier_b.getValue() + 1) % 4;
+				Debug.console("Setting tier_b to " .. tostring(n));
+				tier_b.setValue(n);
+			end
+			function cycleArmorE()
+				if not bEditMode then return; end
+				local n = (tier_e.getValue() + 1) % 4;
+				tier_e.setValue(n);
+			end
+			function cycleArmorP()
+				if not bEditMode then return; end
+				local n = (tier_p.getValue() + 1) % 4;
+				tier_p.setValue(n);
+			end
+			function cycleArmorF()
+				if not bEditMode then return; end
+				local n = (tier_f.getValue() + 1) % 4;
+				tier_f.setValue(n);
+			end
+
+			-- Icon cycling for BLD/SHK/AMP
+			function cycleBLD()
+				Debug.console("cycleBLD called, bEditMode=" .. tostring(bEditMode));
+				if not bEditMode then return; end
+				local n = (bld_level.getValue() + 1) % 4;
+				bld_level.setValue(n);
+			end
+			function cycleSHK()
+				if not bEditMode then return; end
+				local n = (shk_level.getValue() + 1) % 7;
+				shk_level.setValue(n);
+			end
+			function cycleAMP()
+				if not bEditMode then return; end
+				local n = (amp_level.getValue() + 1) % 4;
+				amp_level.setValue(n);
+			end
+
+			function updateAllVisuals()
+				updateArmorVisuals();
+				updateStatusIcons();
+			end
+
+			function updateArmorVisuals()
+				-- Update B armor background (buttoncontrol state) and text color
+				local nB = tier_b.getValue();
+				bg_b.setValue(nB);
+				av_b.setColor((nB == 3) and "FFFFFFFF" or "FF000000");
+
+				-- Update E armor background and text color
+				local nE = tier_e.getValue();
+				bg_e.setValue(nE);
+				av_e.setColor((nE == 3) and "FFFFFFFF" or "FF000000");
+
+				-- Update P armor background and text color
+				local nP = tier_p.getValue();
+				bg_p.setValue(nP);
+				av_p.setColor((nP == 3) and "FFFFFFFF" or "FF000000");
+
+				-- Update F armor background and text color
+				local nF = tier_f.getValue();
+				bg_f.setValue(nF);
+				av_f.setColor((nF == 3) and "FFFFFFFF" or "FF000000");
+			end
+
+			function updateStatusIcons()
+				-- Update buttoncontrol states (0=empty, 1-3=icons)
+				icon_bld.setValue(bld_level.getValue());
+				icon_shk.setValue(shk_level.getValue());
+				icon_amp.setValue(amp_level.getValue());
+			end
+		</script>
 		<sheetdata>
 			<genericcontrol name="leftanchor">
 				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
@@ -862,38 +974,339 @@
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<stringfield name="av_b">
+
+			<!-- BEPF fields with background icons for armor tier -->
+			<!-- B field - buttoncontrol with 4 states for armor tiers -->
+			<buttoncontrol name="bg_b">
 				<anchored to="location" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
+				<state />
+				<state icon="rigid1" />
+				<state icon="rigid2" />
+				<state icon="rigid3" />
+				<script>
+					function onButtonPress()
+						window.cycleArmorB();
+					end
+				</script>
+			</buttoncontrol>
+			<stringfield name="av_b">
+				<anchored to="bg_b" position="over" />
 				<center />
 			</stringfield>
+
+			<!-- E field -->
+			<buttoncontrol name="bg_e">
+				<anchored to="bg_b" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="1" />
+				</anchored>
+				<state />
+				<state icon="rigid1" />
+				<state icon="rigid2" />
+				<state icon="rigid3" />
+				<script>
+					function onButtonPress()
+						window.cycleArmorE();
+					end
+				</script>
+			</buttoncontrol>
 			<stringfield name="av_e">
-				<anchored to="av_b" width="22" height="20">
+				<anchored to="bg_e" position="over" />
+				<center />
+			</stringfield>
+
+			<!-- P field -->
+			<buttoncontrol name="bg_p">
+				<anchored to="bg_e" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<center />
-			</stringfield>
+				<state />
+				<state icon="rigid1" />
+				<state icon="rigid2" />
+				<state icon="rigid3" />
+				<script>
+					function onButtonPress()
+						window.cycleArmorP();
+					end
+				</script>
+			</buttoncontrol>
 			<stringfield name="av_p">
-				<anchored to="av_e" width="22" height="20">
+				<anchored to="bg_p" position="over" />
+				<center />
+			</stringfield>
+
+			<!-- F field -->
+			<buttoncontrol name="bg_f">
+				<anchored to="bg_p" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<center />
-			</stringfield>
+				<state />
+				<state icon="rigid1" />
+				<state icon="rigid2" />
+				<state icon="rigid3" />
+				<script>
+					function onButtonPress()
+						window.cycleArmorF();
+					end
+				</script>
+			</buttoncontrol>
 			<stringfield name="av_f">
-				<anchored to="av_p" width="22" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="1" />
-				</anchored>
+				<anchored to="bg_f" position="over" />
 				<center />
 			</stringfield>
-			
+
+			<!-- Delete button - only visible in edit mode -->
+			<button_idelete name="idelete">
+				<anchored to="bg_f" position="righthigh" offset="5,0" width="20" height="20" />
+				<invisible />
+			</button_idelete>
+
+			<!-- BLD/SHK/AMP icons - buttoncontrols with states -->
+			<buttoncontrol name="icon_bld">
+				<anchored to="bg_f" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="30" />
+				</anchored>
+				<state />
+				<state icon="bld1" />
+				<state icon="bld2" />
+				<state icon="bld3" />
+				<script>
+					function onButtonPress()
+						window.cycleBLD();
+					end
+				</script>
+			</buttoncontrol>
+			<buttoncontrol name="icon_shk">
+				<anchored to="icon_bld" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state />
+				<state icon="shk1" />
+				<state icon="shk2" />
+				<state icon="shk3" />
+				<state icon="shk4" />
+				<state icon="shk5" />
+				<state icon="shk6" />
+				<script>
+					function onButtonPress()
+						window.cycleSHK();
+					end
+				</script>
+			</buttoncontrol>
+			<buttoncontrol name="icon_amp">
+				<anchored to="icon_shk" width="20" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state />
+				<state icon="amp1" />
+				<state icon="amp2" />
+				<state icon="amp3" />
+				<script>
+					function onButtonPress()
+						window.cycleAMP();
+					end
+				</script>
+			</buttoncontrol>
+
+			<!-- Hidden level fields for armor tier and status icon tracking -->
+			<numberfield name="tier_b">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateArmorVisuals();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="tier_e">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateArmorVisuals();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="tier_p">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateArmorVisuals();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="tier_f">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateArmorVisuals();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="bld_level">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateStatusIcons();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="shk_level">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateStatusIcons();
+					end
+				</script>
+			</numberfield>
+			<numberfield name="amp_level">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+				<invisible />
+				<default>0</default>
+				<script>
+					function onValueChanged()
+						window.updateStatusIcons();
+					end
+				</script>
+			</numberfield>
+		</sheetdata>
+	</windowclass>
+
+	<!-- NPC Injury Entry - simplified version without auto-impairment calculation -->
+	<windowclass name="harn_npc_injury_entry">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				updateHeal();
+			end
+
+			function updateHeal()
+				local nodeEntry = getDatabaseNode();
+				if not nodeEntry then return end
+
+				local nInjuryHR = DB.getValue(nodeEntry, "injury_hr", 0);
+				local nodeNPC = nodeEntry.getParent().getParent();
+				local nHB = 0;
+				if nodeNPC then
+					nHB = DB.getValue(nodeNPC, "healing_base", 0);
+				end
+
+				local nHeal = nInjuryHR * nHB;
+				heal.setValue(nHeal);
+			end
+		</script>
+		<sheetdata>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<disabled />
+			</genericcontrol>
+			<!-- Location (text: Skull, Face, etc.) -->
+			<stringfield name="location">
+				<anchored to="leftanchor" width="60" height="20">
+					<top />
+					<left offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<!-- Side (L/R/-) -->
+			<stringfield name="side">
+				<anchored to="location" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<!-- Severity (M/S/G) -->
+			<stringfield name="severity">
+				<anchored to="side" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<!-- Level (1-5) -->
+			<stringfield name="level">
+				<anchored to="severity" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<!-- Aspect (B/E/P/F) -->
+			<stringfield name="aspect">
+				<anchored to="level" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+			</stringfield>
+			<!-- BLD checkbox -->
+			<buttoncontrol name="bleeding">
+				<anchored to="aspect" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<!-- INF checkbox -->
+			<buttoncontrol name="infected">
+				<anchored to="bleeding" width="15" height="15">
+					<top parent="leftanchor" offset="2" />
+					<left anchor="right" offset="4" />
+				</anchored>
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+			</buttoncontrol>
+			<!-- HR (1-6) -->
+			<numberfield name="injury_hr">
+				<anchored to="infected" width="22" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>1</min>
+				<max>6</max>
+				<script>
+					function onValueChanged()
+						window.updateHeal();
+					end
+				</script>
+			</numberfield>
+			<!-- Heal (HR x HB) - readonly display -->
+			<numberfield name="heal">
+				<anchored to="injury_hr" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
 			<!-- Delete button -->
 			<button_idelete name="idelete">
-				<anchored to="av_f" position="righthigh" offset="5,0" width="20" height="20" />
+				<anchored to="heal" position="righthigh" offset="4,0" width="20" height="20" />
 			</button_idelete>
 		</sheetdata>
 	</windowclass>
@@ -944,6 +1357,37 @@
 				move_half.setValue(math.floor((nEff / 2) / 5) * 5);
 				-- Double Move = sum * 2
 				move_double.setValue(nEff * 2);
+			end
+
+			-- Edit mode state for body locations
+			local bEditMode = false;
+
+			function toggleEditMode()
+				bEditMode = not bEditMode;
+				edit_mode_btn.setValue(bEditMode and 1 or 0);
+				Debug.console("NPC toggleEditMode: " .. tostring(bEditMode));
+
+				-- Notify all body location entries to update their state
+				local windows = bodylocations.getWindows();
+				Debug.console("NPC body location windows: " .. tostring(#windows));
+				for _, wnd in pairs(windows) do
+					Debug.console("Checking window for setEditMode...");
+					if wnd.setEditMode then
+						Debug.console("Calling setEditMode on window");
+						wnd.setEditMode(bEditMode);
+					else
+						Debug.console("Window does not have setEditMode");
+					end
+				end
+			end
+
+			function updateInjuryHeals()
+				-- Update heal values for all injuries when HB changes
+				for _, wnd in pairs(npcinjuries.getWindows()) do
+					if wnd.updateHeal then
+						wnd.updateHeal();
+					end
+				end
 			end
 		</script>
 		<sheetdata>
@@ -1338,18 +1782,34 @@
 				</script>
 			</button_iadd>
 
-			<!-- BODY LOCATION Section -->
+			<!-- BODY LOCATIONS Section (left side) -->
 			<frame_char name="bodyloc_frame">
-				<anchored position="insidetopleft" offset="0,435" height="400">
-					<right offset="0" />
-				</anchored>
+				<anchored position="insidetopleft" offset="0,435" width="460" height="400" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="bodyloc_frame" />
 				<static textres="harn_body_location" />
 			</label_frametop>
 
-			<!-- Headers -->
+			<!-- Edit mode toggle button - checkbox to toggle edit mode for icon cycling -->
+			<buttoncontrol name="edit_mode_btn">
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="380,5" width="20" height="20" />
+				<state icon="button_checkoff" />
+				<state icon="button_checkon" />
+				<tooltip>Toggle Edit Mode (enable icon cycling and row deletion)</tooltip>
+				<script>
+					function onButtonPress()
+						window.toggleEditMode();
+					end
+				</script>
+			</buttoncontrol>
+			<label name="edit_mode_label">
+				<anchored to="edit_mode_btn" position="righthigh" offset="3,0" width="50" height="20" />
+				<static>EDIT</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- Body Location Headers -->
 			<label name="h_zr">
 				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="20" height="15" />
 				<static>ZR</static>
@@ -1397,6 +1857,25 @@
 				<font>sheetlabel</font>
 				<center />
 			</label>
+			<!-- Icon column headers -->
+			<label name="h_bld_icon">
+				<anchored to="h_f" position="righthigh" offset="25,0" width="22" height="15" />
+				<static>BLD</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_shk_icon">
+				<anchored to="h_bld_icon" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>SHK</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="h_amp_icon">
+				<anchored to="h_shk_icon" position="righthigh" offset="2,0" width="22" height="15" />
+				<static>AMP</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
 
 			<!-- Body Locations List -->
 			<windowlist name="bodylocations">
@@ -1433,7 +1912,203 @@
 			<numberfield name="area_attack">
 				<anchored to="area_attack_label" position="righthigh" offset="10,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
+				<source>area_attack</source>
 			</numberfield>
+
+			<!-- INJURIES Section (right side) -->
+			<frame_char name="injury_frame">
+				<anchored to="bodyloc_frame" position="righthigh" offset="5,0" height="400">
+					<right parent="" offset="0" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="injury_frame" />
+				<static textres="harn_injuries" />
+			</label_frametop>
+
+			<!-- Healing Base -->
+			<label name="hb_label">
+				<anchored to="injury_frame" position="insidetopleft" offset="10,25" width="25" height="20" />
+				<static>HB:</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="healing_base">
+				<anchored to="hb_label" position="righthigh" offset="5,0" width="35" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>healing_base</source>
+				<script>
+					function onValueChanged()
+						-- Update all injury heal values when HB changes
+						window.updateInjuryHeals();
+					end
+				</script>
+			</numberfield>
+
+			<!-- Zone Impairment Boxes -->
+			<label name="zone_imp_label">
+				<anchored to="hb_label" position="below" offset="0,10" width="80" height="15" />
+				<static>IMPAIRMENT</static>
+				<font>sheetlabelbold</font>
+			</label>
+
+			<!-- Head -->
+			<label name="imp_head_label">
+				<anchored to="zone_imp_label" position="below" offset="0,5" width="35" height="20" />
+				<static>Head</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_head">
+				<anchored to="imp_head_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_head</source>
+			</numberfield>
+
+			<!-- Arms L/R -->
+			<label name="imp_arms_label">
+				<anchored to="imp_head_label" position="below" offset="0,3" width="35" height="20" />
+				<static>Arms</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_arm_l">
+				<anchored to="imp_arms_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_arm_l</source>
+			</numberfield>
+			<label name="imp_arm_l_lbl">
+				<anchored to="imp_arm_l" position="righthigh" offset="2,0" width="12" height="20" />
+				<static>L</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_arm_r">
+				<anchored to="imp_arm_l_lbl" position="righthigh" offset="2,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_arm_r</source>
+			</numberfield>
+			<label name="imp_arm_r_lbl">
+				<anchored to="imp_arm_r" position="righthigh" offset="2,0" width="12" height="20" />
+				<static>R</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- Torso -->
+			<label name="imp_torso_label">
+				<anchored to="imp_arms_label" position="below" offset="0,3" width="35" height="20" />
+				<static>Torso</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_torso">
+				<anchored to="imp_torso_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_torso</source>
+			</numberfield>
+
+			<!-- Legs L/R -->
+			<label name="imp_legs_label">
+				<anchored to="imp_torso_label" position="below" offset="0,3" width="35" height="20" />
+				<static>Legs</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_leg_l">
+				<anchored to="imp_legs_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_leg_l</source>
+			</numberfield>
+			<label name="imp_leg_l_lbl">
+				<anchored to="imp_leg_l" position="righthigh" offset="2,0" width="12" height="20" />
+				<static>L</static>
+				<font>sheetlabel</font>
+			</label>
+			<numberfield name="imp_leg_r">
+				<anchored to="imp_leg_l_lbl" position="righthigh" offset="2,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<source>imp_leg_r</source>
+			</numberfield>
+			<label name="imp_leg_r_lbl">
+				<anchored to="imp_leg_r" position="righthigh" offset="2,0" width="12" height="20" />
+				<static>R</static>
+				<font>sheetlabel</font>
+			</label>
+
+			<!-- Injury List Headers -->
+			<label name="inj_h_loc">
+				<anchored to="imp_legs_label" position="below" offset="0,15" width="60" height="15" />
+				<static>Loc</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="inj_h_side">
+				<anchored to="inj_h_loc" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>Sd</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_sev">
+				<anchored to="inj_h_side" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>Sv</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_lvl">
+				<anchored to="inj_h_sev" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>Lv</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_asp">
+				<anchored to="inj_h_lvl" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>As</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_bld">
+				<anchored to="inj_h_asp" position="righthigh" offset="5,0" width="18" height="15" />
+				<static>B</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_inf">
+				<anchored to="inj_h_bld" position="righthigh" offset="5,0" width="18" height="15" />
+				<static>I</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_hr">
+				<anchored to="inj_h_inf" position="righthigh" offset="5,0" width="22" height="15" />
+				<static>HR</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="inj_h_heal">
+				<anchored to="inj_h_hr" position="righthigh" offset="5,0" width="28" height="15" />
+				<static>Heal</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<!-- Injuries List -->
+			<windowlist name="npcinjuries">
+				<anchored to="injury_frame">
+					<top offset="175" />
+					<left offset="3" />
+					<right offset="-3" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.npcinjuries</datasource>
+				<class>harn_npc_injury_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<button_iadd name="injuries_iadd">
+				<anchored to="npcinjuries" position="aboveright" offset="0,8" />
+				<target>npcinjuries</target>
+				<script>
+					function onButtonPress()
+						local list = window.npcinjuries;
+						if list then
+							list.createWindow();
+						end
+					end
+				</script>
+			</button_iadd>
 		</sheetdata>
 	</windowclass>
 
