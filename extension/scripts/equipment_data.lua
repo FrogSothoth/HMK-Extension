@@ -180,6 +180,7 @@ local aEquipmentData = {
     ["Bolts, Light Bodkin"] = { type = "Ammo", weight = .125, price = 1 },
     ["Bolts, Light Blunt"] = { type = "Ammo", weight = .125, price = 1 },
     ["Bolts, Light Broad"] = { type = "Ammo", weight = .125, price = 1 },
+    ["Small Bow"] = { type = "Missile", weight = 1.5, price = 0 },
 };
 
 function lookupItem(sName)

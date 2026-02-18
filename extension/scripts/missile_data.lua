@@ -38,6 +38,11 @@ local aMissileWeaponData = {
         pbzd = 6, impd = 8, impv = 0, asp = "P", ta = "4"
     },
     -- BOWS (Composite)
+    [ "small bow"] = {
+        name = "Small Bow", skill = "Archery", wq = 10, drw = 40, hft = nil,
+        br = 120, vm = 3, chg = 0, proj = "arrow",
+        pbzd = 6, impd = nil, impv = 3, asp = "p", ta = nil
+    },
     ["composite bow-150"] = {
         name = "Composite Bow-150", skill = "Archery", wq = 11, drw = 40, hft = nil,
         br = 150, vm = 3, chg = 0, proj = "arrow",
