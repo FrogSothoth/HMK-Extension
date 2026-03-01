@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+    <font name="harn_header_extrabold">
+        <ttf file="graphics/fonts/Alegreya-ExtraBold.ttf" name="Alegreya ExtraBold" size="24" />
+        <color value="000000" />
+    </font>
+    <font name="harn_header_medium">
+        <ttf file="graphics/fonts/Alegreya-Medium.ttf" name="Alegreya Medium" size="24" />
+        <color value="000000" />
+    </font>
+</root>

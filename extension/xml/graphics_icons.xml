@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+    <icon name="fat_icon" file="graphics/frames/FAT.png" />
+    <icon name="grc_icon" file="graphics/frames/GRC.png" />
+    <icon name="pie_icon" file="graphics/frames/PIE.png" />
+    <icon name="mov_icon" file="graphics/frames/MOV.png" />
+    <icon name="portrait_bg" file="graphics/frames/portraitframe.png" />
+</root>

@@ -16,6 +16,11 @@
 		<!-- String resources for labels -->
 		<includefile source="xml/strings.xml" />
 
+		<!-- Graphics definitions -->
+		<includefile source="xml/graphics_frames.xml" />
+		<includefile source="xml/graphics_fonts.xml" />
+		<includefile source="xml/graphics_icons.xml" />
+
 		<!-- Character sheet definition -->
 		<includefile source="xml/charsheet.xml" />
 

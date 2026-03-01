@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+    <framedef name="charsheet">
+        <bitmap file="graphics/frames/charsheet.png" />
+        <offset>68,68,68,68</offset>
+    </framedef>
+    <framedef name="charheading">
+        <bitmap file="graphics/frames/charheading.png" />
+        <offset>20,20,20,20</offset>
+    </framedef>
+</root>

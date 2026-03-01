@@ -278,6 +278,11 @@
 
 			<!-- Character name and portrait header -->
 			<sub_content_top name="overview">
+				<anchored height="60">
+					<top offset="30" />
+					<left offset="60" />
+					<right offset="-60" />
+				</anchored>
 				<class>harn_charsheet_overview</class>
 			</sub_content_top>
 
@@ -319,25 +324,32 @@
 
 	<!-- Character header/overview (name + portrait) -->
 	<windowclass name="harn_charsheet_overview">
-		<frame>groupbox</frame>
-		<margins control="0,0,0,15" />
+		<frame>charheading</frame>
 		<sheetdata>
 			<anchor_content_charsheet_header_top />
 			<anchor_content_charsheet_header_left />
 			<anchor_content_charsheet_header_right />
 
-			<!-- Portrait -->
-			<picture_charsheet_v2 name="portrait" />
-
 			<!-- Character Name -->
 			<string_labeled name="name">
-				<anchored to="rightanchor" height="30">
-					<top offset="5" />
-					<right relation="current" offset="-5" />
-					<left parent="leftanchor" relation="current" offset="5" />
+				<anchored height="30">
+					<top offset="10" />
+					<left parent="leftanchor" offset="5" />
+					<right parent="rightanchor" offset="-165" />
 				</anchored>
 				<labelres>harn_name</labelres>
-				<font>charsheet_header</font>
+				<font>harn_header_extrabold</font>
+			</string_labeled>
+
+			<!-- Occupation -->
+			<string_labeled name="occupation">
+				<anchored height="30">
+					<top offset="10" />
+					<left parent="rightanchor" offset="-160" />
+					<right parent="rightanchor" offset="-5" />
+				</anchored>
+				<labelres>harn_occupation</labelres>
+				<font>harn_header_medium</font>
 			</string_labeled>
 		</sheetdata>
 	</windowclass>
