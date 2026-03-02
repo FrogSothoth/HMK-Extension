@@ -23,11 +23,295 @@
 				<tooltip text="Fate" />
 			</genericcontrol>
 
+			<!-- Fate Values Overlay -->
+			<numberfield name="fate_roll">
+				<anchored to="fat_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<numberfield name="fate_fp">
+				<anchored to="fat_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<!-- STR Box -->
+			<genericcontrol name="str_frame">
+				<anchored position="insidetopleft" offset="60,71" width="45" height="56" />
+				<icon>str_icon</icon>
+				<tooltip text="Strength" />
+			</genericcontrol>
+
+			<numberfield name="str_score">
+				<anchored to="str_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="str_ml">
+				<anchored to="str_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- END Box -->
+			<genericcontrol name="end_frame">
+				<anchored position="insidetopleft" offset="130,71" width="45" height="56" />
+				<icon>end_icon</icon>
+				<tooltip text="Endurance" />
+			</genericcontrol>
+
+			<numberfield name="end_score">
+				<anchored to="end_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="end_ml">
+				<anchored to="end_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- AGL Box -->
+			<genericcontrol name="agl_frame">
+				<anchored position="insidetopleft" offset="60,142" width="45" height="56" />
+				<icon>agl_icon</icon>
+				<tooltip text="Agility" />
+			</genericcontrol>
+
+			<numberfield name="agl_score">
+				<anchored to="agl_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="agl_ml">
+				<anchored to="agl_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<!-- DEX Box -->
+			<genericcontrol name="dex_frame">
+				<anchored position="insidetopleft" offset="130,142" width="45" height="56" />
+				<icon>dex_icon</icon>
+				<tooltip text="Dexterity" />
+			</genericcontrol>
+
+			<numberfield name="dex_score">
+				<anchored to="dex_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="dex_ml">
+				<anchored to="dex_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+
+			<!-- PER Box -->
+			<genericcontrol name="per_frame">
+				<anchored position="insidetopleft" offset="60,214" width="45" height="56" />
+				<icon>per_icon</icon>
+				<tooltip text="Perception" />
+			</genericcontrol>
+
+			<numberfield name="per_score">
+				<anchored to="per_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="per_ml">
+				<anchored to="per_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<!-- CML Box -->
+			<genericcontrol name="cml_frame">
+				<anchored position="insidetopleft" offset="130,214" width="45" height="56" />
+				<icon>cml_icon</icon>
+				<tooltip text="Comeliness" />
+			</genericcontrol>
+
+			<numberfield name="cml_score">
+				<anchored to="cml_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="cml_ml">
+				<anchored to="cml_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+			
+			<!-- WIL Box -->
+			<genericcontrol name="wil_frame">
+				<anchored position="insidetopright" offset="60,71" width="45" height="56" />
+				<icon>wil_icon</icon>
+				<tooltip text="Willpower" />
+			</genericcontrol>
+
+			<numberfield name="wil_score">
+				<anchored to="wil_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="wil_ml">
+				<anchored to="wil_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- AUR Box -->
+			<genericcontrol name="aur_frame">
+				<anchored position="insidetopright" offset="130,71" width="45" height="56" />
+				<icon>aur_icon</icon>
+				<tooltip text="Aura" />
+			</genericcontrol>
+
+			<numberfield name="aur_score">
+				<anchored to="aur_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="aur_ml">
+				<anchored to="aur_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- REA Box -->
+			<genericcontrol name="rea_frame">
+				<anchored position="insidetopright" offset="60,142" width="45" height="56" />
+				<icon>rea_icon</icon>
+				<tooltip text="Ready" />
+			</genericcontrol>
+
+			<numberfield name="rea_score">
+				<anchored to="rea_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="rea_ml">
+				<anchored to="rea_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- CRE Box -->
+			<genericcontrol name="cre_frame">
+				<anchored position="insidetopright" offset="130,142" width="45" height="56" />
+				<icon>cre_icon</icon>
+				<tooltip text="Creativity" />
+			</genericcontrol>
+
+			<numberfield name="cre_score">
+				<anchored to="cre_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="cre_ml">
+				<anchored to="cre_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- EMP Box -->
+			<genericcontrol name="emp_frame">
+				<anchored position="insidetopright" offset="60,214" width="45" height="56" />
+				<icon>emp_icon</icon>
+				<tooltip text="Empathy" />
+			</genericcontrol>
+
+			<numberfield name="emp_score">
+				<anchored to="emp_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="emp_ml">
+				<anchored to="emp_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- ELO Box -->
+			<genericcontrol name="elo_frame">
+				<anchored position="insidetopright" offset="130,214" width="45" height="56" />
+				<icon>elo_icon</icon>
+				<tooltip text="Eloquence" />
+			</genericcontrol>
+
+			<numberfield name="elo_score">
+				<anchored to="elo_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="elo_ml">
+				<anchored to="elo_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+
 			<genericcontrol name="grc_frame">
 				<anchored to="fat_frame" position="right" offset="100,0" width="45" height="56" />
 				<icon>grc_icon</icon>
 				<tooltip text="Grace" />
 			</genericcontrol>
+
+			<!-- Grace Values Overlay -->
+			<numberfield name="grace_total">
+				<anchored to="grc_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<numberfield name="grace_left">
+				<anchored to="grc_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
 
 			<genericcontrol name="mov_frame">
 				<anchored position="insidetopright" offset="60,0" width="45" height="56" />
@@ -35,11 +319,43 @@
 				<tooltip text="Movement" />
 			</genericcontrol>
 
+			<!-- Movement Values Overlay -->
+			<numberfield name="move">
+				<anchored to="mov_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<numberfield name="move_effective">
+				<anchored to="mov_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
 			<genericcontrol name="pie_frame">
 				<anchored to="mov_frame" position="left" offset="100,0" width="45" height="56" />
 				<icon>pie_icon</icon>
 				<tooltip text="Piety" />
 			</genericcontrol>
+
+			<!-- Piety Values Overlay -->
+			<numberfield name="piety_max">
+				<anchored to="pie_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<numberfield name="piety_left">
+				<anchored to="pie_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
 
 			<!-- Character Portrait Area -->
 			<!-- Manually centered at offset 220 from the left anchor to prevent stretching -->

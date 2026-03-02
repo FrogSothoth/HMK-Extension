@@ -4,5 +4,17 @@
     <icon name="grc_icon" file="graphics/frames/GRC.png" />
     <icon name="pie_icon" file="graphics/frames/PIE.png" />
     <icon name="mov_icon" file="graphics/frames/MOV.png" />
+    <icon name="str_icon" file="graphics/frames/STR.png" />
+    <icon name="end_icon" file="graphics/frames/END.png" />
+    <icon name="agl_icon" file="graphics/frames/AGL.png" />
+    <icon name="dex_icon" file="graphics/frames/DEX.png" />
+    <icon name="per_icon" file="graphics/frames/PER.png" />
+    <icon name="cml_icon" file="graphics/frames/CML.png" />
+    <icon name="aur_icon" file="graphics/frames/AUR.png" />
+    <icon name="wil_icon" file="graphics/frames/WIL.png" />
+    <icon name="rea_icon" file="graphics/frames/REA.png" />
+    <icon name="cre_icon" file="graphics/frames/CRE.png" />
+    <icon name="emp_icon" file="graphics/frames/EMP.png" />
+    <icon name="elo_icon" file="graphics/frames/ELO.png" />
     <icon name="portrait_bg" file="graphics/frames/portraitframe.png" />
 </root>

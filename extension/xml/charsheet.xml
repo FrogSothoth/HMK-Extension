@@ -254,6 +254,11 @@
 					if HarnManager and HarnManager.calculateHealingBase then
 						HarnManager.calculateHealingBase(nodeChar);
 					end
+
+					-- Update Attribute ML (Score * 5)
+					if HarnManager and HarnManager.updateAttributeML then
+						HarnManager.updateAttributeML(nodeChar, nodeField.getName());
+					end
 				else
 					Debug.console("  WARNING: Could not get parent node");
 				end

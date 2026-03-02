@@ -261,6 +261,30 @@ function calculateMove(nodeChar)
 	return nMove
 end
 
+-- Update attribute ML based on score (ML = score * 5)
+function updateAttributeML(nodeChar, sFieldName)
+	if not nodeChar or not sFieldName then return end
+	
+	-- Check if the updated field is an attribute score
+	local sAttr = sFieldName:match("^([%a]+)_score$")
+	if not sAttr then return end
+	
+	local nScore = DB.getValue(nodeChar, sFieldName, 0)
+	local nML = nScore * 5
+	
+	local sMLField = sAttr .. "_ml"
+	DB.setValue(nodeChar, sMLField, "number", nML)
+	
+	-- Also trigger related calculations
+	if sAttr == "aur" then
+		calculateFate(nodeChar)
+	elseif sAttr == "agl" or sAttr == "str" then
+		calculateMove(nodeChar)
+	elseif sAttr == "end" or sAttr == "wil" then
+		calculateHealingBase(nodeChar)
+	end
+end
+
 -----------------------------------------------------------
 -- EML (Effective Mastery Level) and Effective Move
 -----------------------------------------------------------
