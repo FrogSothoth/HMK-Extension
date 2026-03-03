@@ -357,25 +357,24 @@
 				<hideonzero />
 			</numberfield>
 
-			<!-- Character Portrait Area -->
-			<!-- Manually centered at offset 220 from the left anchor to prevent stretching -->
+			<!-- Character Portrait Area (dynamically centered) -->
 			<genericcontrol name="portrait_background">
 				<anchored height="245" width="175">
 					<top offset="50" />
-					<left parent="leftanchor" offset="220" />
+					<left anchor="center" offset="-87" />
 				</anchored>
 				<icon>portrait_bg</icon>
 			</genericcontrol>
 
-			<!-- Portrait control (centered at offset 237 from left, 67 from top) -->
-			<!-- Using portraitcontrol which is the native CoreRPG control for PCs -->
-			<portraitcontrol name="portrait">
+			<!-- Portrait (tokenfield with drawmode=fit renders raw asset at full size) -->
+			<tokenfield name="portrait">
 				<anchored height="210" width="140">
 					<top offset="67" />
-					<left parent="leftanchor" offset="237" />
+					<left anchor="center" offset="-70" />
 				</anchored>
-				<tooltip text="Click to select Character Portrait" />
-			</portraitcontrol>
+				<drawmode>fit</drawmode>
+				<script file="scripts/portrait_charsheet.lua" />
+			</tokenfield>
 
 			<!-- Appearance Box -->
 			<genericcontrol name="appearance_box">
@@ -512,7 +511,6 @@
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-
 		</sheetdata>
 	</windowclass>
 </root>
