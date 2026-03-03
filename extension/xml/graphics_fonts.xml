@@ -8,4 +8,8 @@
         <ttf file="graphics/fonts/Alegreya-Medium.ttf" name="Alegreya Medium" size="24" />
         <color value="000000" />
     </font>
+    <font name="harn_label_18_bold">
+        <ttf file="graphics/fonts/Alegreya-ExtraBold.ttf" name="Alegreya ExtraBold" size="18" />
+        <color value="000000" />
+    </font>
 </root>

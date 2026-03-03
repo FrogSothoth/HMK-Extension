@@ -279,7 +279,14 @@
 			<windowmenubar_charsheet name="menubar" />
 
 			<anchor_content_charsheet_tabbed_top />
-			<anchor_content_charsheet_bottom />
+			
+			<genericcontrol name="bottomanchor">
+				<anchored height="0">
+					<bottom offset="-50" />
+					<left />
+					<right />
+				</anchored>
+			</genericcontrol>
 
 			<!-- Character name and portrait header -->
 			<sub_content_top name="overview">
@@ -290,6 +297,22 @@
 				</anchored>
 				<class>harn_charsheet_overview</class>
 			</sub_content_top>
+
+			<subwindow name="main">
+				<anchored>
+					<top parent="overview" anchor="bottom" offset="10" />
+					<left offset="20" />
+					<right offset="-20" />
+					<bottom parent="bottomanchor" />
+				</anchored>
+				<class>harn_tab_main</class>
+				<activate />
+				<fastinit />
+			</subwindow>
+			<scrollbar_list>
+				<anchored to="main" />
+				<target>main</target>
+			</scrollbar_list>
 
 			<resize_charsheet />
 		</sheetdata>

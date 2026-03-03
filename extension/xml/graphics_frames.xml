@@ -2,10 +2,14 @@
 <root>
     <framedef name="charsheet">
         <bitmap file="graphics/frames/charsheet.png" />
-        <offset>68,68,68,68</offset>
+        <offset>68,68,68,126</offset>
     </framedef>
     <framedef name="charheading">
         <bitmap file="graphics/frames/charheading.png" />
         <offset>20,20,20,20</offset>
+    </framedef>
+    <framedef name="groupbox">
+        <bitmap file="graphics/frames/groupbox1.png" />
+        <offset>25,25,25,25</offset>
     </framedef>
 </root>
