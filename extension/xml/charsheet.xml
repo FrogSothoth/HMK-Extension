@@ -324,9 +324,9 @@
 			<class>harn_tab_main</class>
 		</tab>
 		<tab merge="add">
-			<name>attributes</name>
-			<text>Attributes</text>
-			<class>harn_tab_attributes</class>
+			<name>background</name>
+			<textres>harn_tab_background</textres>
+			<class>harn_tab_background</class>
 		</tab>
 		<tab merge="add">
 			<name>skills</name>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <root>
 	<string name="harn_tab_main">Main</string>
-	<string name="harn_tab_attributes">Attributes</string>
+	<string name="harn_tab_background">Background</string>
 	<string name="harn_tab_skills">Skills</string>
 	<string name="harn_tab_esoterica">Esoterica</string>
 	<string name="harn_tab_combat">Combat</string>
@@ -53,6 +53,22 @@
 	<string name="harn_birthdate">Birthdate</string>
 	<string name="harn_sunsign">Sunsign</string>
 	<string name="harn_birthplace">Birthplace</string>
+	<string name="harn_young">Young</string>
+	<string name="harn_mature">Mature</string>
+	<string name="harn_old">Old</string>
+
+	<string name="harn_month_01">Nuzyael</string>
+	<string name="harn_month_02">Peonu</string>
+	<string name="harn_month_03">Kelen</string>
+	<string name="harn_month_04">Nolus</string>
+	<string name="harn_month_05">Larane</string>
+	<string name="harn_month_06">Agrazhar</string>
+	<string name="harn_month_07">Azura</string>
+	<string name="harn_month_08">Halane</string>
+	<string name="harn_month_09">Savor</string>
+	<string name="harn_month_10">Ilvin</string>
+	<string name="harn_month_11">Navek</string>
+	<string name="harn_month_12">Morgat</string>
 
 	<!-- Main tab - Family -->
 	<string name="harn_family">FAMILY</string>

@@ -17,4 +17,60 @@
     <icon name="emp_icon" file="graphics/frames/EMP.png" />
     <icon name="elo_icon" file="graphics/frames/ELO.png" />
     <icon name="portrait_bg" file="graphics/frames/portraitframe.png" />
+    
+    <!-- Background Frame Icons -->
+    <icon name="sunsign_icon" file="graphics/charsheet/sunsignframe.png" />
+    <icon name="birthplace_icon" file="graphics/charsheet/birthplaceframe.png" />
+
+
+    <!-- Sunsign Graphic Overlays -->
+    <icon name="sunsign_ahnu" file="graphics/charsheet/ahnu.png" />
+    <icon name="sunsign_ahnu-angberelius" file="graphics/charsheet/ahnu-angberelius.png" />
+    <icon name="sunsign_angberelius" file="graphics/charsheet/angberelius.png" />
+    <icon name="sunsign_angberelius-nadai" file="graphics/charsheet/angberelius-nadai.png" />
+    <icon name="sunsign_aralius" file="graphics/charsheet/aralius.png" />
+    <icon name="sunsign_aralius-feneri" file="graphics/charsheet/aralius-feneri.png" />
+    <icon name="sunsign_aralius-ulandus" file="graphics/charsheet/ulandus-aralius.png" />
+    <icon name="sunsign_feneri" file="graphics/charsheet/feneri.png" />
+    <icon name="sunsign_feneri-ahnu" file="graphics/charsheet/feneri-ahnu.png" />
+    <icon name="sunsign_hirin" file="graphics/charsheet/hirin.png" />
+    <icon name="sunsign_hirin-tarael" file="graphics/charsheet/hirin-tarael.png" />
+    <icon name="sunsign_lado" file="graphics/charsheet/lado.png" />
+    <icon name="sunsign_lado-ulandus" file="graphics/charsheet/lado-ulandus.png" />
+    <icon name="sunsign_masara" file="graphics/charsheet/masara.png" />
+    <icon name="sunsign_masara-lado" file="graphics/charsheet/masara-lado.png" />
+    <icon name="sunsign_nadai" file="graphics/charsheet/nadai.png" />
+    <icon name="sunsign_nadai-hirin" file="graphics/charsheet/nadai-hirin.png" />
+    <icon name="sunsign_skorus" file="graphics/charsheet/skorus.png" />
+    <icon name="sunsign_skorus-masara" file="graphics/charsheet/skorus-masara.png" />
+    <icon name="sunsign_tai" file="graphics/charsheet/tai.png" />
+    <icon name="sunsign_tai-skorus" file="graphics/charsheet/tai-skorus.png" />
+    <icon name="sunsign_tarael" file="graphics/charsheet/tarael.png" />
+    <icon name="sunsign_tarael-tai" file="graphics/charsheet/tarael-tai.png" />
+    <icon name="sunsign_ulandus" file="graphics/charsheet/ulandus.png" />
+    <icon name="sunsign_ulandus-aralius" file="graphics/charsheet/ulandus-aralius.png" />
+
+    <!-- Birthplace (Nation) Graphic Overlays -->
+    <icon name="birthplace_Altor" file="graphics/charsheet/Altor.png" />
+    <icon name="birthplace_Azeryan" file="graphics/charsheet/Azeryan.png" />
+    <icon name="birthplace_Byria" file="graphics/charsheet/Byria.png" />
+    <icon name="birthplace_Chogoro-Mafani" file="graphics/charsheet/Chogoro-Mafani.png" />
+    <icon name="birthplace_Dalkesh" file="graphics/charsheet/Dalkesh.png" />
+    <icon name="birthplace_Emelrene" file="graphics/charsheet/Emelrene.png" />
+    <icon name="birthplace_Hacherdad" file="graphics/charsheet/Hacherdad.png" />
+    <icon name="birthplace_Harbaal" file="graphics/charsheet/Harbaal.png" />
+    <icon name="birthplace_Harn" file="graphics/charsheet/Harn.png" />
+    <icon name="birthplace_Hepekeria" file="graphics/charsheet/Hepekeria.png" />
+    <icon name="birthplace_Hurisea" file="graphics/charsheet/Hurisea.png" />
+    <icon name="birthplace_Ivinia" file="graphics/charsheet/Ivinia.png" />
+    <icon name="birthplace_Karejia" file="graphics/charsheet/Karejia.png" />
+    <icon name="birthplace_Ketarh-Beshakan" file="graphics/charsheet/Ketarh-Beshakan.png" />
+    <icon name="birthplace_Northern Anzeloria" file="graphics/charsheet/northern anzeloria.png" />
+    <icon name="birthplace_Palithane" file="graphics/charsheet/Palithane.png" />
+    <icon name="birthplace_Quarphor" file="graphics/charsheet/Quarphor.png" />
+    <icon name="birthplace_Reksyna" file="graphics/charsheet/Reksyna.png" />
+    <icon name="birthplace_Shorkyne" file="graphics/charsheet/Shorkyne.png" />
+    <icon name="birthplace_Thonia" file="graphics/charsheet/Thonia.png" />
+    <icon name="birthplace_Trierzon" file="graphics/charsheet/Trierzon.png" />
+    <icon name="birthplace_Umelria" file="graphics/charsheet/Umelria.png" />
 </root>

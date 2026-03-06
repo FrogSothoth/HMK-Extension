@@ -10,6 +10,6 @@
     </framedef>
     <framedef name="groupbox">
         <bitmap file="graphics/frames/groupbox1.png" />
-        <offset>25,25,25,25</offset>
+        <offset>26,26,26,26</offset>
     </framedef>
 </root>

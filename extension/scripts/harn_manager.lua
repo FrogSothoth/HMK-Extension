@@ -59,46 +59,46 @@ local ZONE_AFFECTED_SKILLS = {
 	}
 }
 
--- Sunsign data: each entry is {startDay, endDay, sunsignName, mod1, mod2, mod3, mod4, mod5, mod6}
+-- Sunsign data: each entry is {startDay, endDay, sunsignName, fatSocial, fatLore, fatPhysical, fatNature, fatCraft, fatCombat, logo}
 -- Modifiers stored for future use
 local SUNSIGN_DATA = {
-	{1, 2, "Lado", 10, 0, -10, 10, 0, -10},
-	{2, 4, "Lado-Ulandus", 10, 0, -10, 15, 5, -5},
-	{5, 6, "Ulandus-Lado", 10, 0, -10, 15, 5, -5},
-	{7, 31, "Ulandus", 5, -5, -15, 15, 5, -5},
-	{32, 33, "Ulandus-Aralius", 5, -5, -10, 15, 10, 0},
-	{34, 35, "Aralius-Ulandus", 5, -5, -10, 15, 10, 0},
-	{36, 60, "Aralius", 0, -10, -10, 10, 10, 0},
-	{61, 62, "Aralius-Feneri", 0, -10, -5, 10, 15, 5},
-	{63, 65, "Feneri-Aralius", 0, -10, -5, 10, 15, 5},
-	{66, 91, "Feneri", -5, -15, -5, 5, 15, 5},
-	{92, 93, "Feneri-Ahnu", -5, -10, 0, 5, 15, 10},
-	{94, 95, "Ahnu-Feneri", -5, -10, 0, 5, 15, 10},
-	{96, 123, "Ahnu", -10, -10, 0, 0, 10, 10},
-	{124, 125, "Ahnu-Angberelius", -10, -5, 5, 0, 10, 15},
-	{126, 127, "Angberelius-Ahnu", -10, -5, 5, 0, 10, 15},
-	{128, 154, "Angberelius", -15, -5, 5, -5, 5, 15},
-	{155, 156, "Angberelius-Nadai", -10, 0, 10, -5, 5, 15},
-	{157, 158, "Nadai-Angberelius", -10, 0, 10, -5, 5, 15},
-	{159, 183, "Nadai", -10, 0, 10, -10, 0, 10},
-	{184, 185, "Nadai-Hirin", -5, 5, 15, -10, 0, 10},
-	{186, 187, "Hirin-Nadai", -5, 5, 15, -10, 0, 10},
-	{188, 212, "Hirin", -5, 5, 15, -15, -5, 5},
-	{213, 214, "Hirin-Tarael", 0, 10, 15, -10, -5, 5},
-	{215, 216, "Tarael-Hirin", 0, 10, 15, -10, -5, 5},
-	{217, 241, "Tarael", 0, 10, 10, -10, -10, 0},
-	{242, 243, "Tarael-Tai", 5, 15, 10, -5, -10, 0},
-	{244, 245, "Tai-Tarael", 5, 15, 10, -5, -10, 0},
-	{246, 270, "Tai", 5, 15, 5, -5, 15, -5},
-	{271, 272, "Tai-Skorus", 10, 15, 5, 0, -10, -5},
-	{273, 274, "Skorus-Tai", 10, 15, 5, 0, -10, -5},
-	{275, 300, "Skorus", 10, 10, 0, 0, -10, -10},
-	{301, 302, "Skorus-Masara", 15, 10, 0, 5, -5, -10},
-	{303, 304, "Masara-Skorus", 15, 10, 0, 5, -5, -10},
-	{305, 329, "Masara", 15, 5, -5, 5, -5, -15},
-	{330, 331, "Masara-Lado", 15, 5, -5, 10, 0, -10},
-	{332, 333, "Lado-Masara", 15, 5, -5, 10, 0, -10},
-	{334, 360, "Lado", 10, 0, -10, 10, 0, -10},
+	{1, 2, "Lado", 10, 0, -10, 10, 0, -10, "lado.png"},
+	{2, 4, "Lado-Ulandus", 10, 0, -10, 15, 5, -5, "lado-ulandus.png"},
+	{5, 6, "Ulandus-Lado", 10, 0, -10, 15, 5, -5, "lado-ulandus.png"},
+	{7, 31, "Ulandus", 5, -5, -15, 15, 5, -5, "ulandus.png"},
+	{32, 33, "Ulandus-Aralius", 5, -5, -10, 15, 10, 0, "ulandus-aralius.png"},
+	{34, 35, "Aralius-Ulandus", 5, -5, -10, 15, 10, 0, "ulandus-aralius.png"},
+	{36, 60, "Aralius", 0, -10, -10, 10, 10, 0, "aralius.png"},
+	{61, 62, "Aralius-Feneri", 0, -10, -5, 10, 15, 5, "aralius-feneri.png"},
+	{63, 65, "Feneri-Aralius", 0, -10, -5, 10, 15, 5, "aralius-feneri.png"},
+	{66, 91, "Feneri", -5, -15, -5, 5, 15, 5, "feneri.png"},
+	{92, 93, "Feneri-Ahnu", -5, -10, 0, 5, 15, 10, "feneri-ahnu.png"},
+	{94, 95, "Ahnu-Feneri", -5, -10, 0, 5, 15, 10, "feneri-ahnu.png"},
+	{96, 123, "Ahnu", -10, -10, 0, 0, 10, 10, "ahnu.png"},
+	{124, 125, "Ahnu-Angberelius", -10, -5, 5, 0, 10, 15, "ahnu-angberelius.png"},
+	{126, 127, "Angberelius-Ahnu", -10, -5, 5, 0, 10, 15, "ahnu-angberelius.png"},
+	{128, 154, "Angberelius", -15, -5, 5, -5, 5, 15, "angberelius.png"},
+	{155, 156, "Angberelius-Nadai", -10, 0, 10, -5, 5, 15, "angberelius-nadai.png"},
+	{157, 158, "Nadai-Angberelius", -10, 0, 10, -5, 5, 15, "angberelius-nadai.png"},
+	{159, 183, "Nadai", -10, 0, 10, -10, 0, 10, "nadai.png"},
+	{184, 185, "Nadai-Hirin", -5, 5, 15, -10, 0, 10, "nadai-hirin.png"},
+	{186, 187, "Hirin-Nadai", -5, 5, 15, -10, 0, 10, "nadai-hirin.png"},
+	{188, 212, "Hirin", -5, 5, 15, -15, -5, 5, "hirin.png"},	
+	{213, 214, "Hirin-Tarael", 0, 10, 15, -10, -5, 5, "hirin-tarael.png"},
+	{215, 216, "Tarael-Hirin", 0, 10, 15, -10, -5, 5, "hirin-tarael.png"},
+	{217, 241, "Tarael", 0, 10, 10, -10, -10, 0, "tarael.png"},
+	{242, 243, "Tarael-Tai", 5, 15, 10, -5, -10, 0, "tarael-tai.png"},
+	{244, 245, "Tai-Tarael", 5, 15, 10, -5, -10, 0, "tarael-tai.png"},
+	{246, 270, "Tai", 5, 15, 5, -5, 15, -5, "tai.png"},
+	{271, 272, "Tai-Skorus", 10, 15, 5, 0, -10, -5, "tai-skorus.png"},
+	{273, 274, "Skorus-Tai", 10, 15, 5, 0, -10, -5, "tai-skorus.png"},
+	{275, 300, "Skorus", 10, 10, 0, 0, -10, -10, "skorus.png"},
+	{301, 302, "Skorus-Masara", 15, 10, 0, 5, -5, -10, "skorus-masara.png"},
+	{303, 304, "Masara-Skorus", 15, 10, 0, 5, -5, -10, "skorus-masara.png"},
+	{305, 329, "Masara", 15, 5, -5, 5, -5, -15, "masara.png"},
+	{330, 331, "Masara-Lado", 15, 5, -5, 10, 0, -10, "masara-lado.png"},
+	{332, 333, "Lado-Masara", 15, 5, -5, 10, 0, -10, "masara-lado.png"},
+	{334, 360, "Lado", 10, 0, -10, 10, 0, -10, "lado.png"},
 }
 
 -- Morality descriptors by score range
@@ -118,6 +118,15 @@ local WEALTH_DATA = {
 	{ min = 10, max = 19, text = "Comfortable" },
 	{ min = 20, max = 49, text = "Affluent" },
 	{ min = 50, max = 1000, text = "Ostentatious" },
+}
+
+-- Estrangement descriptors by score range
+local ESTRANGEMENT_DATA = {
+	{ min = 1, max = 10, text = "Outcast" },
+	{ min = 11, max = 40, text = "Unpopular" },
+	{ min = 41, max = 60, text = "Accepted" },
+	{ min = 61, max = 95, text = "Popular" },
+	{ min = 96, max = 100, text = "Favourite" },
 }
 
 -- Look up morality descriptor by score
@@ -154,6 +163,23 @@ function getWealthDescriptor(nScore)
 	return ""
 end
 
+-- Look up estrangement descriptor by score
+function getEstrangementDescriptor(nScore)
+	local nVal = tonumber(nScore)
+	if not nVal or nVal < 1 then return "" end
+	
+	for _, entry in ipairs(ESTRANGEMENT_DATA) do
+		if nVal >= entry.min and nVal <= entry.max then
+			return entry.text
+		end
+	end
+	
+	-- Fallback for values > 100
+	if nVal > 100 then return "Favourite" end
+	
+	return ""
+end
+
 -- Get month number from name
 function getMonthValue(sMonthName)
 	return MONTH_VALUES[sMonthName] or 0
@@ -168,14 +194,14 @@ function calculateDayOfYear(nMonth, nDay)
 end
 
 -- Look up sunsign data by day of year
--- Returns: sunsignName, mod1, mod2, mod3, mod4, mod5, mod6
+-- Returns: sunsignName, mod1, mod2, mod3, mod4, mod5, mod6, logo
 function getSunsignData(nDayOfYear)
 	for _, entry in ipairs(SUNSIGN_DATA) do
 		if nDayOfYear >= entry[1] and nDayOfYear <= entry[2] then
-			return entry[3], entry[4], entry[5], entry[6], entry[7], entry[8], entry[9]
+			return entry[3], entry[4], entry[5], entry[6], entry[7], entry[8], entry[9], entry[10]
 		end
 	end
-	return "Unknown", 0, 0, 0, 0, 0, 0
+	return "Unknown", 0, 0, 0, 0, 0, 0, ""
 end
 
 -- Look up sunsign modifiers by name
@@ -189,16 +215,16 @@ function getSunsignModifiers(sSunsign)
 	return { 0, 0, 0, 0, 0, 0 }
 end
 
--- Get just the sunsign name from month name and day
+-- Get sunsign name and logo from month name and day
 function getSunsign(sMonthName, nDay)
 	local nMonth = getMonthValue(sMonthName)
-	if nMonth == 0 then return "" end
+	if nMonth == 0 then return "", "" end
 
 	local nDayOfYear = calculateDayOfYear(nMonth, nDay)
-	if nDayOfYear == 0 then return "" end
+	if nDayOfYear == 0 then return "", "" end
 
-	local sSunsign = getSunsignData(nDayOfYear)
-	return sSunsign
+	local sSunsign, _, _, _, _, _, _, sLogo = getSunsignData(nDayOfYear)
+	return sSunsign, sLogo
 end
 
 -- Update the first-created "Language" skill entry found on the character sheet

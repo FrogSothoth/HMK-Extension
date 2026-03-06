@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root>
+	<!--
+		HarnMaster Background Tab
+		Repurposed from Attributes Tab
+	-->
+
+	<windowclass name="harn_tab_background">
+		<script>
+			function onInit()
+				updateSunsign();
+				populateNations();
+				updateRealms();
+				updateBirthplaceIcon();
+			end
+
+			function populateNations()
+				birth_place.clear();
+				birth_place.add("");
+				
+				if BirthData and BirthData.Nations then
+					local aNations = {};
+					for sNation, _ in pairs(BirthData.Nations) do
+						table.insert(aNations, sNation);
+					end
+					table.sort(aNations);
+					for _, sNation in ipairs(aNations) do
+						birth_place.add(sNation);
+					end
+				end
+			end
+
+			function updateBirthplaceIcon()
+				local sNation = birth_place.getValue();
+				if sNation ~= "" then
+					birthplace_graphic.setIcon("birthplace_" .. sNation);
+				else
+					birthplace_graphic.setIcon("");
+				end
+			end
+
+			function updateSunsign()
+				local nDay = birth_day.getValue();
+				local sMonth = birth_month.getValue();
+				
+				if nDay > 0 and sMonth ~= "" then
+					local sSign, sLogo = HarnManager.getSunsign(sMonth, nDay);
+					birth_sunsign.setValue(sSign);
+					if sLogo ~= "" then
+						local sIcon = "sunsign_" .. sLogo:gsub("%.png", "");
+						sunsign_graphic.setIcon(sIcon);
+					else
+						sunsign_graphic.setIcon("");
+					end
+				else
+					birth_sunsign.setValue("");
+					sunsign_graphic.setIcon("");
+				end
+			end
+
+			function updateSociety()
+				local sNation = birth_place.getValue();
+				local sRealm = birth_realm.getValue();
+				
+				if sNation ~= "" and sRealm ~= "" then
+					if BirthData and BirthData.Nations and BirthData.Nations[sNation] and BirthData.Nations[sNation][sRealm] then
+						local sSoc = BirthData.Nations[sNation][sRealm].society or "";
+						society.setValue(sSoc);
+					end
+				end
+			end
+
+			function updateRealms()
+				local sNation = birth_place.getValue();
+				birth_realm.clear();
+				birth_realm.add("");
+				
+				if sNation ~= "" and BirthData and BirthData.Nations and BirthData.Nations[sNation] then
+					local aRealms = {};
+					for sRealm, _ in pairs(BirthData.Nations[sNation]) do
+						table.insert(aRealms, sRealm);
+					end
+					table.sort(aRealms);
+					for _, sRealm in ipairs(aRealms) do
+						birth_realm.add(sRealm);
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<!-- Standard anchors to satisfy internal template logic -->
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" offset="0,0" width="0" height="0" />
+			</genericcontrol>
+			<genericcontrol name="rightanchor">
+				<anchored position="insidetopright" offset="0,0" width="0" height="0" />
+			</genericcontrol>
+
+			<!-- Sunsign Icon -->
+			<genericcontrol name="sunsign_icon_frame">
+				<anchored position="insidetopleft" offset="110,-40" width="135" height="230" />
+				<icon>sunsign_icon</icon>
+			</genericcontrol>
+
+			<!-- Birthplace Icon -->
+			<genericcontrol name="birthplace_icon_frame">
+				<anchored position="insidetopright" offset="90,-45" width="175" height="245" />
+				<icon>birthplace_icon</icon>
+			</genericcontrol>
+
+			<!-- Icon Overlays -->
+			<genericcontrol name="sunsign_graphic">
+				<anchored to="sunsign_icon_frame" position="over" />
+			</genericcontrol>
+			<genericcontrol name="birthplace_graphic">
+				<anchored to="birthplace_icon_frame" position="over" />
+			</genericcontrol>
+
+			<!-- Birth Groupbox -->
+			<genericcontrol name="birth_box">
+				<anchored width="250" height="195">
+					<top parent="sunsign_icon_frame" anchor="bottom" offset="-35" />
+					<left offset="50" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="birth_title">
+				<anchored to="birth_box" position="insidetop" offset="0,10" width="101" height="20" />
+				<static>BIRTH</static>
+				<font>harn_label_18_bold</font>
+				<center />
+			</label>
+
+			<!-- FOLK -->
+			<label name="folk_label">
+				<anchored to="birth_box" position="insidetopleft" offset="20,50" width="100" height="20" />
+				<static>FOLK:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="folk">
+				<anchored to="folk_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- AGE GROUP -->
+			<label name="agegroup_label">
+				<anchored to="folk_label" position="belowleft" offset="0,5" width="100" height="20" />
+				<static>AGE GROUP:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<combobox name="birth_age_group">
+				<anchored to="agegroup_label" position="right" offset="8,0" width="95" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxheight>100</listmaxheight>
+				<script>
+					function onInit()
+						super.onInit();
+						add("");
+						add(Interface.getString("harn_young"));
+						add(Interface.getString("harn_mature"));
+						add(Interface.getString("harn_old"));
+					end
+				</script>
+			</combobox>
+
+			<!-- BIRTHDATE -->
+			<label name="birthdate_label">
+				<anchored to="agegroup_label" position="belowleft" offset="0,5" width="100" height="20" />
+				<static>BIRTHDATE:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="birth_day">
+				<anchored to="birthdate_label" position="right" offset="5,0" width="28" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						local val = getValue();
+						if val &lt; 1 then
+							setValue(0);
+						elseif val &gt; 30 then
+							setValue(30);
+						end
+						window.updateSunsign();
+					end
+				</script>
+			</numberfield>
+			<combobox name="birth_month">
+				<anchored to="birth_day" position="right" offset="5,0" width="65" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxheight>240</listmaxheight>
+				<script>
+					function onInit()
+						super.onInit();
+						add("");
+						add(Interface.getString("harn_month_01"));
+						add(Interface.getString("harn_month_02"));
+						add(Interface.getString("harn_month_03"));
+						add(Interface.getString("harn_month_04"));
+						add(Interface.getString("harn_month_05"));
+						add(Interface.getString("harn_month_06"));
+						add(Interface.getString("harn_month_07"));
+						add(Interface.getString("harn_month_08"));
+						add(Interface.getString("harn_month_09"));
+						add(Interface.getString("harn_month_10"));
+						add(Interface.getString("harn_month_11"));
+						add(Interface.getString("harn_month_12"));
+					end
+					function onValueChanged()
+						window.updateSunsign();
+					end
+				</script>
+			</combobox>
+
+			<!-- SUNSIGN -->
+			<label name="sunsign_label">
+				<anchored to="birthdate_label" position="belowleft" offset="0,5" width="100" height="20" />
+				<static>SUNSIGN:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="birth_sunsign">
+				<anchored to="sunsign_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<!-- frame name="fielddark" offset="7,5,7,5" / -->
+				<readonly />
+			</stringfield>
+
+			<!-- TRAIT -->
+			<label name="trait_label">
+				<anchored to="sunsign_label" position="belowleft" offset="0,5" width="100" height="20" />
+				<static>TRAIT:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="trait">
+				<anchored to="trait_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+
+			<!-- Family Groupbox -->
+			<genericcontrol name="family_box">
+				<anchored width="250" height="195">
+					<top parent="birth_box" anchor="bottom" offset="10" />
+					<left offset="50" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="family_title">
+				<anchored to="family_box" position="insidetop" offset="0,10" width="101" height="20" />
+				<static>FAMILY</static>
+				<font>harn_label_18_bold</font>
+				<center />
+			</label>
+
+			<!-- SOCIAL CLASS -->
+			<label name="socialclass_label">
+				<anchored to="family_box" position="insidetopleft" offset="15,50" width="115" height="20" />
+				<static>CLASS:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="social_class">
+				<anchored to="socialclass_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- FAMILY OCCUPATION -->
+			<label name="familyoccupation_label">
+				<anchored to="socialclass_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<static>OCCUPATION:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="family_occupation">
+				<anchored to="familyoccupation_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- FAMILY BACKGROUND -->
+			<label name="familybackground_label">
+				<anchored to="familyoccupation_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<static>BACKGROUND:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<combobox name="family_background">
+				<anchored to="familybackground_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxheight>100</listmaxheight>
+				<script>
+					function onInit()
+						super.onInit();
+						add("");
+						add("Rural");
+						add("Rural-Wilderness");
+						add("Urban");
+						add("Urban-City");
+					end
+				</script>
+			</combobox>
+
+			<!-- FAMILY ESTRANGEMENT -->
+			<label name="familyestrangement_label">
+				<anchored to="familybackground_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<static>ESTRANGEMENT:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="family_estrangement_score">
+				<anchored to="familyestrangement_label" position="right" offset="5,0" width="20" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onInit()
+						onValueChanged()
+					end
+					function onValueChanged()
+						local nScore = getValue()
+						local sDescriptor = HarnManager.getEstrangementDescriptor(nScore)
+						window.family_estrangement_descriptor.setValue(sDescriptor)
+					end
+				</script>
+			</stringfield>
+			<stringcontrol name="family_estrangement_descriptor">
+				<anchored to="family_estrangement_score" position="right" offset="10,0" width="71" height="20" />
+				<font>sheettext</font>
+				<readonly />
+			</stringcontrol>
+
+			<!-- FAMILY PANTHEON -->
+			<label name="familypantheon_label">
+				<anchored to="familyestrangement_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<static>PANTHEON:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="family_pantheon">
+				<anchored to="familypantheon_label" position="right" offset="5,0" width="101" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- Locale Groupbox -->
+			<genericcontrol name="locale_box">
+				<anchored width="250" height="195">
+					<top parent="birthplace_icon_frame" anchor="bottom" offset="-45" />
+					<right offset="-45" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="locale_title">
+				<anchored to="locale_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static>LOCATION</static>
+				<font>harn_label_18_bold</font>
+				<center />
+			</label>
+
+			<!-- BIRTHPLACE -->
+			<label name="birthplace_label">
+				<anchored to="locale_box" position="insidetopleft" offset="20,50" width="90" height="20" />
+				<static>BIRTHPLACE:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<combobox name="birth_place">
+				<anchored to="birthplace_label" position="right" offset="5,0" width="115" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<listmaxsize>8</listmaxsize>
+				<script>
+					function onValueChanged()
+						window.updateRealms();
+						window.updateBirthplaceIcon();
+					end
+				</script>
+			</combobox>
+
+			<!-- REALM -->
+			<label name="realm_label">
+				<anchored to="birthplace_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<static>REALM:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<combobox name="birth_realm">
+				<anchored to="realm_label" position="right" offset="5,0" width="115" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<unsorted />
+				<listmaxsize>8</listmaxsize>
+				<script>
+					function onValueChanged()
+						window.updateSociety();
+					end
+				</script>
+			</combobox>
+
+			<!-- SITE -->
+			<label name="site_label">
+				<anchored to="realm_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<static>SITE:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="birth_site">
+				<anchored to="site_label" position="right" offset="5,0" width="115" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- SOCIETY -->
+			<label name="society_label">
+				<anchored to="site_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<static>SOCIETY:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="society">
+				<anchored to="society_label" position="right" offset="5,0" width="115" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+		</sheetdata>
+	</windowclass>
+</root>

@@ -46,7 +46,7 @@
 			<label name="physical_label">
 				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
 				<static>PHYSICAL</static>
-				<font>harn_label_24_bold</font>
+				<font>harn_label_18_bold</font>
 				<center />
 			</label>
 
