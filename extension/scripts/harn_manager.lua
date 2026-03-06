@@ -101,6 +101,59 @@ local SUNSIGN_DATA = {
 	{334, 360, "Lado", 10, 0, -10, 10, 0, -10},
 }
 
+-- Morality descriptors by score range
+local MORALITY_DATA = {
+	{ min = 1, max = 4, text = "Diabolical" },
+	{ min = 5, max = 7, text = "Unscrupulous" },
+	{ min = 8, max = 10, text = "Corruptible" },
+	{ min = 11, max = 13, text = "Dutiful" },
+	{ min = 14, max = 16, text = "Principled" },
+	{ min = 17, max = 100, text = "Exemplary" },
+}
+
+-- Wealth descriptors by score range
+local WEALTH_DATA = {
+	{ min = 0, max = 4, text = "Poor" },
+	{ min = 5, max = 9, text = "Meagre" },
+	{ min = 10, max = 19, text = "Comfortable" },
+	{ min = 20, max = 49, text = "Affluent" },
+	{ min = 50, max = 1000, text = "Ostentatious" },
+}
+
+-- Look up morality descriptor by score
+function getMoralityDescriptor(nScore)
+	local nVal = tonumber(nScore)
+	if not nVal or nVal < 1 then return "" end
+	
+	for _, entry in ipairs(MORALITY_DATA) do
+		if nVal >= entry.min and nVal <= entry.max then
+			return entry.text
+		end
+	end
+	
+	-- Fallback for values > 100
+	if nVal > 100 then return "Exemplary" end
+	
+	return ""
+end
+
+-- Look up wealth descriptor by score
+function getWealthDescriptor(nScore)
+	local nVal = tonumber(nScore)
+	if not nVal or nVal < 0 then return "" end
+	
+	for _, entry in ipairs(WEALTH_DATA) do
+		if nVal >= entry.min and nVal <= entry.max then
+			return entry.text
+		end
+	end
+	
+	-- Fallback for values > 1000
+	if nVal > 1000 then return "Ostentatious" end
+	
+	return ""
+end
+
 -- Get month number from name
 function getMonthValue(sMonthName)
 	return MONTH_VALUES[sMonthName] or 0

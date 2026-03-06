@@ -18,7 +18,7 @@
 			<!-- Status Icon Row (Fixed Positioning) -->
 			<!-- FAT and MOV are fixed at the margins -->
 			<genericcontrol name="fat_frame">
-				<anchored position="insidetopleft" offset="60,0" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,250" width="45" height="56" />
 				<icon>fat_icon</icon>
 				<tooltip text="Fate" />
 			</genericcontrol>
@@ -38,9 +38,21 @@
 				<hideonzero />
 			</numberfield>
 
+			<!-- PHYSICAL GROUP BOX -->
+			<genericcontrol name="physical_group_box">
+				<anchored position="insidetopleft" offset="50,10" width="135" height="230" />
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="physical_label">
+				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static>PHYSICAL</static>
+				<font>harn_label_24_bold</font>
+				<center />
+			</label>
+
 			<!-- STR Box -->
 			<genericcontrol name="str_frame">
-				<anchored position="insidetopleft" offset="60,71" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,35" width="45" height="56" />
 				<icon>str_icon</icon>
 				<tooltip text="Strength" />
 			</genericcontrol>
@@ -61,7 +73,7 @@
 
 			<!-- END Box -->
 			<genericcontrol name="end_frame">
-				<anchored position="insidetopleft" offset="130,71" width="45" height="56" />
+				<anchored position="insidetopleft" offset="130,35" width="45" height="56" />
 				<icon>end_icon</icon>
 				<tooltip text="Endurance" />
 			</genericcontrol>
@@ -82,7 +94,7 @@
 
 			<!-- AGL Box -->
 			<genericcontrol name="agl_frame">
-				<anchored position="insidetopleft" offset="60,142" width="45" height="56" />
+				<anchored position="insidetopleft" offset="130,106" width="45" height="56" />
 				<icon>agl_icon</icon>
 				<tooltip text="Agility" />
 			</genericcontrol>
@@ -103,7 +115,7 @@
 
 			<!-- DEX Box -->
 			<genericcontrol name="dex_frame">
-				<anchored position="insidetopleft" offset="130,142" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,106" width="45" height="56" />
 				<icon>dex_icon</icon>
 				<tooltip text="Dexterity" />
 			</genericcontrol>
@@ -125,7 +137,7 @@
 
 			<!-- PER Box -->
 			<genericcontrol name="per_frame">
-				<anchored position="insidetopleft" offset="60,214" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,178" width="45" height="56" />
 				<icon>per_icon</icon>
 				<tooltip text="Perception" />
 			</genericcontrol>
@@ -146,7 +158,7 @@
 
 			<!-- CML Box -->
 			<genericcontrol name="cml_frame">
-				<anchored position="insidetopleft" offset="130,214" width="45" height="56" />
+				<anchored position="insidetopleft" offset="130,178" width="45" height="56" />
 				<icon>cml_icon</icon>
 				<tooltip text="Comeliness" />
 			</genericcontrol>
@@ -165,9 +177,21 @@
 				<nodrag />
 				</numberfield>
 			
+			<!-- MENTAL GROUP BOX -->
+			<genericcontrol name="mental_group_box">
+				<anchored position="insidetopright" offset="50,10" width="135" height="230" />
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="mental_label">
+				<anchored to="mental_group_box" position="insidetop" offset="10,10" width="100" height="20" />
+				<static>MENTAL</static>
+				<font>harn_label_18_bold</font>
+				<center />
+			</label>
+
 			<!-- WIL Box -->
 			<genericcontrol name="wil_frame">
-				<anchored position="insidetopright" offset="60,71" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,35" width="45" height="56" />
 				<icon>wil_icon</icon>
 				<tooltip text="Willpower" />
 			</genericcontrol>
@@ -188,7 +212,7 @@
 
 			<!-- AUR Box -->
 			<genericcontrol name="aur_frame">
-				<anchored position="insidetopright" offset="130,71" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,35" width="45" height="56" />
 				<icon>aur_icon</icon>
 				<tooltip text="Aura" />
 			</genericcontrol>
@@ -209,7 +233,7 @@
 
 			<!-- REA Box -->
 			<genericcontrol name="rea_frame">
-				<anchored position="insidetopright" offset="60,142" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,106" width="45" height="56" />
 				<icon>rea_icon</icon>
 				<tooltip text="Ready" />
 			</genericcontrol>
@@ -230,7 +254,7 @@
 
 			<!-- CRE Box -->
 			<genericcontrol name="cre_frame">
-				<anchored position="insidetopright" offset="130,142" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,106" width="45" height="56" />
 				<icon>cre_icon</icon>
 				<tooltip text="Creativity" />
 			</genericcontrol>
@@ -251,7 +275,7 @@
 
 			<!-- EMP Box -->
 			<genericcontrol name="emp_frame">
-				<anchored position="insidetopright" offset="60,214" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,178" width="45" height="56" />
 				<icon>emp_icon</icon>
 				<tooltip text="Empathy" />
 			</genericcontrol>
@@ -272,7 +296,7 @@
 
 			<!-- ELO Box -->
 			<genericcontrol name="elo_frame">
-				<anchored position="insidetopright" offset="130,214" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,178" width="45" height="56" />
 				<icon>elo_icon</icon>
 				<tooltip text="Eloquence" />
 			</genericcontrol>
@@ -314,7 +338,7 @@
 			</numberfield>
 
 			<genericcontrol name="mov_frame">
-				<anchored position="insidetopright" offset="60,0" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,250" width="45" height="56" />
 				<icon>mov_icon</icon>
 				<tooltip text="Movement" />
 			</genericcontrol>
@@ -360,7 +384,7 @@
 			<!-- Character Portrait Area (dynamically centered) -->
 			<genericcontrol name="portrait_background">
 				<anchored height="245" width="175">
-					<top offset="50" />
+					<top offset="0" />
 					<left anchor="center" offset="-87" />
 				</anchored>
 				<icon>portrait_bg</icon>
@@ -369,7 +393,7 @@
 			<!-- Portrait (tokenfield with drawmode=fit renders raw asset at full size) -->
 			<tokenfield name="portrait">
 				<anchored height="210" width="140">
-					<top offset="67" />
+					<top offset="17" />
 					<left anchor="center" offset="-70" />
 				</anchored>
 				<drawmode>fit</drawmode>
@@ -378,7 +402,7 @@
 
 			<!-- Appearance Box -->
 			<genericcontrol name="appearance_box">
-				<anchored width="225" height="190">
+				<anchored width="225" height="250">
 					<top offset="310" />
 					<left parent="leftanchor" offset="60" />
 				</anchored>
@@ -469,7 +493,7 @@
 
 			<!-- Notes Box -->
 			<genericcontrol name="notes_box">
-				<anchored width="225" height="190">
+				<anchored width="225" height="250">
 					<top offset="310" />
 					<right parent="rightanchor" offset="-60" />
 				</anchored>
@@ -486,7 +510,23 @@
 				<anchored to="morality_label" position="right" offset="5,0" width="20" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onInit()
+						onValueChanged()
+					end
+					function onValueChanged()
+						local nScore = getValue()
+						local sDescriptor = HarnManager.getMoralityDescriptor(nScore)
+						window.mor_descriptor.setValue(sDescriptor)
+					end
+				</script>
 			</stringfield>
+
+			<stringcontrol name="mor_descriptor">
+				<anchored to="mor_score" position="right" offset="10,0" width="100" height="20" />
+				<font>sheettext</font>
+				<readonly />
+			</stringcontrol>
 
 			<!-- Wealth -->
 			<label name="wealth_label">
@@ -498,7 +538,23 @@
 				<anchored to="wealth_label" position="right" offset="5,0" width="20" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onInit()
+						onValueChanged()
+					end
+					function onValueChanged()
+						local nScore = getValue()
+						local sDescriptor = HarnManager.getWealthDescriptor(nScore)
+						window.wealth_descriptor.setValue(sDescriptor)
+					end
+				</script>
 			</stringfield>
+
+			<stringcontrol name="wealth_descriptor">
+				<anchored to="wealth_score" position="right" offset="10,0" width="100" height="20" />
+				<font>sheettext</font>
+				<readonly />
+			</stringcontrol>
 
 			<!-- Notes -->
 			<label name="notes_label">
@@ -507,10 +563,15 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="notes">
-				<anchored to="notes_label" position="right" offset="5,0" width="105" height="120" />
+				<anchored to="notes_label" position="belowleft" offset="0,5" width="185" height="130" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
+				<multilinespacing>20</multilinespacing>
 			</stringfield>
+			<scrollbar_list>
+				<anchored to="notes" />
+				<target>notes</target>
+			</scrollbar_list>
 		</sheetdata>
 	</windowclass>
 </root>
