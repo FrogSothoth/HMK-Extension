@@ -14,16 +14,10 @@
 		<margins control="0,0,0,2" />
 		<script>
 			function onInit()
-				-- Check if this skill needs special attribute display (e.g., Singing needs VOI)
-				local sName = DB.getValue(getDatabaseNode(), "name", "");
-				Debug.console("harn_skill_entry.onInit: " .. sName);
-				updateSpecialFields(sName);
-
-				-- Add handlers for name and language updates
+				-- Add handlers for name update
 				local node = getDatabaseNode();
 				if node then
 					DB.addHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
-					DB.addHandler(node.getPath() .. ".language", "onUpdate", onLanguageUpdate);
 				end
 			end
 
@@ -31,83 +25,16 @@
 				local node = getDatabaseNode();
 				if node then
 					DB.removeHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
-					DB.removeHandler(node.getPath() .. ".language", "onUpdate", onLanguageUpdate);
 				end
 			end
 
 			function onNameUpdate()
-				local sName = DB.getValue(getDatabaseNode(), "name", "");
-				updateSpecialFields(sName);
-			end
-
-			function onLanguageUpdate()
-				-- Force text update on lang_value by resetting its value from DB
-				local sLang = DB.getValue(getDatabaseNode(), "language", "");
-				lang_value.setValue(sLang);
-			end
-
-			function updateSpecialFields(sName)
-				Debug.console("updateSpecialFields called with: '" .. tostring(sName) .. "'");
-
-				-- Hide all special fields first
-				voi_label.setVisible(false);
-				voi_value.setVisible(false);
-				lang_label.setVisible(false);
-				lang_value.setVisible(false);
-				deity_label.setVisible(false);
-				deity_value.setVisible(false);
-				type_label.setVisible(false);
-				type_value.setVisible(false);
-				instrument_label.setVisible(false);
-				instrument_value.setVisible(false);
-				style_label.setVisible(false);
-				style_value.setVisible(false);
-
-				-- Show VOI field for Singing skill
-				if sName == "Singing" then
-					Debug.console("Showing VOI field for Singing");
-					voi_label.setVisible(true);
-					voi_value.setVisible(true);
-					-- Get character node and load VOI score
-					local nodeSkill = getDatabaseNode();
-					if nodeSkill then
-						local nodeChar = nodeSkill.getParent().getParent();
-						if nodeChar then
-							local nVOI = DB.getValue(nodeChar, "voi_score", 0);
-							voi_value.setValue(nVOI);
-						end
-					end
-				-- Show Lang field for Language skill (matches "Language" or "Language: X")
-				elseif sName == "Language" or string.sub(sName, 1, 10) == "Language: " then
-					Debug.console("Showing Lang field for Language skill");
-					lang_label.setVisible(true);
-					lang_value.setVisible(true);
-				-- Show Deity field for Ritual skill (matches "Ritual" or "Ritual: X")
-				elseif sName == "Ritual" or string.sub(sName, 1, 8) == "Ritual: " then
-					Debug.console("Showing Deity field for Ritual skill");
-					deity_label.setVisible(true);
-					deity_value.setVisible(true);
-				-- Show Type field for Script skill (matches "Script" or "Script: X")
-				elseif sName == "Script" or string.sub(sName, 1, 8) == "Script: " then
-					Debug.console("Showing Type field for Script skill");
-					type_label.setVisible(true);
-					type_value.setVisible(true);
-				-- Show Instrument field for Musician skill (matches "Musician" or "Musician: X")
-				elseif sName == "Musician" or string.sub(sName, 1, 10) == "Musician: " then
-					Debug.console("Showing Instrument field for Musician skill");
-					instrument_label.setVisible(true);
-					instrument_value.setVisible(true);
-				-- Show Style field for Shipwright skill (matches "Shipwright" or "Shipwright: X")
-				elseif sName == "Shipwright" or string.sub(sName, 1, 12) == "Shipwright: " then
-					Debug.console("Showing Style field for Shipwright skill");
-					style_label.setVisible(true);
-					style_value.setVisible(true);
-				end
+				-- Name updates are now handled by standard DB triggers if needed
 			end
 		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="85" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
 					function onLoseFocus()
@@ -166,8 +93,6 @@
 									else
 										Debug.console("ERROR: Could not get database node");
 									end
-									-- Update special field visibility based on skill name
-									window.updateSpecialFields(sName);
 									return;
 								end
 							end
@@ -175,30 +100,25 @@
 						else
 							Debug.console("ERROR: harnmaster.skills node not found");
 						end
-
-						-- Update special field visibility for manually entered skill names
-						window.updateSpecialFields(sName);
 					end
 				</script>
 			</stringfield>
 			<stringfield name="att1">
-				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored to="name" position="righthigh" offset="6,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att1</source>
 			</stringfield>
 			<stringfield name="att2">
-				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored to="att1" position="righthigh" offset="3,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att2</source>
 			</stringfield>
 			<numberfield name="sm">
-				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
+				<anchored to="name" position="righthigh" offset="53,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -206,127 +126,20 @@
 				<source>sm</source>
 			</numberfield>
 			<numberfield name="sb">
-				<anchored position="insidetopleft" offset="225,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="sm" position="righthigh" offset="3,0" width="25" height="20" />
 				<font>sheettext</font>
 				<center />
 				<readonly />
 				<source>sb</source>
 			</numberfield>
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="260,0" width="35" height="20" />
+				<anchored to="sm" position="righthigh" offset="30,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
 				<source>ml</source>
 			</numberfield>
 
-			<!-- Special attribute fields (hidden by default, shown for specific skills) -->
-			<label name="voi_label">
-				<anchored position="insidetopleft" offset="305,0" width="30" height="20" />
-				<static>VOI</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<numberfield name="voi_value">
-				<anchored position="insidetopleft" offset="335,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<center />
-				<invisible />
-				<script>
-					function onValueChanged()
-						-- Save VOI back to character's voi_score
-						local nodeSkill = window.getDatabaseNode();
-						if nodeSkill then
-							local nodeChar = nodeSkill.getParent().getParent();
-							if nodeChar then
-								DB.setValue(nodeChar, "voi_score", "number", getValue());
-							end
-						end
-					end
-				</script>
-			</numberfield>
-
-			<!-- Lang field for Language skill (stores on skill node) -->
-			<label name="lang_label">
-				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
-				<static>Lang</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<stringfield name="lang_value">
-				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<maxchars>15</maxchars>
-				<source>language</source>
-				<invisible />
-			</stringfield>
-
-			<!-- Deity field for Ritual skill (stores on skill node) -->
-			<label name="deity_label">
-				<anchored position="insidetopleft" offset="305,0" width="40" height="20" />
-				<static>Deity</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<stringfield name="deity_value">
-				<anchored position="insidetopleft" offset="345,0" width="100" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<maxchars>15</maxchars>
-				<source>deity</source>
-				<invisible />
-			</stringfield>
-
-			<!-- Type field for Script skill (stores on skill node) -->
-			<label name="type_label">
-				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
-				<static>Type</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<stringfield name="type_value">
-				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<maxchars>15</maxchars>
-				<source>scripttype</source>
-				<invisible />
-			</stringfield>
-
-			<!-- Instrument field for Musician skill (stores on skill node) -->
-			<label name="instrument_label">
-				<anchored position="insidetopleft" offset="305,0" width="60" height="20" />
-				<static>Instrument</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<stringfield name="instrument_value">
-				<anchored position="insidetopleft" offset="370,0" width="100" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<maxchars>15</maxchars>
-				<source>instrument</source>
-				<invisible />
-			</stringfield>
-
-			<!-- Style field for Shipwright skill (stores on skill node) -->
-			<label name="style_label">
-				<anchored position="insidetopleft" offset="305,0" width="35" height="20" />
-				<static>Style</static>
-				<font>sheetlabel</font>
-				<invisible />
-			</label>
-			<stringfield name="style_value">
-				<anchored position="insidetopleft" offset="340,0" width="100" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
-				<maxchars>15</maxchars>
-				<source>style</source>
-				<invisible />
-			</stringfield>
 		</sheetdata>
 	</windowclass>
 
@@ -349,37 +162,37 @@
 			<label name="h_skill">
 				<anchored height="20">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
+					<left offset="5" />
 				</anchored>
 				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
-			<label name="h_att1">
-				<anchored to="h_skill" position="righthigh" offset="5,0" width="35" height="20" />
+			<!-- <label name="h_att1">
+				<anchored to="h_skill" position="righthigh" offset="5,0" width="15" height="20" />
 				<static>ATT1</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_att2">
-				<anchored to="h_att1" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="h_att1" position="righthigh" offset="5,0" width="15" height="20" />
 				<static>ATT2</static>
 				<font>sheetlabel</font>
 				<center />
-			</label>
+			</label> -->
 			<label name="h_sm">
-				<anchored to="h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_sb">
-				<anchored to="h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_ml">
-				<anchored to="h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
@@ -414,7 +227,11 @@
 			end
 
 			function onRefresh()
-				Debug.console("harn_tab_skills.onRefresh called");
+				local nodeChar = getDatabaseNode();
+				if nodeChar and SkillsManager and SkillsManager.recalculateAllSB then
+					SkillsManager.recalculateAllSB(nodeChar);
+				end
+
 				-- Iterate through all skill lists and force entries to update their special fields
 				local tLists = { socialskills, loreskills, physicalskills, natureskills, craftskills, combatskills };
 				for _, list in ipairs(tLists) do
@@ -585,413 +402,359 @@
 			<!-- Use anchor_column for vertical flow -->
 			<anchor_column name="columnanchor" />
 
-			<!-- SOCIAL Skills -->
+			<!-- SOCIAL Skills Group Box -->
+			<genericcontrol name="social_group_box">
+				<anchored width="275" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
 			<label name="social_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
+				<anchored to="social_group_box" position="insidetop" offset="0,10" width="100" height="20" />
 				<static textres="harn_skill_social" />
-				<font>sheetlabel</font>
+				<font>harn_group</font>
 				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
+
+			<button_iadd name="socialskills_iadd">
+				<anchored to="social_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>socialskills</target>
+			</button_iadd>
+
 			<label name="social_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="social_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="social_h_att1">
-				<anchored to="social_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="social_h_att2">
-				<anchored to="social_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="social_h_sm">
-				<anchored to="social_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="social_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="social_h_sb">
-				<anchored to="social_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="social_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="social_h_ml">
-				<anchored to="social_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="social_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="socialskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="social_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.socialskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="socialskills_iadd">
-				<anchored to="socialskills" position="aboveright" offset="2,8" />
-				<target>socialskills</target>
+
+			<!-- LORE Skills Group Box (Right of Social) -->
+			<genericcontrol name="lore_group_box">
+				<anchored width="275" height="200">
+					<top parent="social_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="lore_title">
+				<anchored to="lore_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_lore" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="loreskills_iadd">
+				<anchored to="lore_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>loreskills</target>
 			</button_iadd>
 
-			<!-- LORE Skills -->
-			<label name="lore_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_skill_lore" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
 			<label name="lore_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="lore_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="lore_h_att1">
-				<anchored to="lore_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="lore_h_att2">
-				<anchored to="lore_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="lore_h_sm">
-				<anchored to="lore_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="lore_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="lore_h_sb">
-				<anchored to="lore_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="lore_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="lore_h_ml">
-				<anchored to="lore_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="lore_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="loreskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="lore_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.loreskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="loreskills_iadd">
-				<anchored to="loreskills" position="aboveright" offset="2,8" />
-				<target>loreskills</target>
+
+			<!-- PHYSICAL Skills Group Box (Under Social) -->
+			<genericcontrol name="physical_group_box">
+				<anchored width="275" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="physical_title">
+				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_physical" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="physicalskills_iadd">
+				<anchored to="physical_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>physicalskills</target>
 			</button_iadd>
 
-			<!-- PHYSICAL Skills -->
-			<label name="physical_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_skill_physical" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
 			<label name="physical_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="physical_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="physical_h_att1">
-				<anchored to="physical_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="physical_h_att2">
-				<anchored to="physical_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="physical_h_sm">
-				<anchored to="physical_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="physical_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="physical_h_sb">
-				<anchored to="physical_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="physical_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="physical_h_ml">
-				<anchored to="physical_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="physical_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="physicalskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="physical_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.physicalskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="physicalskills_iadd">
-				<anchored to="physicalskills" position="aboveright" offset="2,8" />
-				<target>physicalskills</target>
+
+			<!-- NATURE Skills Group Box (Right of Physical) -->
+			<genericcontrol name="nature_group_box">
+				<anchored width="275" height="200">
+					<top parent="physical_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="nature_title">
+				<anchored to="nature_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_nature" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="natureskills_iadd">
+				<anchored to="nature_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>natureskills</target>
 			</button_iadd>
 
-			<!-- NATURE Skills -->
-			<label name="nature_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_skill_nature" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
 			<label name="nature_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="nature_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="nature_h_att1">
-				<anchored to="nature_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="nature_h_att2">
-				<anchored to="nature_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="nature_h_sm">
-				<anchored to="nature_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="nature_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="nature_h_sb">
-				<anchored to="nature_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="nature_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="nature_h_ml">
-				<anchored to="nature_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="nature_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="natureskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="nature_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.natureskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="natureskills_iadd">
-				<anchored to="natureskills" position="aboveright" offset="2,8" />
-				<target>natureskills</target>
+
+			<!-- CRAFT Skills Group Box (Under Physical) -->
+			<genericcontrol name="craft_group_box">
+				<anchored width="275" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="craft_title">
+				<anchored to="craft_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_craft" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="craftskills_iadd">
+				<anchored to="craft_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>craftskills</target>
 			</button_iadd>
 
-			<!-- CRAFT Skills -->
-			<label name="craft_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_skill_craft" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
 			<label name="craft_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="craft_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="craft_h_att1">
-				<anchored to="craft_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="craft_h_att2">
-				<anchored to="craft_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="craft_h_sm">
-				<anchored to="craft_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="craft_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="craft_h_sb">
-				<anchored to="craft_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="craft_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="craft_h_ml">
-				<anchored to="craft_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="craft_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="craftskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="craft_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.craftskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="craftskills_iadd">
-				<anchored to="craftskills" position="aboveright" offset="2,8" />
-				<target>craftskills</target>
+
+			<!-- COMBAT Skills Group Box (Right of Craft) -->
+			<genericcontrol name="combat_group_box">
+				<anchored width="275" height="200">
+					<top parent="craft_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="combat_title">
+				<anchored to="combat_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_combat" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="combatskills_iadd">
+				<anchored to="combat_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>combatskills</target>
 			</button_iadd>
 
-			<!-- COMBAT Skills -->
-			<label name="combat_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_skill_combat" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
 			<label name="combat_h_skill">
-				<anchored width="100" height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-				</anchored>
+				<anchored to="combat_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="combat_h_att1">
-				<anchored to="combat_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="combat_h_att2">
-				<anchored to="combat_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="combat_h_sm">
-				<anchored to="combat_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="combat_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="combat_h_sb">
-				<anchored to="combat_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="combat_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="combat_h_ml">
-				<anchored to="combat_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="combat_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
+
 			<windowlist name="combatskills">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="combat_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="-15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.combatskills</datasource>
 				<class>harn_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="combatskills_iadd">
-				<anchored to="combatskills" position="aboveright" offset="2,8" />
-				<target>combatskills</target>
-			</button_iadd>
 		</sheetdata>
 	</windowclass>
 </root>

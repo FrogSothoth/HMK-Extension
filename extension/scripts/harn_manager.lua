@@ -352,7 +352,9 @@ function updateAttributeML(nodeChar, sFieldName)
 	local nML = nScore * 5
 	
 	local sMLField = sAttr .. "_ml"
-	DB.setValue(nodeChar, sMLField, "number", nML)
+	if sAttr ~= "voi" then
+		DB.setValue(nodeChar, sMLField, "number", nML)
+	end
 	
 	-- Also trigger related calculations
 	if sAttr == "aur" then
@@ -361,6 +363,11 @@ function updateAttributeML(nodeChar, sFieldName)
 		calculateMove(nodeChar)
 	elseif sAttr == "end" or sAttr == "wil" then
 		calculateHealingBase(nodeChar)
+	end
+	
+	-- Update recalculate all SB whenever an attribute changes
+	if SkillsManager and SkillsManager.recalculateAllSB then
+		SkillsManager.recalculateAllSB(nodeChar)
 	end
 end
 

@@ -17,7 +17,11 @@
         <color value="431612" />
     </font>
     <font name="att_text">
-        <ttf file="graphics/fonts/NotoSans-Regular.ttf" name="Noto Sans Small" size="6" />
+        <ttf file="graphics/fonts/NotoSans-Regular.ttf" name="Noto Sans Small" size="11" />
+        <color value="000000" />
+    </font>
+    <font name="harn_skill_header">
+        <ttf file="graphics/fonts/NotoSans-Bold.ttf" name="Noto Sans Bold" size="14" />
         <color value="000000" />
     </font>
 </root>

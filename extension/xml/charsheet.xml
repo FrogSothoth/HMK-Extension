@@ -34,11 +34,13 @@
 				WindowTabManager.populate(self);
 
 				-- Hook into tab selection to provide a refresh event for child windows
-				if WindowTabManager.onTabSelect then
+				if WindowTabManager and WindowTabManager.onTabSelect then
 					local oldOnTabSelect = WindowTabManager.onTabSelect;
 					WindowTabManager.onTabSelect = function(wTabControl, sTab)
 						oldOnTabSelect(wTabControl, sTab);
-						self.onTabSelect(sTab);
+						if wTabControl.window and wTabControl.window.onTabSelect then
+							wTabControl.window.onTabSelect(sTab);
+						end
 					end
 				end
 
@@ -231,47 +233,27 @@
 			end
 
 			function onAttributeChanged(nodeField)
-				Debug.console("onAttributeChanged fired for: " .. DB.getPath(nodeField));
-				local nodeChar = DB.getParent(nodeField);
+				local nodeChar = getDatabaseNode();
 				if nodeChar then
-					Debug.console("  Character node: " .. DB.getPath(nodeChar));
-					if SkillsManager and SkillsManager.recalculateAllSB then
-						Debug.console("  Calling recalculateAllSB");
-						SkillsManager.recalculateAllSB(nodeChar);
-					else
-						Debug.console("  WARNING: SkillsManager.recalculateAllSB not available");
-					end
-
-					-- Recalculate Fate
-					if HarnManager and HarnManager.calculateFate then
-						HarnManager.calculateFate(nodeChar);
-					end
-					-- Recalculate Move
-					if HarnManager and HarnManager.calculateMove then
-						HarnManager.calculateMove(nodeChar);
-					end
-					-- Recalculate Healing Rate
-					if HarnManager and HarnManager.calculateHealingBase then
-						HarnManager.calculateHealingBase(nodeChar);
-					end
-
-					-- Update Attribute ML (Score * 5)
+					local sFieldName = nodeField.getName();
+					-- Update Attribute ML (Score * 5) and trigger related calculations
 					if HarnManager and HarnManager.updateAttributeML then
-						HarnManager.updateAttributeML(nodeChar, nodeField.getName());
+						HarnManager.updateAttributeML(nodeChar, sFieldName);
 					end
-				else
-					Debug.console("  WARNING: Could not get parent node");
 				end
 			end
 
 			function onTabSelect(sTab)
-				Debug.console("charsheet.onTabSelect: " .. tostring(sTab));
-				-- In many tab managers, the active subwindow is named after the tab, 
-				-- or there is a generic 'content' subwindow.
-				if self[sTab] and self[sTab].subwindow and self[sTab].subwindow.onRefresh then
-					self[sTab].subwindow.onRefresh();
-				elseif self.content and self.content.subwindow and self.content.subwindow.onRefresh then
-					self.content.subwindow.onRefresh();
+				-- In CoreRPG sheets, the tab manager usually swaps classes in 'main' or 'content' subwindow
+				local sub = nil;
+				if self.main and self.main.subwindow then
+					sub = self.main.subwindow;
+				elseif self.content and self.content.subwindow then
+					sub = self.content.subwindow;
+				end
+
+				if sub and sub.onRefresh then
+					sub.onRefresh();
 				end
 			end
 		</script>
