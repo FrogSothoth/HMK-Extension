@@ -64,9 +64,16 @@
 				
 				if sNation ~= "" and sRealm ~= "" then
 					if BirthData and BirthData.Nations and BirthData.Nations[sNation] and BirthData.Nations[sNation][sRealm] then
-						local sSoc = BirthData.Nations[sNation][sRealm].society or "";
+						local tData = BirthData.Nations[sNation][sRealm];
+						local sSoc = tData.society or "";
 						society.setValue(sSoc);
+
+						local sPan = tData.pantheon or "";
+						family_pantheon.setValue(sPan);
 					end
+				else
+					society.setValue("");
+					family_pantheon.setValue("");
 				end
 			end
 
@@ -127,7 +134,7 @@
 			<label name="birth_title">
 				<anchored to="birth_box" position="insidetop" offset="0,10" width="101" height="20" />
 				<static>BIRTH</static>
-				<font>harn_label_18_bold</font>
+				<font>harn_group</font>
 				<center />
 			</label>
 
@@ -252,13 +259,13 @@
 			<label name="family_title">
 				<anchored to="family_box" position="insidetop" offset="0,10" width="101" height="20" />
 				<static>FAMILY</static>
-				<font>harn_label_18_bold</font>
+				<font>harn_group</font>
 				<center />
 			</label>
 
 			<!-- SOCIAL CLASS -->
 			<label name="socialclass_label">
-				<anchored to="family_box" position="insidetopleft" offset="15,50" width="115" height="20" />
+				<anchored to="family_box" position="insidetopleft" offset="15,50" width="112" height="20" />
 				<static>CLASS:</static>
 				<font>harn_label_18_bold</font>
 			</label>
@@ -270,7 +277,7 @@
 
 			<!-- FAMILY OCCUPATION -->
 			<label name="familyoccupation_label">
-				<anchored to="socialclass_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<anchored to="socialclass_label" position="belowleft" offset="0,5" width="112" height="20" />
 				<static>OCCUPATION:</static>
 				<font>harn_label_18_bold</font>
 			</label>
@@ -283,11 +290,11 @@
 			<!-- FAMILY BACKGROUND -->
 			<label name="familybackground_label">
 				<anchored to="familyoccupation_label" position="belowleft" offset="0,5" width="115" height="20" />
-				<static>BACKGROUND:</static>
+				<static>BACKGND:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<combobox name="family_background">
-				<anchored to="familybackground_label" position="right" offset="5,0" width="101" height="20" />
+				<anchored to="familybackground_label" position="right" offset="5,0" width="96" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<listmaxheight>100</listmaxheight>
@@ -310,7 +317,7 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="family_estrangement_score">
-				<anchored to="familyestrangement_label" position="right" offset="5,0" width="20" height="20" />
+				<anchored to="familyestrangement_label" position="right" offset="2,0" width="20" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
@@ -332,7 +339,7 @@
 
 			<!-- FAMILY PANTHEON -->
 			<label name="familypantheon_label">
-				<anchored to="familyestrangement_label" position="belowleft" offset="0,5" width="115" height="20" />
+				<anchored to="familyestrangement_label" position="belowleft" offset="0,5" width="112" height="20" />
 				<static>PANTHEON:</static>
 				<font>harn_label_18_bold</font>
 			</label>
@@ -352,19 +359,19 @@
 			</genericcontrol>
 			<label name="locale_title">
 				<anchored to="locale_box" position="insidetop" offset="0,10" width="100" height="20" />
-				<static>LOCATION</static>
-				<font>harn_label_18_bold</font>
+				<static>BIRTHPLACE</static>
+				<font>harn_group</font>
 				<center />
 			</label>
 
 			<!-- BIRTHPLACE -->
 			<label name="birthplace_label">
-				<anchored to="locale_box" position="insidetopleft" offset="20,50" width="90" height="20" />
-				<static>BIRTHPLACE:</static>
+				<anchored to="locale_box" position="insidetopleft" offset="20,50" width="65" height="20" />
+				<static>REGION:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<combobox name="birth_place">
-				<anchored to="birthplace_label" position="right" offset="5,0" width="115" height="20" />
+				<anchored to="birthplace_label" position="right" offset="8,0" width="134" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<listmaxsize>8</listmaxsize>
@@ -378,12 +385,12 @@
 
 			<!-- REALM -->
 			<label name="realm_label">
-				<anchored to="birthplace_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<anchored to="birthplace_label" position="belowleft" offset="0,5" width="65" height="20" />
 				<static>REALM:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<combobox name="birth_realm">
-				<anchored to="realm_label" position="right" offset="5,0" width="115" height="20" />
+				<anchored to="realm_label" position="right" offset="8,0" width="134" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<unsorted />
@@ -397,24 +404,104 @@
 
 			<!-- SITE -->
 			<label name="site_label">
-				<anchored to="realm_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<anchored to="realm_label" position="belowleft" offset="0,5" width="65" height="20" />
 				<static>SITE:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="birth_site">
-				<anchored to="site_label" position="right" offset="5,0" width="115" height="20" />
+				<anchored to="site_label" position="right" offset="5,0" width="140" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 
 			<!-- SOCIETY -->
 			<label name="society_label">
-				<anchored to="site_label" position="belowleft" offset="0,5" width="90" height="20" />
+				<anchored to="site_label" position="belowleft" offset="0,5" width="65" height="20" />
 				<static>SOCIETY:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="society">
-				<anchored to="society_label" position="right" offset="5,0" width="115" height="20" />
+				<anchored to="society_label" position="right" offset="5,0" width="140" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+
+			<!-- Blessings Groupbox -->
+			<genericcontrol name="blessings_box">
+				<anchored width="250" height="230">
+					<top parent="locale_box" anchor="bottom" offset="10" />
+					<right offset="-45" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="blessings_title">
+				<anchored to="blessings_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static>BLESSINGS</static>
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<!-- BONUS -->
+			<label name="bonus_label">
+				<anchored to="blessings_box" position="insidetopleft" offset="15,45" width="85" height="20" />
+				<static>BONUS:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="blessing_bonus">
+				<anchored to="bonus_label" position="right" offset="5,0" width="30" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<center />
+				<script>
+					function onValueChanged()
+						local sVal = getValue();
+						if sVal ~= "" then
+							local nVal = tonumber(sVal);
+							if not nVal then
+								setValue("");
+							elseif nVal &lt; 1 then
+								setValue("1");
+							elseif nVal &gt; 20 then
+								setValue("20");
+							end
+						end
+					end
+				</script>
+			</stringfield>
+
+			<!-- DOCTRINES -->
+			<label name="doctrines_label">
+				<anchored to="bonus_label" position="belowleft" offset="0,5" width="85" height="20" />
+				<static>DOCTRINES:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<stringfield name="doctrine1">
+				<anchored to="doctrines_label" position="right" offset="5,0" width="120" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine2">
+				<anchored to="doctrine1" position="belowleft" offset="0,3" width="120" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine3">
+				<anchored to="doctrine2" position="belowleft" offset="0,3" width="120" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine4">
+				<anchored to="doctrine3" position="belowleft" offset="0,3" width="120" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine5">
+				<anchored to="doctrine4" position="belowleft" offset="0,3" width="120" height="20" />
+				<font>sheettext</font>
+				<frame name="fielddark" offset="7,5,7,5" />
+			</stringfield>
+			<stringfield name="doctrine6">
+				<anchored to="doctrine5" position="belowleft" offset="0,3" width="120" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>

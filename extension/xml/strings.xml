@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <root>
 	<string name="harn_tab_main">Main</string>
-	<string name="harn_tab_background">Background</string>
+	<string name="harn_tab_background">Backgnd</string>
 	<string name="harn_tab_skills">Skills</string>
 	<string name="harn_tab_esoterica">Esoterica</string>
 	<string name="harn_tab_combat">Combat</string>

@@ -12,4 +12,12 @@
         <ttf file="graphics/fonts/Alegreya-ExtraBold.ttf" name="Alegreya ExtraBold" size="18" />
         <color value="000000" />
     </font>
+    <font name="harn_group">
+        <ttf file="graphics/fonts/Almendra-Regular.ttf" name="Almendra Regular" size="20" />
+        <color value="431612" />
+    </font>
+    <font name="att_text">
+        <ttf file="graphics/fonts/NotoSans-Regular.ttf" name="Noto Sans Small" size="6" />
+        <color value="000000" />
+    </font>
 </root>

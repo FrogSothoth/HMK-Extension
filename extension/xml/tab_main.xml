@@ -15,38 +15,15 @@
 				<anchored position="insidetopright" offset="0,0" width="0" height="0" />
 			</genericcontrol>
 
-			<!-- Status Icon Row (Fixed Positioning) -->
-			<!-- FAT and MOV are fixed at the margins -->
-			<genericcontrol name="fat_frame">
-				<anchored position="insidetopleft" offset="60,250" width="45" height="56" />
-				<icon>fat_icon</icon>
-				<tooltip text="Fate" />
-			</genericcontrol>
-
-			<!-- Fate Values Overlay -->
-			<numberfield name="fate_roll">
-				<anchored to="fat_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<readonly />
-				<hideonzero />
-				<nodrag />
-			</numberfield>
-
-			<numberfield name="fate_fp">
-				<anchored to="fat_frame" position="insidetopright" offset="1,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<hideonzero />
-			</numberfield>
-
 			<!-- PHYSICAL GROUP BOX -->
 			<genericcontrol name="physical_group_box">
-				<anchored position="insidetopleft" offset="50,10" width="135" height="230" />
+				<anchored position="insidetopleft" offset="50,5" width="135" height="185" />
 				<frame name="groupbox" />
 			</genericcontrol>
 			<label name="physical_label">
 				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
 				<static>PHYSICAL</static>
-				<font>harn_label_18_bold</font>
+				<font>harn_group</font>
 				<center />
 			</label>
 
@@ -94,7 +71,7 @@
 
 			<!-- AGL Box -->
 			<genericcontrol name="agl_frame">
-				<anchored position="insidetopleft" offset="130,106" width="45" height="56" />
+				<anchored position="insidetopleft" offset="130,80" width="45" height="56" />
 				<icon>agl_icon</icon>
 				<tooltip text="Agility" />
 			</genericcontrol>
@@ -115,7 +92,7 @@
 
 			<!-- DEX Box -->
 			<genericcontrol name="dex_frame">
-				<anchored position="insidetopleft" offset="60,106" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,80" width="45" height="56" />
 				<icon>dex_icon</icon>
 				<tooltip text="Dexterity" />
 			</genericcontrol>
@@ -137,7 +114,7 @@
 
 			<!-- PER Box -->
 			<genericcontrol name="per_frame">
-				<anchored position="insidetopleft" offset="60,178" width="45" height="56" />
+				<anchored position="insidetopleft" offset="60,125" width="45" height="56" />
 				<icon>per_icon</icon>
 				<tooltip text="Perception" />
 			</genericcontrol>
@@ -158,7 +135,7 @@
 
 			<!-- CML Box -->
 			<genericcontrol name="cml_frame">
-				<anchored position="insidetopleft" offset="130,178" width="45" height="56" />
+				<anchored position="insidetopleft" offset="130,125" width="45" height="56" />
 				<icon>cml_icon</icon>
 				<tooltip text="Comeliness" />
 			</genericcontrol>
@@ -179,13 +156,13 @@
 			
 			<!-- MENTAL GROUP BOX -->
 			<genericcontrol name="mental_group_box">
-				<anchored position="insidetopright" offset="50,10" width="135" height="230" />
+				<anchored position="insidetopright" offset="50,5" width="135" height="185" />
 				<frame name="groupbox" />
 			</genericcontrol>
 			<label name="mental_label">
 				<anchored to="mental_group_box" position="insidetop" offset="10,10" width="100" height="20" />
 				<static>MENTAL</static>
-				<font>harn_label_18_bold</font>
+				<font>harn_group</font>
 				<center />
 			</label>
 
@@ -233,7 +210,7 @@
 
 			<!-- REA Box -->
 			<genericcontrol name="rea_frame">
-				<anchored position="insidetopright" offset="60,106" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,80" width="45" height="56" />
 				<icon>rea_icon</icon>
 				<tooltip text="Ready" />
 			</genericcontrol>
@@ -254,7 +231,7 @@
 
 			<!-- CRE Box -->
 			<genericcontrol name="cre_frame">
-				<anchored position="insidetopright" offset="130,106" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,80" width="45" height="56" />
 				<icon>cre_icon</icon>
 				<tooltip text="Creativity" />
 			</genericcontrol>
@@ -275,7 +252,7 @@
 
 			<!-- EMP Box -->
 			<genericcontrol name="emp_frame">
-				<anchored position="insidetopright" offset="60,178" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,125" width="45" height="56" />
 				<icon>emp_icon</icon>
 				<tooltip text="Empathy" />
 			</genericcontrol>
@@ -296,7 +273,7 @@
 
 			<!-- ELO Box -->
 			<genericcontrol name="elo_frame">
-				<anchored position="insidetopright" offset="130,178" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,125" width="45" height="56" />
 				<icon>elo_icon</icon>
 				<tooltip text="Eloquence" />
 			</genericcontrol>
@@ -315,16 +292,40 @@
 				<nodrag />
 				</numberfield>
 
+			<!-- FAT GRC PIE MOV boxes -->
+			<!-- FAT and MOV are fixed at the margins -->
+			<genericcontrol name="fat_frame">
+				<anchored position="insidetopleft" offset="60,190" width="45" height="56" />
+				<icon>fat_icon</icon>
+				<tooltip text="Fate" />
+			</genericcontrol>
 
+			<!-- Fate Values Overlay -->
+			<numberfield name="fate_roll">
+				<anchored to="fat_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
+
+			<numberfield name="fate_fp">
+				<anchored to="fat_frame" position="insidetopright" offset="1,22" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+
+			<!-- GRC Box -->
 			<genericcontrol name="grc_frame">
-				<anchored to="fat_frame" position="right" offset="100,0" width="45" height="56" />
+				<anchored to="fat_frame" position="right" offset="25,0" width="45" height="56" />
 				<icon>grc_icon</icon>
 				<tooltip text="Grace" />
 			</genericcontrol>
 
 			<!-- Grace Values Overlay -->
 			<numberfield name="grace_total">
-				<anchored to="grc_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<anchored to="grc_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<readonly />
 				<hideonzero />
@@ -332,20 +333,20 @@
 			</numberfield>
 
 			<numberfield name="grace_left">
-				<anchored to="grc_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<anchored to="grc_frame" position="insidetopright" offset="1,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<hideonzero />
 			</numberfield>
 
 			<genericcontrol name="mov_frame">
-				<anchored position="insidetopright" offset="60,250" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,190" width="45" height="56" />
 				<icon>mov_icon</icon>
 				<tooltip text="Movement" />
 			</genericcontrol>
 
 			<!-- Movement Values Overlay -->
 			<numberfield name="move">
-				<anchored to="mov_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<anchored to="mov_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<readonly />
 				<hideonzero />
@@ -353,7 +354,7 @@
 			</numberfield>
 
 			<numberfield name="move_effective">
-				<anchored to="mov_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<anchored to="mov_frame" position="insidetopright" offset="1,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<readonly />
 				<hideonzero />
@@ -361,14 +362,14 @@
 			</numberfield>
 
 			<genericcontrol name="pie_frame">
-				<anchored to="mov_frame" position="left" offset="100,0" width="45" height="56" />
+				<anchored to="mov_frame" position="left" offset="25,0" width="45" height="56" />
 				<icon>pie_icon</icon>
 				<tooltip text="Piety" />
 			</genericcontrol>
 
 			<!-- Piety Values Overlay -->
 			<numberfield name="piety_max">
-				<anchored to="pie_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<anchored to="pie_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<readonly />
 				<hideonzero />
@@ -376,12 +377,12 @@
 			</numberfield>
 
 			<numberfield name="piety_left">
-				<anchored to="pie_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<anchored to="pie_frame" position="insidetopright" offset="1,22" width="20" height="20" />
 				<font>sheetnumber</font>
 				<hideonzero />
 			</numberfield>
 
-			<!-- Character Portrait Area (dynamically centered) -->
+			<!-- Character Portrait Area (dynamically centered)-->
 			<genericcontrol name="portrait_background">
 				<anchored height="245" width="175">
 					<top offset="0" />
@@ -402,16 +403,22 @@
 
 			<!-- Appearance Box -->
 			<genericcontrol name="appearance_box">
-				<anchored width="225" height="250">
-					<top offset="310" />
+				<anchored width="225" height="215">
+					<top offset="270" />
 					<left parent="leftanchor" offset="60" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
+			<label name="appearance_label">
+				<anchored to="appearance_box" position="insidetop" offset="10,10" width="100" height="20" />
+				<static>APPEARANCE</static>
+				<font>harn_group</font>
+				<center />
+			</label>
 
 			<!-- Complexion -->
 			<label name="complexion_label">
-				<anchored to="appearance_box" position="insidetopleft" offset="20,20" width="100" height="20" />
+				<anchored to="appearance_box" position="insidetopleft" offset="20,40" width="100" height="20" />
 				<static>COMPLEXION:</static>
 				<font>harn_label_18_bold</font>
 			</label>
@@ -493,16 +500,22 @@
 
 			<!-- Notes Box -->
 			<genericcontrol name="notes_box">
-				<anchored width="225" height="250">
-					<top offset="310" />
+				<anchored width="225" height="265">
+					<top offset="270" />
 					<right parent="rightanchor" offset="-60" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
+			<label name="notesgroup_label">
+				<anchored to="notes_box" position="insidetop" offset="10,10" width="100" height="20" />
+				<static>NOTES</static>
+				<font>harn_group</font>
+				<center />
+			</label>
 
 			<!-- Morality -->
 			<label name="morality_label">
-				<anchored to="notes_box" position="insidetopleft" offset="20,20" width="75" height="20" />
+				<anchored to="notes_box" position="insidetopleft" offset="20,40" width="75" height="20" />
 				<static>MORALITY:</static>
 				<font>harn_label_18_bold</font>
 			</label>
