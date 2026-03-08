@@ -9,7 +9,7 @@
 	<windowclass name="charsheet">
 		<frame>charsheet</frame>
 		<sizelimits>
-			<minimum width="650" height="600" />
+			<minimum width="700" height="600" />
 			<dynamic />
 		</sizelimits>
 		<minimize>minimized_npc</minimize>

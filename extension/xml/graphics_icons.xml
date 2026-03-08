@@ -4,6 +4,8 @@
     <icon name="grc_icon" file="graphics/frames/GRC.png" />
     <icon name="pie_icon" file="graphics/frames/PIE.png" />
     <icon name="mov_icon" file="graphics/frames/MOV.png" />
+    <icon name="button_calc" file="graphics/buttons/button_calc.png" />
+    <icon name="button_calc_down" file="graphics/buttons/button_calc_down.png" />
     <icon name="str_icon" file="graphics/frames/STR.png" />
     <icon name="end_icon" file="graphics/frames/END.png" />
     <icon name="agl_icon" file="graphics/frames/AGL.png" />

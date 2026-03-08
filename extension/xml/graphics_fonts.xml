@@ -20,6 +20,10 @@
         <ttf file="graphics/fonts/NotoSans-Regular.ttf" name="Noto Sans Small" size="11" />
         <color value="000000" />
     </font>
+    <font name="harn_skill_12">
+        <ttf file="graphics/fonts/NotoSans-Regular.ttf" name="Noto Sans 12" size="12" />
+        <color value="000000" />
+    </font>
     <font name="harn_skill_header">
         <ttf file="graphics/fonts/NotoSans-Bold.ttf" name="Noto Sans Bold" size="14" />
         <color value="000000" />

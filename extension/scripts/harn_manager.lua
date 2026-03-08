@@ -352,9 +352,7 @@ function updateAttributeML(nodeChar, sFieldName)
 	local nML = nScore * 5
 	
 	local sMLField = sAttr .. "_ml"
-	if sAttr ~= "voi" then
-		DB.setValue(nodeChar, sMLField, "number", nML)
-	end
+	DB.setValue(nodeChar, sMLField, "number", nML)
 	
 	-- Also trigger related calculations
 	if sAttr == "aur" then

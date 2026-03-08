@@ -13,12 +13,58 @@
 	<windowclass name="harn_skill_entry">
 		<margins control="0,0,0,2" />
 		<script>
+			function updateVisibility()
+				local sName = name.getValue();
+				local sUpperName = string.upper(sName);
+
+				-- Handle Singing width overrides first
+				local baseWidth = 85;
+				if sName == "Singing" then
+					baseWidth = 60;
+					voi_score.setVisible(true);
+				else
+					voi_score.setVisible(false);
+				end
+
+				-- Handle Dodge and Shock formatting (Indent text 10px, keep frame graphic stationary)
+				-- Default state: left=3, width=85, frame="fielddark", 7,5,7,5. 
+				-- Frame graphic left edge = 3 - 7 = -4. Frame graphic right edge = 3 + 85 + 7 = 95.
+				
+				if sUpperName == "DODGE" or sUpperName == "SHOCK" then
+					if sName ~= sUpperName then
+						name.setValue(sUpperName); -- Force uppercase
+					end
+					
+					name.setFont("harn_skill_12");
+					
+					-- Move control bounds 10px right (3 -> 13)
+					-- name.setAnchor("left", "", "left", "absolute", 13);
+					-- name.setAnchoredWidth(baseWidth - 10);
+					
+					-- Stretch the graphic backwards by 10px so it still renders at -4 and 95
+					-- Left frame offset: 7 + 10 = 17
+					-- Right frame offset: 7 + 10 = 17
+					-- name.setFrame("fielddark", 17, 5, 17, 5);
+					
+				else
+					-- Revert to normal
+					name.setFont("sheettext");
+					name.setAnchor("left", "", "left", "absolute", 3);
+					name.setAnchoredWidth(baseWidth);
+					name.setFrame("fielddark", 7, 5, 7, 5);
+				end
+			end
+			
+			-- Logic to dynamically link SM to a parent skill
+			local sParentNodePath = "";
 			function onInit()
 				-- Add handlers for name update
 				local node = getDatabaseNode();
 				if node then
 					DB.addHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
 				end
+				updateVisibility();
+				linkDynamicSM();
 			end
 
 			function onClose()
@@ -26,10 +72,83 @@
 				if node then
 					DB.removeHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
 				end
+				if sParentNodePath ~= "" then
+					DB.removeHandler(sParentNodePath .. ".sm", "onUpdate", onParentSMUpdate);
+				end
+			end
+			
+			function linkDynamicSM()
+				local sUpperName = string.upper(name.getValue());
+				local nodeChar = windowlist.window.getDatabaseNode();
+				if not nodeChar then return; end
+				
+				local sTargetParentName = "";
+				if sUpperName == "DODGE" then
+					sTargetParentName = "Melee";
+				elseif sUpperName == "SHOCK" then
+					sTargetParentName = "Initiative";
+				end
+				
+				if sTargetParentName ~= "" then
+					-- Search combatskills for the parent
+					local nodeCombatList = DB.getChild(nodeChar, "combatskills");
+					if nodeCombatList then
+						for _, nodeSkill in pairs(DB.getChildren(nodeCombatList)) do
+							if DB.getValue(nodeSkill, "name", "") == sTargetParentName then
+								-- Found the parent, set up a handler on its SM
+								sParentNodePath = nodeSkill.getPath();
+								DB.addHandler(sParentNodePath .. ".sm", "onUpdate", onParentSMUpdate);
+								onParentSMUpdate(); -- Initial sync
+								return;
+							end
+						end
+					end
+				end
+			end
+			
+			function onParentSMUpdate()
+				if sParentNodePath ~= "" then
+					local nParentSM = DB.getValue(sParentNodePath .. ".sm", 0);
+					local nodeThis = getDatabaseNode();
+					if nodeThis then
+						DB.setValue(nodeThis, "sm", "number", nParentSM);
+					end
+				end
 			end
 
 			function onNameUpdate()
-				-- Name updates are now handled by standard DB triggers if needed
+				updateVisibility();
+				-- Resync dynamic anchors if name changes
+				if sParentNodePath ~= "" then
+					DB.removeHandler(sParentNodePath .. ".sm", "onUpdate", onParentSMUpdate);
+					sParentNodePath = "";
+				end
+				linkDynamicSM();
+			end
+
+			function setCustomEditMode(bEdit)
+				btn_recalc.setVisible(bEdit);
+				
+				if bEdit then
+					local sNameVal = name.getValue();
+					local bDeletable = false;
+					if SkillsData then
+						local rSkill = SkillsData.getSkill(sNameVal);
+						if rSkill then
+							if rSkill.sm == 0 and sNameVal ~= "Language" and sNameVal ~= "Ritual" then
+								bDeletable = true;
+							end
+						else
+							bDeletable = true;
+						end
+					else
+						bDeletable = true;
+					end
+					
+					btn_delete.setVisible(bDeletable);
+				else
+					btn_delete.setVisible(false);
+				end
 			end
 		</script>
 		<sheetdata>
@@ -100,11 +219,65 @@
 						else
 							Debug.console("ERROR: harnmaster.skills node not found");
 						end
+						window.updateVisibility();
 					end
 				</script>
 			</stringfield>
+			<numberfield name="voi_score">
+				<anchored to="name" position="right" offset="0,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<font>sheettext</font>
+				<center />
+				<hideonzero />
+				<script>
+					function onInit()
+						-- Set up DB handler to sync from character's voi_score
+						local nodeChar = window.getDatabaseNode().getParent().getParent();
+						if nodeChar then
+							local nodeVoi = DB.getPath(nodeChar, "voi_score");
+							DB.addHandler(nodeVoi, "onUpdate", onVoiUpdated);
+							onVoiUpdated(); -- initial sync
+						end
+					end
+
+					function onClose()
+						local nodeChar = window.getDatabaseNode().getParent().getParent();
+						if nodeChar then
+							local nodeVoi = DB.getPath(nodeChar, "voi_score");
+							DB.removeHandler(nodeVoi, "onUpdate", onVoiUpdated);
+						end
+					end
+
+					function onVoiUpdated()
+						local nodeChar = window.getDatabaseNode().getParent().getParent();
+						if nodeChar then
+							local nVoi = DB.getValue(nodeChar, "voi_score", 0);
+							if getValue() ~= nVoi then
+								setValue(nVoi);
+							end
+						end
+					end
+
+					function onValueChanged()
+						local nVal = getValue();
+						if nVal &gt; 25 then
+							nVal = 25;
+							setValue(25);
+						elseif nVal &lt; 1 and nVal ~= 0 then
+							nVal = 1;
+							setValue(1);
+						end
+
+						-- Sync back to character's global voi_score
+						local nodeChar = window.getDatabaseNode().getParent().getParent();
+						if nodeChar then
+							DB.setValue(nodeChar, "voi_score", "number", nVal);
+						end
+					end
+				</script>
+			</numberfield>
 			<stringfield name="att1">
-				<anchored to="name" position="righthigh" offset="6,0" width="20" height="20" />
+				<anchored to="name" position="insidetopleft" offset="91,0" width="20" height="20" />
 				<font>att_text</font>
 				<center />
 				<readonly />
@@ -118,12 +291,24 @@
 				<source>att2</source>
 			</stringfield>
 			<numberfield name="sm">
-				<anchored to="name" position="righthigh" offset="53,0" width="20" height="20" />
+				<anchored to="name" position="insidetopleft" offset="138,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
-				<readonly />
 				<source>sm</source>
+				<script>
+					function onValueChanged()
+						local nVal = getValue();
+						if type(nVal) ~= "number" then
+							nVal = 0;
+						end
+						if nVal &gt; 5 then
+							setValue(5);
+						elseif nVal &lt; 0 then
+							setValue(0);
+						end
+					end
+				</script>
 			</numberfield>
 			<numberfield name="sb">
 				<anchored to="sm" position="righthigh" offset="3,0" width="25" height="20" />
@@ -139,6 +324,37 @@
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<buttoncontrol name="btn_recalc">
+				<anchored to="ml" position="righthigh" offset="5,2" width="15" height="15" />
+				<icon normal="button_calc" pressed="button_calc_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							local nSM = DB.getValue(nodeBase, "sm", 0);
+							local nSB = DB.getValue(nodeBase, "sb", 0);
+							local nML = nSM * nSB;
+							DB.setValue(nodeBase, "ml", "number", nML);
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<buttoncontrol name="btn_delete">
+				<anchored to="btn_recalc" position="righthigh" offset="5,0" width="15" height="15" />
+				<icon normal="button_delete" pressed="button_delete_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							nodeBase.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 		</sheetdata>
 	</windowclass>
@@ -422,6 +638,22 @@
 				<anchored to="social_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>socialskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="socialskills_edit">
+				<anchored to="social_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.socialskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="social_h_skill">
 				<anchored to="social_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -431,18 +663,21 @@
 			<label name="social_h_sm">
 				<anchored to="social_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="social_h_sb">
 				<anchored to="social_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="social_h_ml">
 				<anchored to="social_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -451,7 +686,7 @@
 				<anchored to="social_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.socialskills</datasource>
@@ -481,6 +716,22 @@
 				<anchored to="lore_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>loreskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="loreskills_edit">
+				<anchored to="lore_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.loreskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="lore_h_skill">
 				<anchored to="lore_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -490,18 +741,21 @@
 			<label name="lore_h_sm">
 				<anchored to="lore_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="lore_h_sb">
 				<anchored to="lore_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="lore_h_ml">
 				<anchored to="lore_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -510,7 +764,7 @@
 				<anchored to="lore_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.loreskills</datasource>
@@ -540,6 +794,22 @@
 				<anchored to="physical_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>physicalskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="physicalskills_edit">
+				<anchored to="physical_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.physicalskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="physical_h_skill">
 				<anchored to="physical_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -549,18 +819,21 @@
 			<label name="physical_h_sm">
 				<anchored to="physical_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="physical_h_sb">
 				<anchored to="physical_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="physical_h_ml">
 				<anchored to="physical_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -569,7 +842,7 @@
 				<anchored to="physical_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.physicalskills</datasource>
@@ -599,6 +872,22 @@
 				<anchored to="nature_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>natureskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="natureskills_edit">
+				<anchored to="nature_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.natureskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="nature_h_skill">
 				<anchored to="nature_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -608,18 +897,21 @@
 			<label name="nature_h_sm">
 				<anchored to="nature_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="nature_h_sb">
 				<anchored to="nature_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="nature_h_ml">
 				<anchored to="nature_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -628,7 +920,7 @@
 				<anchored to="nature_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.natureskills</datasource>
@@ -658,6 +950,22 @@
 				<anchored to="craft_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>craftskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="craftskills_edit">
+				<anchored to="craft_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.craftskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="craft_h_skill">
 				<anchored to="craft_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -667,18 +975,21 @@
 			<label name="craft_h_sm">
 				<anchored to="craft_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="craft_h_sb">
 				<anchored to="craft_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="craft_h_ml">
 				<anchored to="craft_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -687,7 +998,7 @@
 				<anchored to="craft_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.craftskills</datasource>
@@ -717,6 +1028,22 @@
 				<anchored to="combat_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
 				<target>combatskills</target>
 			</button_iadd>
+			
+			<buttoncontrol name="combatskills_edit">
+				<anchored to="combat_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.combatskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="combat_h_skill">
 				<anchored to="combat_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
@@ -726,18 +1053,21 @@
 			<label name="combat_h_sm">
 				<anchored to="combat_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="combat_h_sb">
 				<anchored to="combat_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="combat_h_ml">
 				<anchored to="combat_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
@@ -746,14 +1076,46 @@
 				<anchored to="combat_group_box">
 					<top offset="65" />
 					<left offset="15" />
-					<right offset="-15" />
+					<right offset="15" />
 					<bottom offset="-15" />
 				</anchored>
 				<datasource>.combatskills</datasource>
 				<class>harn_skill_entry</class>
-				<sortby><field>name</field></sortby>
 				<allowcreate />
 				<allowdelete />
+				<script>
+					function onInit()
+						-- Force an initial sort
+						applySort();
+					end
+					
+					function onListChanged()
+						-- Ensure custom sorting happens when items are added/removed
+						applySort();
+					end
+
+					function onSortCompare(w1, w2)
+						local sName1 = w1.name.getValue();
+						local sName2 = w2.name.getValue();
+						
+						local sKey1 = sName1:lower();
+						local sKey2 = sName2:lower();
+
+						-- Special case for DODGE (always follows Melee)
+						if sKey1 == "dodge" then sKey1 = "melee~"; end
+						if sKey2 == "dodge" then sKey2 = "melee~"; end
+						
+						-- Special case for SHOCK (always follows Initiative)
+						if sKey1 == "shock" then sKey1 = "initiative~"; end
+						if sKey2 == "shock" then sKey2 = "initiative~"; end
+
+						-- Normal alphabetical sort
+						if sKey1 == sKey2 then
+							return false;
+						end
+						return sKey1 &gt; sKey2;
+					end
+				</script>
 			</windowlist>
 		</sheetdata>
 	</windowclass>
