@@ -9,9 +9,158 @@
 	<!-- Template for esoterica skill entry (like regular skills) -->
 	<windowclass name="harn_esoterica_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			-- The ordered list of convocation skills associated with Pvarism
+			local tConvocationSkills = { "FYVRIA", "JMORVI", "LYAHVI", "ODIVSHE", "PELEAHN", "SAVORYA", "NEUTRAL" };
+
+			-- Sort order keys: PVARISM sorts before its sub-skills, which sort before everything after P
+			local tConvSortOrder = {
+				["FYVRIA"]  = "PVARISM_1",
+				["JMORVI"]  = "PVARISM_2",
+				["LYAHVI"]  = "PVARISM_3",
+				["ODIVSHE"] = "PVARISM_4",
+				["PELEAHN"] = "PVARISM_5",
+				["SAVORYA"] = "PVARISM_6",
+				["NEUTRAL"] = "PVARISM_7",
+			};
+
+			function getSortOrder(sName)
+				local sUpper = string.upper(sName);
+				if sUpper == "PVARISM" then
+					return "PVARISM";  -- sorts before PVARISM_1, PVARISM_2 ...
+				end
+				local s = tConvSortOrder[sUpper];
+				if s then return s; end
+				return sUpper;  -- everything else sorts by its own uppercase name
+			end
+
+			function updateSortOrder()
+				local sNameVal = name.getValue();
+				local node = getDatabaseNode();
+				if node and sNameVal ~= "" then
+					DB.setValue(node, "sortorder", "string", getSortOrder(sNameVal));
+				end
+			end
+
+			function isConvocationSkill(sName)
+				local sUpper = string.upper(sName);
+				for _, sCon in ipairs(tConvocationSkills) do
+					if sUpper == sCon then return true; end
+				end
+				return false;
+			end
+
+			-- Sunsign modifier index per convocation (from HarnManager.getSunsignModifiers)
+			-- Returns {social[1], lore[2], physical[3], nature[4], craft[5], combat[6]}
+			local tConvModifierIndex = {
+				["ODIVSHE"] = 1,  -- fatSocial
+				["SAVORYA"] = 2,  -- fatLore
+				["LYAHVI"]  = 3,  -- fatPhysical
+				["FYVRIA"]  = 4,  -- fatNature
+				["JMORVI"]  = 5,  -- fatCraft
+				["PELEAHN"] = 6,  -- fatCombat
+				["NEUTRAL"] = 0,  -- no sunsign modifier
+			};
+
+			-- Calculate ML for a convocation: PvarismML + sunsign modifier
+			function calculateConvocationML(nodeChar, sConvName)
+				if not nodeChar then return 0; end
+				-- Find Pvarism ML in the esotericalist
+				local nPvarismML = 0;
+				local nodeEsoList = DB.getChild(nodeChar, "esotericalist");
+				if nodeEsoList then
+					for _, nodeSkill in pairs(DB.getChildren(nodeEsoList)) do
+						if string.upper(DB.getValue(nodeSkill, "name", "")) == "PVARISM" then
+							nPvarismML = DB.getValue(nodeSkill, "ml", 0);
+							break;
+						end
+					end
+				end
+				-- Get sunsign modifier for this convocation
+				local nModIdx = tConvModifierIndex[string.upper(sConvName)] or 0;
+				local nMod = 0;
+				if nModIdx > 0 and HarnManager and HarnManager.getSunsignModifiers then
+					local sSunsign = DB.getValue(nodeChar, "birth_sunsign", "");
+					local tMods = HarnManager.getSunsignModifiers(sSunsign);
+					nMod = tMods[nModIdx] or 0;
+				end
+				return nPvarismML + nMod;
+			end
+
+			function updateVisibility()
+				local sNameVal = name.getValue();
+				if isConvocationSkill(sNameVal) then
+					local sUpper = string.upper(sNameVal);
+					if sNameVal ~= sUpper then
+						name.setValue(sUpper);
+					end
+					name.setFont("harn_skill_12");
+					-- Hide SM and SB for convocations - they don't use them
+					sm.setVisible(false);
+					sb.setVisible(false);
+					att1.setVisible(false);
+					att2.setVisible(false);
+				else
+					name.setFont("sheettext");
+					sm.setVisible(true);
+					sb.setVisible(true);
+					att1.setVisible(true);
+					att2.setVisible(true);
+				end
+			end
+
+			function onInit()
+				local node = getDatabaseNode();
+				if node then
+					DB.addHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
+				end
+				updateVisibility();
+				updateSortOrder();
+			end
+
+			function onClose()
+				local node = getDatabaseNode();
+				if node then
+					DB.removeHandler(node.getPath() .. ".name", "onUpdate", onNameUpdate);
+				end
+			end
+
+			function onNameUpdate()
+				updateVisibility();
+				updateSortOrder();
+			end
+
+			function setCustomEditMode(bEdit)
+				btn_recalc.setVisible(bEdit);
+				if bEdit then
+					local sNameVal = name.getValue();
+					-- Convocation sub-skills cannot be independently deleted
+					if isConvocationSkill(sNameVal) then
+						btn_delete.setVisible(false);
+						return;
+					end
+					local bDeletable = false;
+					if SkillsData then
+						local rSkill = SkillsData.getSkill(sNameVal);
+						if rSkill then
+							if rSkill.sm == 0 and sNameVal ~= "Spirit" then
+								bDeletable = true;
+							end
+						else
+							bDeletable = true;
+						end
+					else
+						bDeletable = true;
+					end
+					btn_delete.setVisible(bDeletable);
+				else
+					btn_delete.setVisible(false);
+				end
+			end
+		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5,0" width="100" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="85" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
 					function onLoseFocus()
@@ -19,6 +168,44 @@
 						if sName == "" then return; end
 
 						Debug.console("Esoterica skill name entered: " .. sName);
+
+						-- If Pvarism was entered, auto-add the 7 convocation skills
+						if string.upper(sName) == "PVARISM" then
+							local nodeCharSkill = window.getDatabaseNode();
+							if nodeCharSkill then
+								-- Set PVARISM's own sortorder
+								DB.setValue(nodeCharSkill, "sortorder", "string", "PVARISM");
+								local nodeList = nodeCharSkill.getParent();
+								if nodeList then
+									local tConvSkills = {
+										{ name="FYVRIA",  sort="PVARISM_1" },
+										{ name="JMORVI",  sort="PVARISM_2" },
+										{ name="LYAHVI",  sort="PVARISM_3" },
+										{ name="ODIVSHE", sort="PVARISM_4" },
+										{ name="PELEAHN", sort="PVARISM_5" },
+										{ name="SAVORYA", sort="PVARISM_6" },
+										{ name="NEUTRAL", sort="PVARISM_7" },
+									};
+									for _, tEntry in ipairs(tConvSkills) do
+										-- Check if it already exists
+										local bExists = false;
+										for _, nodeExisting in pairs(DB.getChildren(nodeList)) do
+											if string.upper(DB.getValue(nodeExisting, "name", "")) == tEntry.name then
+												bExists = true;
+												break;
+											end
+										end
+										if not bExists then
+											local nodeNew = DB.createChild(nodeList);
+											DB.setValue(nodeNew, "name", "string", tEntry.name);
+											DB.setValue(nodeNew, "sortorder", "string", tEntry.sort);
+											Debug.console("Added convocation skill: " .. tEntry.name);
+										end
+									end
+								end
+							end
+							-- fall through to look up Pvarism's own att1/att2/sm from the skills db
+						end
 
 						-- Look up skill data from database (Esoterica group only)
 						local nodeSkillsRef = DB.findNode("harnmaster.skills");
@@ -68,53 +255,114 @@
 				</script>
 			</stringfield>
 			<stringfield name="att1">
-				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored to="name" position="insidetopleft" offset="91,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att1</source>
 			</stringfield>
 			<stringfield name="att2">
-				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored to="att1" position="righthigh" offset="3,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att2</source>
 			</stringfield>
 			<numberfield name="sm">
-				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
+				<anchored to="name" position="insidetopleft" offset="138,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
-				<readonly />
 				<source>sm</source>
 			</numberfield>
 			<numberfield name="sb">
-				<anchored position="insidetopleft" offset="225,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="sm" position="righthigh" offset="3,0" width="25" height="20" />
 				<font>sheettext</font>
 				<center />
 				<readonly />
 				<source>sb</source>
 			</numberfield>
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="260,0" width="35" height="20" />
+				<anchored to="name" position="insidetopleft" offset="188,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<buttoncontrol name="btn_recalc">
+				<anchored to="ml" position="righthigh" offset="5,2" width="15" height="15" />
+				<icon normal="button_calc" pressed="button_calc_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							local sNameVal = DB.getValue(nodeBase, "name", "");
+							if window.isConvocationSkill(sNameVal) then
+								-- Use convocation ML formula: PvarismML + sunsign modifier
+								local nodeChar = nodeBase.getParent().getParent();
+								local nML = window.calculateConvocationML(nodeChar, sNameVal);
+								DB.setValue(nodeBase, "ml", "number", nML);
+							else
+								-- Standard recalc: SM * SB
+								local nSM = DB.getValue(nodeBase, "sm", 0);
+								local nSB = DB.getValue(nodeBase, "sb", 0);
+								DB.setValue(nodeBase, "ml", "number", nSM * nSB);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<buttoncontrol name="btn_delete">
+				<anchored to="btn_recalc" position="righthigh" offset="5,0" width="15" height="15" />
+				<icon normal="button_delete" pressed="button_delete_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							local sNameVal = DB.getValue(nodeBase, "name", "");
+							-- If deleting Pvarism, also remove the 7 convocation skills
+							if string.upper(sNameVal) == "PVARISM" then
+								local tConvSkills = { "FYVRIA", "JMORVI", "LYAHVI", "ODIVSHE", "PELEAHN", "SAVORYA", "NEUTRAL" };
+								local nodeList = nodeBase.getParent();
+								if nodeList then
+									local tToDelete = {};
+									for _, nodeChild in pairs(DB.getChildren(nodeList)) do
+										local sChildName = string.upper(DB.getValue(nodeChild, "name", ""));
+										for _, sCon in ipairs(tConvSkills) do
+											if sChildName == sCon then
+												table.insert(tToDelete, nodeChild);
+												break;
+											end
+										end
+									end
+									for _, nodeChild in ipairs(tToDelete) do
+										nodeChild.delete();
+									end
+								end
+							end
+							nodeBase.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
 		</sheetdata>
 	</windowclass>
 
 	<!-- Template for spell entry -->
 	<windowclass name="harn_spell_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			function setCustomEditMode(bEdit)
+				btn_delete.setVisible(bEdit);
+			end
+		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="130" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
 					function onLoseFocus()
@@ -148,7 +396,7 @@
 				</script>
 			</stringfield>
 			<stringfield name="conv">
-				<anchored position="insidetopleft" offset="160,0" width="60" height="20" />
+				<anchored to="name" position="righthigh" offset="5,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -156,7 +404,7 @@
 				<source>conv</source>
 			</stringfield>
 			<numberfield name="cmp">
-				<anchored position="insidetopleft" offset="225,0" width="35" height="20" />
+				<anchored to="conv" position="righthigh" offset="5,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -164,48 +412,100 @@
 				<source>cmp</source>
 			</numberfield>
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="265,0" width="35" height="20" />
+				<anchored to="cmp" position="righthigh" offset="5,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<buttoncontrol name="btn_delete">
+				<anchored to="ml" position="righthigh" offset="5,0" width="15" height="15" />
+				<icon normal="button_delete" pressed="button_delete_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							nodeBase.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
 		</sheetdata>
 	</windowclass>
 
 	<!-- Template for talent entry -->
 	<windowclass name="harn_talent_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			function setCustomEditMode(bEdit)
+				btn_delete.setVisible(bEdit);
+			end
+		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="150" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="160,0" width="40" height="20" />
+				<anchored to="name" position="righthigh" offset="10,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<buttoncontrol name="btn_delete">
+				<anchored to="ml" position="righthigh" offset="5,0" width="15" height="15" />
+				<icon normal="button_delete" pressed="button_delete_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							nodeBase.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
 		</sheetdata>
 	</windowclass>
 
 	<!-- Template for alchemy entry -->
 	<windowclass name="harn_alchemy_entry">
 		<margins control="0,0,0,2" />
+		<script>
+			function setCustomEditMode(bEdit)
+				btn_delete.setVisible(bEdit);
+			end
+		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5,0" width="150" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="150" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="160,0" width="40" height="20" />
+				<anchored to="name" position="righthigh" offset="10,0" width="40" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<buttoncontrol name="btn_delete">
+				<anchored to="ml" position="righthigh" offset="5,0" width="15" height="15" />
+				<icon normal="button_delete" pressed="button_delete_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeBase = window.getDatabaseNode();
+						if nodeBase then
+							nodeBase.delete();
+						end
+					end
+				</script>
+			</buttoncontrol>
 		</sheetdata>
 	</windowclass>
 
@@ -278,221 +578,285 @@
 		<sheetdata>
 			<anchor_column name="columnanchor" />
 
-			<!-- ESOTERICA Section -->
-			<label name="esoterica_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
-					<left offset="10" />
-					<right offset="-10" />
+			<!-- ESOTERICA Skills Group Box -->
+			<genericcontrol name="esoterica_group_box">
+				<anchored width="275" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
 				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="esoterica_title">
+				<anchored to="esoterica_group_box" position="insidetop" offset="0,10" width="100" height="20" />
 				<static textres="harn_esoterica_esoterica" />
-				<font>sheetlabel</font>
+				<font>harn_group</font>
 				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
 
+			<button_iadd name="esotericalist_iadd">
+				<anchored to="esoterica_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>esotericalist</target>
+			</button_iadd>
+			
+			<buttoncontrol name="esotericalist_edit">
+				<anchored to="esoterica_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.esotericalist.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
 			<label name="esoterica_h_skill">
-				<anchored height="20" width="100">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-				</anchored>
+				<anchored to="esoterica_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>SKILL</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="esoterica_h_att1">
-				<anchored to="esoterica_h_skill" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT1</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="esoterica_h_att2">
-				<anchored to="esoterica_h_att1" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ATT2</static>
-				<font>sheetlabel</font>
-				<center />
+				<font>harn_skill_header</font>
 			</label>
 			<label name="esoterica_h_sm">
-				<anchored to="esoterica_h_att2" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="esoterica_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
 				<static>SM</static>
-				<font>sheetlabel</font>
+				<tooltip><text>Skill Multiple</text></tooltip>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="esoterica_h_sb">
-				<anchored to="esoterica_h_sm" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="esoterica_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
 				<static>SB</static>
-				<font>sheetlabel</font>
+				<tooltip><text>Skill Base</text></tooltip>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="esoterica_h_ml">
-				<anchored to="esoterica_h_sb" position="righthigh" offset="5,0" width="35" height="20" />
+				<anchored to="esoterica_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<windowlist name="esotericalist">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="esoterica_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.esotericalist</datasource>
 				<class>harn_esoterica_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
+				<sortby><field>sortorder</field></sortby>
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="esotericalist_iadd">
-				<anchored to="esotericalist" position="aboveright" offset="2,8" />
-				<target>esotericalist</target>
-			</button_iadd>
 
-			<!-- SPELLS Section -->
-			<label name="spells_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
+			<!-- TALENTS Skills Group Box (Right of Esoterica) -->
+			<genericcontrol name="talents_group_box">
+				<anchored width="275" height="200">
+					<top parent="esoterica_group_box" anchor="top" />
+					<right offset="-40" />
 				</anchored>
-				<static textres="harn_esoterica_spells" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
+				<frame name="groupbox" />
+			</genericcontrol>
 
-			<label name="spells_h_name">
-				<anchored height="20" width="150">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-				</anchored>
-				<static>NAME</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="spells_h_conv">
-				<anchored to="spells_h_name" position="righthigh" offset="5,0" width="60" height="20" />
-				<static textres="harn_esoterica_conv" />
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="spells_h_cmp">
-				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_esoterica_cmp" />
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="spells_h_ml">
-				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="35" height="20" />
-				<static>ML</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<windowlist name="spellslist">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
-				</anchored>
-				<datasource>.spellslist</datasource>
-				<class>harn_spell_entry</class>
-				<sortby><field>name</field></sortby>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-			<button_iadd name="spellslist_iadd">
-				<anchored to="spellslist" position="aboveright" offset="2,8" />
-				<target>spellslist</target>
-			</button_iadd>
-
-			<!-- TALENTS Section -->
 			<label name="talents_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
+				<anchored to="talents_group_box" position="insidetop" offset="0,10" width="100" height="20" />
 				<static textres="harn_esoterica_talents" />
-				<font>sheetlabel</font>
+				<font>harn_group</font>
 				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
+
+			<button_iadd name="talentslist_iadd">
+				<anchored to="talents_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>talentslist</target>
+			</button_iadd>
+			
+			<buttoncontrol name="talentslist_edit">
+				<anchored to="talents_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.talentslist.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="talents_h_name">
-				<anchored height="20" width="150">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-				</anchored>
+				<anchored to="talents_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>NAME</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="talents_h_ml">
-				<anchored to="talents_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<anchored to="talents_h_name" position="righthigh" offset="160,0" width="40" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<windowlist name="talentslist">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="talents_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.talentslist</datasource>
 				<class>harn_talent_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="talentslist_iadd">
-				<anchored to="talentslist" position="aboveright" offset="2,8" />
-				<target>talentslist</target>
-			</button_iadd>
 
-			<!-- ALCHEMY Section -->
-			<label name="alchemy_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
-					<left offset="10" />
-					<right offset="-10" />
+			<!-- SPELLS Skills Group Box (Under Esoterica) -->
+			<genericcontrol name="spells_group_box">
+				<anchored width="275" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
 				</anchored>
-				<static textres="harn_esoterica_alchemy" />
-				<font>sheetlabel</font>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="spells_title">
+				<anchored to="spells_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_esoterica_spells" />
+				<font>harn_group</font>
 				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
+
+			<button_iadd name="spellslist_iadd">
+				<anchored to="spells_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>spellslist</target>
+			</button_iadd>
+			
+			<buttoncontrol name="spellslist_edit">
+				<anchored to="spells_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.spellslist.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<label name="spells_h_name">
+				<anchored to="spells_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<static>NAME</static>
+				<font>harn_skill_header</font>
+			</label>
+			<label name="spells_h_conv">
+				<anchored to="spells_h_name" position="righthigh" offset="130,0" width="35" height="20" />
+				<static textres="harn_esoterica_conv" />
+				<tooltip><text>Convocation</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="spells_h_cmp">
+				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="20" height="20" />
+				<static textres="harn_esoterica_cmp" />
+				<tooltip><text>Complexity</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="spells_h_ml">
+				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="30" height="20" />
+				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<windowlist name="spellslist">
+				<anchored to="spells_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.spellslist</datasource>
+				<class>harn_spell_entry</class>
+				<sortby><field>name</field></sortby>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- ALCHEMY Skills Group Box (Right of Spells) -->
+			<genericcontrol name="alchemy_group_box">
+				<anchored width="275" height="200">
+					<top parent="spells_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="alchemy_title">
+				<anchored to="alchemy_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_esoterica_alchemy" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="alchemylist_iadd">
+				<anchored to="alchemy_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>alchemylist</target>
+			</button_iadd>
+			
+			<buttoncontrol name="alchemylist_edit">
+				<anchored to="alchemy_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.alchemylist.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
 
 			<label name="alchemy_h_name">
-				<anchored height="20" width="150">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-				</anchored>
+				<anchored to="alchemy_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
 				<static>NAME</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="alchemy_h_ml">
-				<anchored to="alchemy_h_name" position="righthigh" offset="5,0" width="40" height="20" />
+				<anchored to="alchemy_h_name" position="righthigh" offset="160,0" width="40" height="20" />
 				<static>ML</static>
-				<font>sheetlabel</font>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<windowlist name="alchemylist">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="5" />
-					<right offset="-5" />
+				<anchored to="alchemy_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.alchemylist</datasource>
 				<class>harn_alchemy_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			<button_iadd name="alchemylist_iadd">
-				<anchored to="alchemylist" position="aboveright" offset="2,8" />
-				<target>alchemylist</target>
-			</button_iadd>
 		</sheetdata>
 	</windowclass>
 </root>

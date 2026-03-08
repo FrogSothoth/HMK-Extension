@@ -210,7 +210,7 @@
 
 			<!-- REA Box -->
 			<genericcontrol name="rea_frame">
-				<anchored position="insidetopright" offset="60,80" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,80" width="45" height="56" />
 				<icon>rea_icon</icon>
 				<tooltip text="Ready" />
 			</genericcontrol>
@@ -231,7 +231,7 @@
 
 			<!-- CRE Box -->
 			<genericcontrol name="cre_frame">
-				<anchored position="insidetopright" offset="130,80" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,80" width="45" height="56" />
 				<icon>cre_icon</icon>
 				<tooltip text="Creativity" />
 			</genericcontrol>
@@ -252,7 +252,7 @@
 
 			<!-- EMP Box -->
 			<genericcontrol name="emp_frame">
-				<anchored position="insidetopright" offset="60,125" width="45" height="56" />
+				<anchored position="insidetopright" offset="130,125" width="45" height="56" />
 				<icon>emp_icon</icon>
 				<tooltip text="Empathy" />
 			</genericcontrol>
@@ -273,7 +273,7 @@
 
 			<!-- ELO Box -->
 			<genericcontrol name="elo_frame">
-				<anchored position="insidetopright" offset="130,125" width="45" height="56" />
+				<anchored position="insidetopright" offset="60,125" width="45" height="56" />
 				<icon>elo_icon</icon>
 				<tooltip text="Eloquence" />
 			</genericcontrol>
@@ -327,7 +327,6 @@
 			<numberfield name="grace_total">
 				<anchored to="grc_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
 				<font>sheetnumber</font>
-				<readonly />
 				<hideonzero />
 				<nodrag />
 			</numberfield>
@@ -371,7 +370,6 @@
 			<numberfield name="piety_max">
 				<anchored to="pie_frame" position="insidetopleft" offset="2,22" width="20" height="20" />
 				<font>sheetnumber</font>
-				<readonly />
 				<hideonzero />
 				<nodrag />
 			</numberfield>
