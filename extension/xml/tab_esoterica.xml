@@ -362,7 +362,7 @@
 		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="3,0" width="130" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="100" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<script>
 					function onLoseFocus()
@@ -396,8 +396,8 @@
 				</script>
 			</stringfield>
 			<stringfield name="conv">
-				<anchored to="name" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="name" position="righthigh" offset="5,0" width="65" height="20" />
+				<!--<frame name="fielddark" offset="7,5,7,5" />-->
 				<font>sheettext</font>
 				<center />
 				<readonly />
@@ -405,7 +405,7 @@
 			</stringfield>
 			<numberfield name="cmp">
 				<anchored to="conv" position="righthigh" offset="5,0" width="20" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<!--<frame name="fielddark" offset="7,5,7,5" />-->
 				<font>sheettext</font>
 				<center />
 				<readonly />
@@ -445,11 +445,11 @@
 		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="3,0" width="150" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="155" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<numberfield name="ml">
-				<anchored to="name" position="righthigh" offset="10,0" width="40" height="20" />
+				<anchored to="name" position="righthigh" offset="10,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -482,11 +482,11 @@
 		</script>
 		<sheetdata>
 			<stringfield name="name">
-				<anchored position="insidetopleft" offset="3,0" width="150" height="20" />
+				<anchored position="insidetopleft" offset="3,0" width="155" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<numberfield name="ml">
-				<anchored to="name" position="righthigh" offset="10,0" width="40" height="20" />
+				<anchored to="name" position="righthigh" offset="10,0" width="30" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -582,7 +582,7 @@
 			<genericcontrol name="esoterica_group_box">
 				<anchored width="275" height="200">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
-					<left offset="40" />
+					<left offset="65" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
@@ -657,9 +657,9 @@
 
 			<!-- TALENTS Skills Group Box (Right of Esoterica) -->
 			<genericcontrol name="talents_group_box">
-				<anchored width="275" height="200">
+				<anchored width="240" height="200">
 					<top parent="esoterica_group_box" anchor="top" />
-					<right offset="-40" />
+					<right offset="-65" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
@@ -693,12 +693,12 @@
 			</buttoncontrol>
 
 			<label name="talents_h_name">
-				<anchored to="talents_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<anchored to="talents_group_box" position="insidetopleft" offset="13,40" width="60" height="20" />
 				<static>NAME</static>
 				<font>harn_skill_header</font>
 			</label>
 			<label name="talents_h_ml">
-				<anchored to="talents_h_name" position="righthigh" offset="160,0" width="40" height="20" />
+				<anchored to="talents_h_name" position="righthigh" offset="104,0" width="40" height="20" />
 				<static>ML</static>
 				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
@@ -722,7 +722,7 @@
 			<genericcontrol name="spells_group_box">
 				<anchored width="275" height="200">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
-					<left offset="40" />
+					<left offset="65" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
@@ -756,26 +756,26 @@
 			</buttoncontrol>
 
 			<label name="spells_h_name">
-				<anchored to="spells_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<anchored to="spells_group_box" position="insidetopleft" offset="13,40" width="115" height="20" />
 				<static>NAME</static>
 				<font>harn_skill_header</font>
 			</label>
 			<label name="spells_h_conv">
-				<anchored to="spells_h_name" position="righthigh" offset="130,0" width="35" height="20" />
+				<anchored to="spells_h_name" position="righthigh" offset="10,0" width="35" height="20" />
 				<static textres="harn_esoterica_conv" />
 				<tooltip><text>Convocation</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="spells_h_cmp">
-				<anchored to="spells_h_conv" position="righthigh" offset="5,0" width="20" height="20" />
+				<anchored to="spells_h_conv" position="righthigh" offset="18,0" width="25" height="20" />
 				<static textres="harn_esoterica_cmp" />
 				<tooltip><text>Complexity</text></tooltip>
 				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="spells_h_ml">
-				<anchored to="spells_h_cmp" position="righthigh" offset="5,0" width="30" height="20" />
+				<anchored to="spells_h_cmp" position="righthigh" offset="4,0" width="27" height="20" />
 				<static>ML</static>
 				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>
@@ -797,9 +797,9 @@
 
 			<!-- ALCHEMY Skills Group Box (Right of Spells) -->
 			<genericcontrol name="alchemy_group_box">
-				<anchored width="275" height="200">
+				<anchored width="240" height="200">
 					<top parent="spells_group_box" anchor="top" />
-					<right offset="-40" />
+					<right offset="-65" />
 				</anchored>
 				<frame name="groupbox" />
 			</genericcontrol>
@@ -833,12 +833,12 @@
 			</buttoncontrol>
 
 			<label name="alchemy_h_name">
-				<anchored to="alchemy_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<anchored to="alchemy_group_box" position="insidetopleft" offset="13,40" width="60" height="20" />
 				<static>NAME</static>
 				<font>harn_skill_header</font>
 			</label>
 			<label name="alchemy_h_ml">
-				<anchored to="alchemy_h_name" position="righthigh" offset="160,0" width="40" height="20" />
+				<anchored to="alchemy_h_name" position="righthigh" offset="104,0" width="40" height="20" />
 				<static>ML</static>
 				<tooltip><text>Mastery Level</text></tooltip>
 				<font>harn_skill_header</font>

@@ -620,7 +620,7 @@
 
 			<!-- SOCIAL Skills Group Box -->
 			<genericcontrol name="social_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
 					<left offset="40" />
 				</anchored>
@@ -698,7 +698,7 @@
 
 			<!-- LORE Skills Group Box (Right of Social) -->
 			<genericcontrol name="lore_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="social_group_box" anchor="top" />
 					<right offset="-40" />
 				</anchored>
@@ -776,7 +776,7 @@
 
 			<!-- PHYSICAL Skills Group Box (Under Social) -->
 			<genericcontrol name="physical_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
 					<left offset="40" />
 				</anchored>
@@ -854,7 +854,7 @@
 
 			<!-- NATURE Skills Group Box (Right of Physical) -->
 			<genericcontrol name="nature_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="physical_group_box" anchor="top" />
 					<right offset="-40" />
 				</anchored>
@@ -932,7 +932,7 @@
 
 			<!-- CRAFT Skills Group Box (Under Physical) -->
 			<genericcontrol name="craft_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
 					<left offset="40" />
 				</anchored>
@@ -1010,7 +1010,7 @@
 
 			<!-- COMBAT Skills Group Box (Right of Craft) -->
 			<genericcontrol name="combat_group_box">
-				<anchored width="275" height="200">
+				<anchored width="285" height="200">
 					<top parent="craft_group_box" anchor="top" />
 					<right offset="-40" />
 				</anchored>
