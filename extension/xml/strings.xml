@@ -141,11 +141,11 @@
 	<string name="harn_shock">Shock</string>
 
 	<string name="harn_movement">MOVEMENT</string>
-	<string name="harn_move">Move</string>
-	<string name="harn_effective">Effective</string>
-	<string name="harn_half">Half</string>
-	<string name="harn_full">Full</string>
-	<string name="harn_double">Double</string>
+	<string name="harn_move">MOVE:</string>
+	<string name="harn_effective">EFF:</string>
+	<string name="harn_half">HALF:</string>
+	<string name="harn_full">FULL:</string>
+	<string name="harn_double">DBL:</string>
 
 	<string name="harn_melee_weapons">MELEE WEAPONS</string>
 	<string name="harn_missile_weapons">MISSILE WEAPONS</string>
@@ -189,11 +189,11 @@
 	<string name="harn_deceased">Dead</string>
 
 	<string name="harn_fatigue">FATIGUE</string>
-	<string name="harn_winded">Winded</string>
-	<string name="harn_weary">Weary</string>
-	<string name="harn_weak">Weak</string>
-	<string name="harn_pf">PF</string>
-	<string name="harn_endsr">End SR</string>
+	<string name="harn_winded">WINDED:</string>
+	<string name="harn_weary">WEARY:</string>
+	<string name="harn_weak">WEAK:</string>
+	<string name="harn_pf">PF:</string>
+	<string name="harn_endsr">End SR:</string>
 
 	<string name="harn_stress">STRESS</string>
 	<string name="harn_auralshock">Aural Shock</string>

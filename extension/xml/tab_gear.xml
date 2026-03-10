@@ -108,7 +108,7 @@
 		<sheetdata>
 			<!-- ENCUMBRANCE Section -->
 			<frame_char name="enc_frame">
-				<anchored position="insidetopleft" offset="60,10" width="160" height="170" />
+				<anchored position="insidetopleft" offset="60,10" width="140" height="170" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="enc_frame" />
@@ -117,13 +117,12 @@
 			</label_frametop>
 
 			<label name="armour_enc_label">
-				<anchored to="enc_frame" position="insidetopleft" offset="15,35" width="60" height="20" />
+				<anchored to="enc_frame" position="insidetopleft" offset="20,35" width="60" height="20" />
 				<static>ARMOUR:</static>
 				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="armour_enc">
-				<anchored to="armour_enc_label" position="righthigh" offset="20,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="armour_enc_label" position="righthigh" offset="10,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
@@ -133,8 +132,7 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="gear_enc">
-				<anchored to="gear_enc_label" position="righthigh" offset="20,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="gear_enc_label" position="righthigh" offset="10,0" width="30" height="20" />
 			</numberfield>
 
 			<label name="strmod_label">
@@ -143,8 +141,7 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="strmod">
-				<anchored to="strmod_label" position="righthigh" offset="20,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="strmod_label" position="righthigh" offset="10,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
@@ -154,8 +151,7 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="enc_total">
-				<anchored to="enc_label" position="righthigh" offset="20,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="enc_label" position="righthigh" offset="10,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
@@ -165,8 +161,7 @@
 				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="bulk_str">
-				<anchored to="bulk_label" position="righthigh" offset="20,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="bulk_label" position="righthigh" offset="10,0" width="30" height="20" />
 				<readonly />
 				<center />
 			</stringfield>
