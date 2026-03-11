@@ -1116,7 +1116,7 @@
 
 			<!-- MELEE WEAPONS - Full width -->
 			<frame_char name="melee_frame">
-				<anchored position="insidetopleft" offset="60,155" width="400" height="140">
+				<anchored to="movement_frame" position="belowleft" offset="0,15" width="400" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -1203,8 +1203,7 @@
 			<!-- MISSILE WEAPONS - Below melee, full width, fixed height -->
 			<!-- y=265 = 120 (top row height) + 140 (melee height) + 5 (gap) -->
 			<frame_char name="missile_frame">
-				<anchored position="insidetopleft" offset="0,265" height="140">
-					<right offset="0" />
+				<anchored to="melee_frame" position="belowleft" offset="0,15" width="400" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -1301,8 +1300,7 @@
 			<!-- y=410 = 120 (top row) + 140 (melee) + 5 (gap) + 140 (missile) + 5 (gap) -->
 			<!-- height=450 = 42 (header) + 15 rows * 24px each + 50px extra space -->
 			<frame_char name="bodyloc_frame">
-				<anchored position="insidetopleft" offset="0,410" height="450">
-					<right offset="0" />
+				<anchored to="missile_frame" position="belowleft" offset="0,15" height="450">
 				</anchored>
 			</frame_char>
 			<label_frametop>
