@@ -976,61 +976,10 @@
 				<state icon="button_checkon" />
 			</buttoncontrol>
 
-			<!-- FATIGUE Section - to right of Shock -->
-			<frame_char name="fatigue_frame">
-				<anchored to="shock_frame" position="righthigh" offset="5,0" width="125" height="150" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="fatigue_frame" />
-				<static textres="harn_fatigue" />
-				<font>harn_group</font>
-			</label_frametop>
-
-			<label name="winded_label">
-				<anchored to="fatigue_frame" position="insidetopleft" offset="10,40" width="70" height="20" />
-				<static textres="harn_winded" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="winded">
-				<anchored to="winded_label" position="righthigh" offset="3,0" width="25" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="weary_label">
-				<anchored to="winded_label" position="below" offset="0,3" width="70" height="20" />
-				<static textres="harn_weary" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="weary">
-				<anchored to="weary_label" position="righthigh" offset="3,0" width="25" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="weak_label">
-				<anchored to="weary_label" position="below" offset="0,3" width="70" height="20" />
-				<static textres="harn_weak" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="weak">
-				<anchored to="weak_label" position="righthigh" offset="3,0" width="25" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="pf_label">
-				<anchored to="weak_label" position="below" offset="0,3" width="70" height="20" />
-				<static textres="harn_pf" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="pf">
-				<anchored to="pf_label" position="righthigh" offset="3,0" width="25" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
-			</numberfield>
-
 			<!-- STRESS Section - anchored to right edge, responsive -->
 			<frame_char name="stress_frame">
 				<anchored position="insidetopright" offset="0,0" height="140">
-					<left parent="fatigue_frame" anchor="right" offset="5" />
+					<left parent="shock_frame" anchor="right" offset="5" />
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -1129,42 +1078,42 @@
 			<label name="melee_name_h">
 				<anchored to="melee_frame" position="insidetopleft" offset="15,25" width="80" height="15" />
 				<static>Weapon</static>
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_wq_h">
 				<anchored to="melee_name_h" position="righthigh" offset="5,0" width="28" height="15" />
 				<static textres="harn_wq" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_hft_h">
 				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="35" height="15" />
 				<static textres="harn_hft" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_rch_h">
 				<anchored to="melee_hft_h" position="righthigh" offset="-2,0" width="28" height="15" />
 				<static textres="harn_rch" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_atk_h">
 				<anchored to="melee_rch_h" position="righthigh" offset="4,0" width="32" height="15" />
 				<static textres="harn_atk" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_def_h">
 				<anchored to="melee_atk_h" position="righthigh" offset="4,0" width="32" height="15" />
 				<static textres="harn_def" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_zd_h">
 				<anchored to="melee_def_h" position="righthigh" offset="4,0" width="30" height="15" />
 				<static textres="harn_zd" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_imp_h">
 				<anchored to="melee_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
 				<static textres="harn_imp" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_ta_h">
 				<anchored to="melee_imp_h" position="righthigh" offset="4,0" width="40" height="15" />

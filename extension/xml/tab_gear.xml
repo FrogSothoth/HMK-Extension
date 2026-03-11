@@ -26,7 +26,7 @@
 
 			<!-- Location -->
 			<stringfield name="location">
-				<anchored to="name" width="120" height="20">
+				<anchored to="name" width="65" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -53,7 +53,7 @@
 			
 			<!-- Total Weight (Calculated) -->
 			<numberfield name="total_weight">
-				<anchored to="quantity" width="45" height="20">
+				<anchored to="quantity" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -63,7 +63,7 @@
 			</numberfield>
 
 			<stringcontrol name="total_weight_display">
-				<anchored to="quantity" width="45" height="20">
+				<anchored to="quantity" width="35" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -166,23 +166,136 @@
 				<center />
 			</stringfield>
 
-			<!-- ARMOUR / CLOTHING Groupbox (right of Encumbrance, anchored to window right) -->
-<!--		<frame_char name="armour_frame">
-				<anchored>
-					<top offset="10" />
-					<left parent="enc_frame" anchor="right" offset="10" />
-					<right offset="-10" />
-					<height>170</height>
+			<!-- FATIGUE Section (between Encumbrance and Armour) -->
+			<frame_char name="fatigue_frame">
+				<anchored to="enc_frame" position="righthigh" offset="10,0" width="125" height="170" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="fatigue_frame" />
+				<static textres="harn_fatigue" />
+				<font>harn_group</font>
+			</label_frametop>
+
+			<label name="winded_label">
+				<anchored to="fatigue_frame" position="insidetopleft" offset="10,40" width="70" height="20" />
+				<static textres="harn_winded" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="winded">
+				<anchored to="winded_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weary_label">
+				<anchored to="winded_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_weary" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="weary">
+				<anchored to="weary_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weak_label">
+				<anchored to="weary_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_weak" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="weak">
+				<anchored to="weak_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="pf_label">
+				<anchored to="weak_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_pf" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="pf">
+				<anchored to="pf_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<!-- POSSESSIONS Section -->
+			<!-- Use anchor_column for vertical flow below the top row -->
+			<anchor_column name="columnanchor">
+				<anchored position="insidetopleft" offset="0,185" width="0" height="0" />
+			</anchor_column>
+
+			<!-- POSSESSIONS Section -->
+			<frame_char name="possessions_frame">
+				<anchored width="350">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="40" />
+					<bottom offset="-20" />
 				</anchored>
 			</frame_char>
 			<label_frametop>
-				<anchored to="armour_frame" />
-				<static textres="harn_armour_clothing" />
+				<anchored to="possessions_frame" />
+				<static textres="harn_possessions" />
 				<font>harn_group</font>
 			</label_frametop>
--->
+
+			<!-- Possessions list headers -->
+			<label name="poss_name_header">
+				<anchored to="possessions_frame" position="insidetopleft" offset="15,30" width="135" height="15" />
+				<static>Item</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_loc_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="65" height="15" />
+				<static>Location</static>
+				<font>sheetlabel</font>
+			</label>
+			<label name="poss_wt_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="208,0" width="35" height="15" />
+				<static>Wt</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="poss_qty_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="245,0" width="35" height="15" />
+				<static>Qty</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+			<label name="poss_total_header">
+				<anchored to="poss_name_header" position="insidetopleft" offset="285,0" width="35" height="15" />
+				<static>Total</static>
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<windowlist name="possessions">
+				<anchored to="possessions_frame">
+					<top offset="50" />
+					<left offset="10" />
+					<right offset="-10" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.possessions</datasource>
+				<class>harn_possession_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<scrollbar_list>
+				<anchored to="possessions" />
+				<target>possessions</target>
+			</scrollbar_list>
+			
+			<button_iadd name="poss_iadd">
+				<anchored to="possessions" position="aboveright" offset="5,20" width="15" height="15" />
+				<target>possessions</target>
+			</button_iadd>
+
+			<!-- ARMOUR / CLOTHING Groupbox (right of Possessions) -->
 			<frame_char name="armour_frame">
-				<anchored position="insidetopright" offset="60,10" width="200" height="170" />
+				<anchored width="210">
+					<top parent="possessions_frame" anchor="top" />
+					<bottom parent="possessions_frame" anchor="bottom" />
+					<right offset="-35" />
+				</anchored>
 			</frame_char>
 			<label_frametop>
 				<anchored to="armour_frame" />
@@ -208,90 +321,22 @@
 					<top parent="armour_name_header" anchor="bottom" relation="relative" offset="2" />
 					<left parent="armour_frame" anchor="left" offset="10" />
 					<right parent="armour_frame" anchor="right" offset="-10" />
+					<bottom parent="armour_frame" anchor="bottom" offset="-15" />
 				</anchored>
 				<datasource>.armourlist</datasource>
 				<class>harn_armour_entry</class>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<scrollbar_list>
+				<anchored to="armourlist" />
+				<target>armourlist</target>
+			</scrollbar_list>
 
 			<button_iadd name="armour_iadd">
-				<anchored to="armourlist" position="aboveright" offset="5,8" />
+				<anchored to="armourlist" position="aboveright" offset="10,20" width="15" height="15" />
 				<target>armourlist</target>
 			</button_iadd>
-
-			<!-- POSSESSIONS Section -->
-			<!-- Use anchor_column for vertical flow below the top row -->
-			<anchor_column name="columnanchor">
-				<anchored position="insidetopleft" offset="0,185" width="0" height="0" />
-			</anchor_column>
-
-			<!-- POSSESSIONS Section -->
-			<label name="poss_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<static textres="harn_possessions" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
-
-			<!-- Possessions list headers -->
-			<label name="poss_name_header">
-				<anchored height="15">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-					<width>135</width>
-				</anchored>
-				<static>Item</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="poss_loc_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="120" height="15" />
-				<static>Location</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="poss_wt_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="263,0" width="35" height="15" />
-				<static>Wt</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="poss_qty_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="302,0" width="35" height="15" />
-				<static>Qty</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-			<label name="poss_total_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="341,0" width="45" height="15" />
-				<static>Total</static>
-				<font>sheetlabel</font>
-				<center />
-			</label>
-
-			<windowlist name="possessions">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-					<right offset="-10" />
-				</anchored>
-				<datasource>.possessions</datasource>
-				<class>harn_possession_entry</class>
-				<noscroll />
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-			
-			<button_iadd name="poss_iadd">
-				<anchored to="possessions" position="aboveright" offset="5,8" />
-				<target>possessions</target>
-			</button_iadd>
-
 
 
 			<!-- NOTES Section -->
