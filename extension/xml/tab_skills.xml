@@ -618,6 +618,162 @@
 			<!-- Use anchor_column for vertical flow -->
 			<anchor_column name="columnanchor" />
 
+			<!-- LORE Skills Group Box -->
+			<genericcontrol name="lore_group_box">
+				<anchored width="285" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="lore_title">
+				<anchored to="lore_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_lore" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="loreskills_iadd">
+				<anchored to="lore_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>loreskills</target>
+			</button_iadd>
+			
+			<buttoncontrol name="loreskills_edit">
+				<anchored to="lore_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.loreskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<label name="lore_h_skill">
+				<anchored to="lore_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<static>SKILL</static>
+				<font>harn_skill_header</font>
+			</label>
+			<label name="lore_h_sm">
+				<anchored to="lore_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
+				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="lore_h_sb">
+				<anchored to="lore_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
+				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="lore_h_ml">
+				<anchored to="lore_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
+				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+
+			<windowlist name="loreskills">
+				<anchored to="lore_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.loreskills</datasource>
+				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- PHYSICAL Skills Group Box (Under Social) -->
+			<genericcontrol name="physical_group_box">
+				<anchored width="285" height="200">
+					<top parent="lore_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="physical_title">
+				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_physical" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="physicalskills_iadd">
+				<anchored to="physical_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>physicalskills</target>
+			</button_iadd>
+			
+			<buttoncontrol name="physicalskills_edit">
+				<anchored to="physical_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.physicalskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<label name="physical_h_skill">
+				<anchored to="physical_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<static>SKILL</static>
+				<font>harn_skill_header</font>
+			</label>
+			<label name="physical_h_sm">
+				<anchored to="physical_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
+				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="physical_h_sb">
+				<anchored to="physical_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
+				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="physical_h_ml">
+				<anchored to="physical_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
+				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+
+			<windowlist name="physicalskills">
+				<anchored to="physical_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.physicalskills</datasource>
+				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
 			<!-- SOCIAL Skills Group Box -->
 			<genericcontrol name="social_group_box">
 				<anchored width="285" height="200">
@@ -696,322 +852,10 @@
 				<allowdelete />
 			</windowlist>
 
-			<!-- LORE Skills Group Box (Right of Social) -->
-			<genericcontrol name="lore_group_box">
-				<anchored width="285" height="200">
-					<top parent="social_group_box" anchor="top" />
-					<right offset="-40" />
-				</anchored>
-				<frame name="groupbox" />
-			</genericcontrol>
-
-			<label name="lore_title">
-				<anchored to="lore_group_box" position="insidetop" offset="0,10" width="100" height="20" />
-				<static textres="harn_skill_lore" />
-				<font>harn_group</font>
-				<center />
-			</label>
-
-			<button_iadd name="loreskills_iadd">
-				<anchored to="lore_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
-				<target>loreskills</target>
-			</button_iadd>
-			
-			<buttoncontrol name="loreskills_edit">
-				<anchored to="lore_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
-				<state icon="button_edit" />
-				<state icon="button_edit_down" />
-				<script>
-					function onValueChanged()
-						local bState = (getValue() == 1);
-						for _,w in pairs(window.loreskills.getWindows()) do
-							if w.setCustomEditMode then
-								w.setCustomEditMode(bState);
-							end
-						end
-					end
-				</script>
-			</buttoncontrol>
-
-			<label name="lore_h_skill">
-				<anchored to="lore_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
-				<static>SKILL</static>
-				<font>harn_skill_header</font>
-			</label>
-			<label name="lore_h_sm">
-				<anchored to="lore_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
-				<static>SM</static>
-				<tooltip><text>Skill Multiple</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="lore_h_sb">
-				<anchored to="lore_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
-				<static>SB</static>
-				<tooltip><text>Skill Base</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="lore_h_ml">
-				<anchored to="lore_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
-				<static>ML</static>
-				<tooltip><text>Mastery Level</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-
-			<windowlist name="loreskills">
-				<anchored to="lore_group_box">
-					<top offset="65" />
-					<left offset="15" />
-					<right offset="15" />
-					<bottom offset="-15" />
-				</anchored>
-				<datasource>.loreskills</datasource>
-				<class>harn_skill_entry</class>
-				<sortby><field>name</field></sortby>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-
-			<!-- PHYSICAL Skills Group Box (Under Social) -->
-			<genericcontrol name="physical_group_box">
-				<anchored width="285" height="200">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
-					<left offset="40" />
-				</anchored>
-				<frame name="groupbox" />
-			</genericcontrol>
-
-			<label name="physical_title">
-				<anchored to="physical_group_box" position="insidetop" offset="0,10" width="100" height="20" />
-				<static textres="harn_skill_physical" />
-				<font>harn_group</font>
-				<center />
-			</label>
-
-			<button_iadd name="physicalskills_iadd">
-				<anchored to="physical_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
-				<target>physicalskills</target>
-			</button_iadd>
-			
-			<buttoncontrol name="physicalskills_edit">
-				<anchored to="physical_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
-				<state icon="button_edit" />
-				<state icon="button_edit_down" />
-				<script>
-					function onValueChanged()
-						local bState = (getValue() == 1);
-						for _,w in pairs(window.physicalskills.getWindows()) do
-							if w.setCustomEditMode then
-								w.setCustomEditMode(bState);
-							end
-						end
-					end
-				</script>
-			</buttoncontrol>
-
-			<label name="physical_h_skill">
-				<anchored to="physical_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
-				<static>SKILL</static>
-				<font>harn_skill_header</font>
-			</label>
-			<label name="physical_h_sm">
-				<anchored to="physical_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
-				<static>SM</static>
-				<tooltip><text>Skill Multiple</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="physical_h_sb">
-				<anchored to="physical_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
-				<static>SB</static>
-				<tooltip><text>Skill Base</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="physical_h_ml">
-				<anchored to="physical_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
-				<static>ML</static>
-				<tooltip><text>Mastery Level</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-
-			<windowlist name="physicalskills">
-				<anchored to="physical_group_box">
-					<top offset="65" />
-					<left offset="15" />
-					<right offset="15" />
-					<bottom offset="-15" />
-				</anchored>
-				<datasource>.physicalskills</datasource>
-				<class>harn_skill_entry</class>
-				<sortby><field>name</field></sortby>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-
-			<!-- NATURE Skills Group Box (Right of Physical) -->
-			<genericcontrol name="nature_group_box">
-				<anchored width="285" height="200">
-					<top parent="physical_group_box" anchor="top" />
-					<right offset="-40" />
-				</anchored>
-				<frame name="groupbox" />
-			</genericcontrol>
-
-			<label name="nature_title">
-				<anchored to="nature_group_box" position="insidetop" offset="0,10" width="100" height="20" />
-				<static textres="harn_skill_nature" />
-				<font>harn_group</font>
-				<center />
-			</label>
-
-			<button_iadd name="natureskills_iadd">
-				<anchored to="nature_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
-				<target>natureskills</target>
-			</button_iadd>
-			
-			<buttoncontrol name="natureskills_edit">
-				<anchored to="nature_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
-				<state icon="button_edit" />
-				<state icon="button_edit_down" />
-				<script>
-					function onValueChanged()
-						local bState = (getValue() == 1);
-						for _,w in pairs(window.natureskills.getWindows()) do
-							if w.setCustomEditMode then
-								w.setCustomEditMode(bState);
-							end
-						end
-					end
-				</script>
-			</buttoncontrol>
-
-			<label name="nature_h_skill">
-				<anchored to="nature_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
-				<static>SKILL</static>
-				<font>harn_skill_header</font>
-			</label>
-			<label name="nature_h_sm">
-				<anchored to="nature_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
-				<static>SM</static>
-				<tooltip><text>Skill Multiple</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="nature_h_sb">
-				<anchored to="nature_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
-				<static>SB</static>
-				<tooltip><text>Skill Base</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="nature_h_ml">
-				<anchored to="nature_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
-				<static>ML</static>
-				<tooltip><text>Mastery Level</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-
-			<windowlist name="natureskills">
-				<anchored to="nature_group_box">
-					<top offset="65" />
-					<left offset="15" />
-					<right offset="15" />
-					<bottom offset="-15" />
-				</anchored>
-				<datasource>.natureskills</datasource>
-				<class>harn_skill_entry</class>
-				<sortby><field>name</field></sortby>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-
-			<!-- CRAFT Skills Group Box (Under Physical) -->
-			<genericcontrol name="craft_group_box">
-				<anchored width="285" height="200">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
-					<left offset="40" />
-				</anchored>
-				<frame name="groupbox" />
-			</genericcontrol>
-
-			<label name="craft_title">
-				<anchored to="craft_group_box" position="insidetop" offset="0,10" width="100" height="20" />
-				<static textres="harn_skill_craft" />
-				<font>harn_group</font>
-				<center />
-			</label>
-
-			<button_iadd name="craftskills_iadd">
-				<anchored to="craft_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
-				<target>craftskills</target>
-			</button_iadd>
-			
-			<buttoncontrol name="craftskills_edit">
-				<anchored to="craft_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
-				<state icon="button_edit" />
-				<state icon="button_edit_down" />
-				<script>
-					function onValueChanged()
-						local bState = (getValue() == 1);
-						for _,w in pairs(window.craftskills.getWindows()) do
-							if w.setCustomEditMode then
-								w.setCustomEditMode(bState);
-							end
-						end
-					end
-				</script>
-			</buttoncontrol>
-
-			<label name="craft_h_skill">
-				<anchored to="craft_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
-				<static>SKILL</static>
-				<font>harn_skill_header</font>
-			</label>
-			<label name="craft_h_sm">
-				<anchored to="craft_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
-				<static>SM</static>
-				<tooltip><text>Skill Multiple</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="craft_h_sb">
-				<anchored to="craft_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
-				<static>SB</static>
-				<tooltip><text>Skill Base</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-			<label name="craft_h_ml">
-				<anchored to="craft_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
-				<static>ML</static>
-				<tooltip><text>Mastery Level</text></tooltip>
-				<font>harn_skill_header</font>
-				<center />
-			</label>
-
-			<windowlist name="craftskills">
-				<anchored to="craft_group_box">
-					<top offset="65" />
-					<left offset="15" />
-					<right offset="15" />
-					<bottom offset="-15" />
-				</anchored>
-				<datasource>.craftskills</datasource>
-				<class>harn_skill_entry</class>
-				<sortby><field>name</field></sortby>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-
 			<!-- COMBAT Skills Group Box (Right of Craft) -->
 			<genericcontrol name="combat_group_box">
 				<anchored width="285" height="200">
-					<top parent="craft_group_box" anchor="top" />
+					<top parent="social_group_box" anchor="top" />
 					<right offset="-40" />
 				</anchored>
 				<frame name="groupbox" />
@@ -1116,6 +960,162 @@
 						return sKey1 &gt; sKey2;
 					end
 				</script>
+			</windowlist>
+
+			<!-- NATURE Skills Group Box (Right of Physical) -->
+			<genericcontrol name="nature_group_box">
+				<anchored width="285" height="200">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="nature_title">
+				<anchored to="nature_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_nature" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="natureskills_iadd">
+				<anchored to="nature_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>natureskills</target>
+			</button_iadd>
+			
+			<buttoncontrol name="natureskills_edit">
+				<anchored to="nature_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.natureskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<label name="nature_h_skill">
+				<anchored to="nature_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<static>SKILL</static>
+				<font>harn_skill_header</font>
+			</label>
+			<label name="nature_h_sm">
+				<anchored to="nature_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
+				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="nature_h_sb">
+				<anchored to="nature_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
+				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="nature_h_ml">
+				<anchored to="nature_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
+				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+
+			<windowlist name="natureskills">
+				<anchored to="nature_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.natureskills</datasource>
+				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+
+			<!-- CRAFT Skills Group Box (Under Physical) -->
+			<genericcontrol name="craft_group_box">
+				<anchored width="285" height="200">
+					<top parent="nature_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<label name="craft_title">
+				<anchored to="craft_group_box" position="insidetop" offset="0,10" width="100" height="20" />
+				<static textres="harn_skill_craft" />
+				<font>harn_group</font>
+				<center />
+			</label>
+
+			<button_iadd name="craftskills_iadd">
+				<anchored to="craft_group_box" position="insidetopright" offset="25,10" width="15" height="15" />
+				<target>craftskills</target>
+			</button_iadd>
+			
+			<buttoncontrol name="craftskills_edit">
+				<anchored to="craft_group_box" position="insidetopright" offset="45,10" width="15" height="15" />
+				<state icon="button_edit" />
+				<state icon="button_edit_down" />
+				<script>
+					function onValueChanged()
+						local bState = (getValue() == 1);
+						for _,w in pairs(window.craftskills.getWindows()) do
+							if w.setCustomEditMode then
+								w.setCustomEditMode(bState);
+							end
+						end
+					end
+				</script>
+			</buttoncontrol>
+
+			<label name="craft_h_skill">
+				<anchored to="craft_group_box" position="insidetopleft" offset="13,40" width="30" height="20" />
+				<static>SKILL</static>
+				<font>harn_skill_header</font>
+			</label>
+			<label name="craft_h_sm">
+				<anchored to="craft_h_skill" position="righthigh" offset="106,0" width="30" height="20" />
+				<static>SM</static>
+				<tooltip><text>Skill Multiple</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="craft_h_sb">
+				<anchored to="craft_h_sm" position="righthigh" offset="3,0" width="20" height="20" />
+				<static>SB</static>
+				<tooltip><text>Skill Base</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+			<label name="craft_h_ml">
+				<anchored to="craft_h_sb" position="righthigh" offset="2,0" width="35" height="20" />
+				<static>ML</static>
+				<tooltip><text>Mastery Level</text></tooltip>
+				<font>harn_skill_header</font>
+				<center />
+			</label>
+
+			<windowlist name="craftskills">
+				<anchored to="craft_group_box">
+					<top offset="65" />
+					<left offset="15" />
+					<right offset="15" />
+					<bottom offset="-15" />
+				</anchored>
+				<datasource>.craftskills</datasource>
+				<class>harn_skill_entry</class>
+				<sortby><field>name</field></sortby>
+				<allowcreate />
+				<allowdelete />
 			</windowlist>
 		</sheetdata>
 	</windowclass>
