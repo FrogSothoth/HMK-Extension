@@ -803,61 +803,9 @@
 			<!-- TOP ROW: Movement, Shock, Fatigue, Stress    -->
 			<!-- ============================================ -->
 
-			<!-- MOVEMENT Section - anchored left -->
-			<frame_char name="movement_frame">
-				<anchored position="insidetopleft" offset="60,0" width="125" height="150" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="movement_frame" />
-				<static textres="harn_movement" />
-				<font>harn_group</font>
-			</label_frametop>
-
-			<label name="move_label">
-				<anchored to="movement_frame" position="insidetopleft" offset="10,40" width="60" height="20" />
-				<static textres="harn_move" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="move">
-				<anchored to="move_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<readonly />
-			</numberfield>
-
-			<label name="effective_label">
-				<anchored to="move_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_effective" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="move_effective">
-				<anchored to="effective_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="half_label">
-				<anchored to="effective_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_half" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="move_half">
-				<anchored to="half_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
-			</numberfield>
-
-			<label name="double_label">
-				<anchored to="half_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_double" />
-				<font>harn_label_18_bold</font>
-			</label>
-			<numberfield name="move_double">
-				<anchored to="double_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
-			</numberfield>
-
-			<!-- SHOCK STATE Section - to right of Movement -->
+			<!-- SHOCK STATE Section - Top Left -->
 			<frame_char name="shock_frame">
-				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="140" />
+				<anchored position="insidetopleft" offset="60,0" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="shock_frame" />
@@ -1065,7 +1013,7 @@
 
 			<!-- MELEE WEAPONS - Full width -->
 			<frame_char name="melee_frame">
-				<anchored to="movement_frame" position="belowleft" offset="0,15" width="400" height="140">
+				<anchored to="shock_frame" position="belowleft" offset="0,15" width="400" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>

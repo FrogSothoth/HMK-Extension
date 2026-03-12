@@ -217,6 +217,58 @@
 				<readonly />
 			</numberfield>
 
+			<!-- MOVEMENT Section (to right of Fatigue) -->
+			<frame_char name="movement_frame">
+				<anchored to="fatigue_frame" position="righthigh" offset="10,0" width="125" height="170" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="movement_frame" />
+				<static textres="harn_movement" />
+				<font>harn_group</font>
+			</label_frametop>
+
+			<label name="move_label">
+				<anchored to="movement_frame" position="insidetopleft" offset="10,40" width="65" height="20" />
+				<static textres="harn_move" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move">
+				<anchored to="move_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<readonly />
+			</numberfield>
+
+			<label name="effective_label">
+				<anchored to="move_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_effective" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_effective">
+				<anchored to="effective_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="half_label">
+				<anchored to="effective_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_half" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_half">
+				<anchored to="half_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="double_label">
+				<anchored to="half_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_double" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_double">
+				<anchored to="double_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
 			<!-- POSSESSIONS Section -->
 			<!-- Use anchor_column for vertical flow below the top row -->
 			<anchor_column name="columnanchor">
