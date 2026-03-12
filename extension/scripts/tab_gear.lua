@@ -6,6 +6,10 @@ function onInit()
     local node = getDatabaseNode();
     if node then
         DB.addHandler(DB.getPath(node, "strmod"), "onUpdate", onDataUpdate);
+        
+        -- Add handler for item deletion in possessions
+        local sPossessionsPath = DB.getPath(node, "possessions");
+        DB.addHandler(sPossessionsPath, "onChildDeleted", onPossessionsDelete);
     end
 end
 
@@ -13,6 +17,10 @@ function onClose()
     local node = getDatabaseNode();
     if node then
         DB.removeHandler(DB.getPath(node, "strmod"), "onUpdate", onDataUpdate);
+
+        -- Remove handler for item deletion in possessions
+        local sPossessionsPath = DB.getPath(node, "possessions");
+        DB.removeHandler(sPossessionsPath, "onChildDeleted", onPossessionsDelete);
     end
 end
 
@@ -87,5 +95,25 @@ function addItem(nodeItem)
 			DB.setValue(nodeEntry, "weight", "number", nWeight);
 			DB.setValue(nodeEntry, "quantity", "number", 1);
 		end
+
+        -- Trigger weapon list synchronization
+        if MeleeData then
+            MeleeData.syncMeleeWeapons(nodeChar);
+        end
+        if MissileData then
+            MissileData.syncMissileWeapons(nodeChar);
+        end
 	end
+end
+
+function onPossessionsDelete(nodeDeleted)
+    local nodeChar = DB.getParent(DB.getParent(nodeDeleted));
+    if nodeChar then
+        if MeleeData then
+            MeleeData.syncMeleeWeapons(nodeChar, nodeDeleted);
+        end
+        if MissileData then
+            MissileData.syncMissileWeapons(nodeChar, nodeDeleted);
+        end
+    end
 end

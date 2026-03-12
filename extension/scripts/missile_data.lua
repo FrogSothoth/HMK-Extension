@@ -38,7 +38,7 @@ local aMissileWeaponData = {
         pbzd = 6, impd = 8, impv = 0, asp = "P", ta = "4"
     },
     -- BOWS (Composite)
-    [ "small bow"] = {
+    ["small bow"] = {
         name = "Small Bow", skill = "Archery", wq = 10, drw = 40, hft = nil,
         br = 120, vm = 3, chg = 0, proj = "arrow",
         pbzd = 6, impd = nil, impv = 3, asp = "p", ta = nil
@@ -206,7 +206,20 @@ end
 function lookupAmmo(sName)
     if not sName or sName == "" then return nil; end
     local sLower = sName:lower();
-    return aAmmoData[sLower];
+    
+    -- Try direct key match
+    if aAmmoData[sLower] then
+        return aAmmoData[sLower];
+    end
+
+    -- Try matching the 'name' field within entries
+    for _, tAmmo in pairs(aAmmoData) do
+        if tAmmo.name:lower() == sLower then
+            return tAmmo;
+        end
+    end
+
+    return nil;
 end
 
 -- Find all ammo of a given type prefix in possessions
@@ -295,18 +308,18 @@ end
 -- Format Functions
 -----------------------------------------------------------
 
--- Format DRW/HFT: show DRW if present, else HFT, else ""
+-- Format DRW/HFT: show DRW if present, else HFT, else 0
 function formatDrwHft(entry)
     if entry.drw and entry.drw > 0 then
-        return tostring(entry.drw);
+        return tonumber(entry.drw) or 0;
     elseif entry.hft then
-        return tostring(entry.hft);
+        return tonumber(entry.hft) or 0;
     end
-    return "";
+    return 0;
 end
 
 -- Format ATK value based on skill ML (and bolt max rule)
--- Returns string: ML value or "n/a"
+-- Returns number: ML value or 0
 function formatATK(nodeChar, entry)
     local nML = getSkillML(nodeChar, entry.skill);
 
@@ -319,10 +332,7 @@ function formatATK(nodeChar, entry)
         end
     end
 
-    if nML == 0 then
-        return "n/a";
-    end
-    return tostring(nML);
+    return tonumber(nML) or 0;
 end
 
 -- Format PB-ZD: "d6", "d8", etc., or ""
@@ -370,49 +380,39 @@ function syncMissileWeapons(nodeChar, nodeExclude)
 
     Debug.console("MissileData: syncMissileWeapons starting for " .. DB.getPath(nodeChar));
 
-    -- Step 1: Delete ALL existing missile entries
-    local nodeMissileList = DB.getChild(nodeChar, "missileweapons");
-    if nodeMissileList then
-        local nDeleted = 0;
-        for _, nodeMissile in pairs(DB.getChildList(nodeMissileList)) do
-            DB.deleteNode(nodeMissile);
-            nDeleted = nDeleted + 1;
-        end
-        if nDeleted > 0 then
-            Debug.console("MissileData: Cleared " .. nDeleted .. " existing missile entries");
-        end
-    end
-
-    -- Step 2: Build expected missile entries from possessions
-    local tExpected = {};  -- array of {weapon=entry, ammo=ammoEntry or nil}
+    -- Step 1: Build set of expected weapon+ammo combinations from possessions
+    -- Identity: "WeaponName|AmmoName" or "WeaponName|self" etc.
+    local tExpected = {};  -- set of combo keys
+    local tComboData = {}; -- map combo key -> {weaponEntry, ammoEntry}
+    
     local nodeGearList = DB.getChild(nodeChar, "possessions");
-
     if nodeGearList then
-        -- Track which weapons we've already processed (avoid duplicates if same weapon appears twice)
-        local tSeen = {};
-
+        local tSeenWeapons = {};
         for _, nodeItem in pairs(DB.getChildList(nodeGearList)) do
             if nodeItem ~= nodeExclude then
                 local sName = DB.getValue(nodeItem, "name", "");
                 if sName ~= "" then
                     local tWeapon, sWeaponKey = lookupMissileWeapon(sName);
-                    if tWeapon and not tSeen[sWeaponKey] then
-                        tSeen[sWeaponKey] = true;
+                    if tWeapon and not tSeenWeapons[sWeaponKey] then
+                        tSeenWeapons[sWeaponKey] = true;
 
                         if tWeapon.proj == "self" or tWeapon.proj == "stone" then
-                            -- One entry per weapon
-                            table.insert(tExpected, { weapon = tWeapon, ammo = nil });
+                            local sKey = tWeapon.name:lower() .. "|" .. tWeapon.proj;
+                            tExpected[sKey] = true;
+                            tComboData[sKey] = { weapon = tWeapon, ammo = nil };
                         elseif tWeapon.proj == "arrow" then
-                            -- One entry per arrow ammo in possessions
                             local aAmmo = findAmmoInPossessions(nodeChar, "arrows", nodeExclude);
                             for _, tAmmoResult in ipairs(aAmmo) do
-                                table.insert(tExpected, { weapon = tWeapon, ammo = tAmmoResult.ammo });
+                                local sKey = tWeapon.name:lower() .. "|" .. tAmmoResult.ammo.name:lower();
+                                tExpected[sKey] = true;
+                                tComboData[sKey] = { weapon = tWeapon, ammo = tAmmoResult.ammo };
                             end
                         elseif tWeapon.proj == "bolt" then
-                            -- One entry per bolt ammo in possessions
                             local aAmmo = findAmmoInPossessions(nodeChar, "bolts", nodeExclude);
                             for _, tAmmoResult in ipairs(aAmmo) do
-                                table.insert(tExpected, { weapon = tWeapon, ammo = tAmmoResult.ammo });
+                                local sKey = tWeapon.name:lower() .. "|" .. tAmmoResult.ammo.name:lower();
+                                tExpected[sKey] = true;
+                                tComboData[sKey] = { weapon = tWeapon, ammo = tAmmoResult.ammo };
                             end
                         end
                     end
@@ -421,51 +421,93 @@ function syncMissileWeapons(nodeChar, nodeExclude)
         end
     end
 
-    Debug.console("MissileData: Creating " .. #tExpected .. " missile entries");
+    Debug.console("MissileData: Expected " .. _countKeys(tExpected) .. " combinations");
 
-    -- Step 3: Create all entries fresh
-    for _, tData in ipairs(tExpected) do
-        local tWeapon = tData.weapon;
-        local tAmmo = tData.ammo;
-        local nodeList = DB.createChild(nodeChar, "missileweapons");
-        local nodeEntry = DB.createChild(nodeList);
+    -- Step 2: Careful Sync - Remove entries that match a "standard" weapon but no longer exist in expected set
+    local nodeMissileList = DB.getChild(nodeChar, "missileweapons");
+    if nodeMissileList then
+        local aToDelete = {};
+        for _, nodeMissile in pairs(DB.getChildList(nodeMissileList)) do
+            local sWpnName = DB.getValue(nodeMissile, "name", ""):lower();
+            local sProj = DB.getValue(nodeMissile, "proj", ""):lower();
+            
+            -- If this looks like a standard weapon entry
+            if lookupMissileWeapon(sWpnName) then
+                -- Check the proj source
+                local sCheckProj = sProj;
+                if sProj == "self" or sProj == "stone" then
+                    -- standard self-propelled
+                else
+                    -- standard arrow/bolt if it matches an ammo name
+                    if not lookupAmmo(sProj) then
+                        sCheckProj = nil; -- Not a standard ammo, might be manual
+                    end
+                end
 
-        DB.setValue(nodeEntry, "name", "string", tWeapon.name);
-        DB.setValue(nodeEntry, "wq", "number", tWeapon.wq);
-        DB.setValue(nodeEntry, "drwhft", "string", formatDrwHft(tWeapon));
-        DB.setValue(nodeEntry, "br", "number", tWeapon.br);
-        DB.setValue(nodeEntry, "chg", "number", tWeapon.chg);
-        DB.setValue(nodeEntry, "pbzd", "string", formatPBZD(tWeapon.pbzd));
+                if sCheckProj then
+                    local sKey = sWpnName .. "|" .. sCheckProj;
+                    if not tExpected[sKey] then
+                        table.insert(aToDelete, nodeMissile);
+                    end
+                end
+            end
+        end
+        for _, node in ipairs(aToDelete) do
+            Debug.console("MissileData: Removing missile entry: " .. DB.getValue(node, "name", ""));
+            DB.deleteNode(node);
+        end
+    end
 
-        -- ATK
-        DB.setValue(nodeEntry, "atk", "string", formatATK(nodeChar, tWeapon));
-
-        if tWeapon.proj == "self" then
-            -- Self-propelled (throwing weapons)
-            DB.setValue(nodeEntry, "vm", "number", tWeapon.vm);
-            DB.setValue(nodeEntry, "proj", "string", "self");
-            DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp));
-            DB.setValue(nodeEntry, "ta", "string", tWeapon.ta or "");
-
-        elseif tWeapon.proj == "stone" then
-            -- Sling with stone/bullet — impact modifier is STR Impact
-            local nStrImp = HarnManager.calculateStrImpact(nodeChar);
-            DB.setValue(nodeEntry, "vm", "number", tWeapon.vm);
-            DB.setValue(nodeEntry, "proj", "string", "stone");
-            DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, nStrImp, tWeapon.asp));
-            DB.setValue(nodeEntry, "ta", "string", tWeapon.ta or "");
-
-        elseif tAmmo then
-            -- Arrow or bolt with specific ammo
-            local nVM = (tWeapon.vm or 0) + (tAmmo.vm or 0);
-            DB.setValue(nodeEntry, "vm", "number", nVM);
-            DB.setValue(nodeEntry, "proj", "string", tAmmo.name);
-            DB.setValue(nodeEntry, "imp", "string", formatImpact(tAmmo.impd, tWeapon.impv, tWeapon.asp));
-            DB.setValue(nodeEntry, "ta", "string", tAmmo.ta or "");
+    -- Step 3: Add missing entries
+    for sComboKey, tData in pairs(tComboData) do
+        -- Check if already exists
+        local bExists = false;
+        nodeMissileList = DB.getChild(nodeChar, "missileweapons");
+        if nodeMissileList then
+            for _, nodeMissile in pairs(DB.getChildList(nodeMissileList)) do
+                local sWpnName = DB.getValue(nodeMissile, "name", ""):lower();
+                local sProj = DB.getValue(nodeMissile, "proj", ""):lower();
+                if (sWpnName .. "|" .. sProj) == sComboKey then
+                    bExists = true;
+                    break;
+                end
+            end
         end
 
-        Debug.console("MissileData: Created " .. tWeapon.name .. " | " .. DB.getValue(nodeEntry, "proj", "")
-            .. " at " .. DB.getPath(nodeEntry));
+        if not bExists then
+            local tWeapon = tData.weapon;
+            local tAmmo = tData.ammo;
+            local nodeList = DB.createChild(nodeChar, "missileweapons");
+            local nodeEntry = DB.createChild(nodeList);
+
+            DB.setValue(nodeEntry, "name", "string", tWeapon.name);
+            DB.setValue(nodeEntry, "wq", "number", tWeapon.wq);
+            DB.setValue(nodeEntry, "drwhft", "number", formatDrwHft(tWeapon));
+            DB.setValue(nodeEntry, "br", "number", tWeapon.br);
+            DB.setValue(nodeEntry, "chg", "number", tWeapon.chg);
+            DB.setValue(nodeEntry, "pbzd", "string", formatPBZD(tWeapon.pbzd));
+            DB.setValue(nodeEntry, "atk", "number", formatATK(nodeChar, tWeapon));
+
+            if tWeapon.proj == "self" then
+                DB.setValue(nodeEntry, "vm", "number", tWeapon.vm);
+                DB.setValue(nodeEntry, "proj", "string", "self");
+                DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp));
+                DB.setValue(nodeEntry, "ta", "number", tonumber(tWeapon.ta) or 0);
+            elseif tWeapon.proj == "stone" then
+                local nStrImp = HarnManager.calculateStrImpact(nodeChar);
+                DB.setValue(nodeEntry, "vm", "number", tWeapon.vm);
+                DB.setValue(nodeEntry, "proj", "string", "stone");
+                DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, nStrImp, tWeapon.asp));
+                DB.setValue(nodeEntry, "ta", "number", tonumber(tWeapon.ta) or 0);
+            elseif tAmmo then
+                local nVM = (tWeapon.vm or 0) + (tAmmo.vm or 0);
+                DB.setValue(nodeEntry, "vm", "number", nVM);
+                DB.setValue(nodeEntry, "proj", "string", tAmmo.name);
+                DB.setValue(nodeEntry, "imp", "string", formatImpact(tAmmo.impd, tWeapon.impv, tWeapon.asp));
+                DB.setValue(nodeEntry, "ta", "number", tonumber(tAmmo.ta) or 0);
+            end
+            Debug.console("MissileData: Added missile entry: " .. sComboKey);
+        end
     end
 end
 
@@ -485,4 +527,11 @@ function updateMissileATK(nodeChar)
             DB.setValue(nodeMissile, "atk", "string", formatATK(nodeChar, tWeapon));
         end
     end
+end
+
+-- Utility: count keys in a table
+function _countKeys(t)
+    local n = 0;
+    for _ in pairs(t) do n = n + 1; end
+    return n;
 end

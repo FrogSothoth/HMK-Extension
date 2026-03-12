@@ -582,21 +582,21 @@ end
 -- Map body locations to injury zones
 -- Returns zone key: "head", "arm_l", "arm_r", "torso", "leg_l", "leg_r"
 local LOCATION_TO_ZONE = {
-	["Skull"] = "head",
-	["Face"] = "head",
-	["Neck"] = "head",
-	["Shoulder"] = "arms",  -- needs side
-	["Upper Arm"] = "arms",
-	["Elbow"] = "arms",
-	["Forearm"] = "arms",
-	["Hand"] = "arms",
-	["Thorax"] = "torso",
-	["Abdomen"] = "torso",
-	["Pelvis"] = "torso",
-	["Thigh"] = "legs",  -- needs side
-	["Knee"] = "legs",
-	["Calf"] = "legs",
-	["Foot"] = "legs",
+	["SK"] = "head",
+	["FA"] = "head",
+	["NK"] = "head",
+	["SH"] = "arms",  -- needs side
+	["UA"] = "arms",
+	["EL"] = "arms",
+	["FO"] = "arms",
+	["HA"] = "arms",
+	["TX"] = "torso",
+	["AB"] = "torso",
+	["PV"] = "torso",
+	["TH"] = "legs",  -- needs side
+	["KN"] = "legs",
+	["CA"] = "legs",
+	["FT"] = "legs",
 }
 
 -- Get the zone key for an injury based on location and side

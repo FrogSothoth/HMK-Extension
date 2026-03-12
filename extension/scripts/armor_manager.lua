@@ -41,9 +41,9 @@ function calculateArmor(nodeChar, nodeExclude)
 
     -- 1. Initialize Body Locations Data Structures
     local locations = {
-        "Skull", "Face", "Neck", "Shoulder", "Upper Arm",
-        "Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
-        "Pelvis", "Thigh", "Knee", "Calf", "Foot"
+        "SK", "FA", "NK", "SH", "UA",
+        "EL", "FO", "HA", "TX", "AB",
+        "PV", "TH", "KN", "CA", "FT"
     };
 
     local locData = {};
@@ -488,9 +488,9 @@ function updateBodyLocations(nodeChar, locData)
         nodeList = DB.createChild(nodeChar, "bodylocations");
         -- Initialize with standard locations
         local locations = {
-            "Skull", "Face", "Neck", "Shoulder", "Upper Arm",
-            "Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
-            "Pelvis", "Thigh", "Knee", "Calf", "Foot"
+            "SK", "FA", "NK", "SH", "UA",
+            "EL", "FO", "HA", "TX", "AB",
+            "PV", "TH", "KN", "CA", "FT"
         };
         for _, loc in ipairs(locations) do
             local node = DB.createChild(nodeList);
@@ -561,22 +561,21 @@ end
 
 -- AREA ATTACK WEIGHTS
 local AREA_ATTACK_WEIGHTS = {
-    ["Skull"]      = 0.04,
-    ["Face"]       = 0.03,
-    ["Neck"]       = 0.02,
-    ["Shoulder"]   = 0.03,
-    ["Upper Arm"]  = 0.06,
-    ["Elbow"]      = 0.02,
-    ["Forearm"]    = 0.05,
-    ["Hand"]       = 0.05,
-    ["Thorax"]     = 0.12,
-    ["Abdomen"]    = 0.12,
-    ["Pelvis"]     = 0.1,
-    ["Thigh"]      = 0.14,
-    ["Knee"]       = 0.03,
-    ["Calf"]       = 0.12,
-    ["Foot"]       = 0.07,
-    ["Feet"]       = 0.07 -- Supporting both names just in case
+    ["SK"]      = 0.04,
+    ["FA"]       = 0.03,
+    ["NK"]       = 0.02,
+    ["SH"]   = 0.03,
+    ["UA"]  = 0.06,
+    ["EL"]      = 0.02,
+    ["FO"]    = 0.05,
+    ["HA"]       = 0.05,
+    ["TX"]     = 0.12,
+    ["AB"]    = 0.12,
+    ["PV"]     = 0.1,
+    ["TH"]      = 0.14,
+    ["KN"]       = 0.03,
+    ["CA"]       = 0.12,
+    ["FT"]       = 0.07,
 };
 
 function calculateAreaAttack(nodeChar)

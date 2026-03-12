@@ -336,18 +336,22 @@ function syncMeleeWeapons(nodeChar, nodeExclude)
 
     Debug.console("MeleeData: Found " .. _countKeys(tPossessionWeapons) .. " weapon types in possessions");
 
-    -- Step 2: Remove melee entries that don't match any possession weapon
+    -- Step 2: Careful Sync - Iterate through existing entries
     local nodeMeleeList = DB.getChild(nodeChar, "meleeweapons");
     if nodeMeleeList then
         local aToDelete = {};
         for _, nodeMelee in pairs(DB.getChildList(nodeMeleeList)) do
             local sMeleeName = DB.getValue(nodeMelee, "name", "");
-            if sMeleeName ~= "" then
-                -- Check if this weapon name matches any possession weapon
-                if not tPossessionWeapons[sMeleeName:lower()] then
+            local sLowerMeleeName = sMeleeName:lower();
+
+            -- If this entry matches a standard weapon name...
+            if aMeleeWeaponData[sLowerMeleeName] then
+                -- ...but that weapon is no longer in possessions, mark for deletion
+                if not tPossessionWeapons[sLowerMeleeName] then
                     table.insert(aToDelete, nodeMelee);
                 end
             end
+            -- Entries not in aMeleeWeaponData (manual entries) are ignored and preserved
         end
         for _, node in ipairs(aToDelete) do
             Debug.console("MeleeData: Removing melee entry: " .. DB.getValue(node, "name", ""));
@@ -355,37 +359,37 @@ function syncMeleeWeapons(nodeChar, nodeExclude)
         end
     end
 
-    -- Step 3: Add melee entries for weapons in possessions but not in melee list
+    -- Step 3: Add missing entries for weapons in possessions
     local nMeleeML = getMeleeML(nodeChar);
-
     for sWeaponKey, _ in pairs(tPossessionWeapons) do
         local aEntries = aMeleeWeaponData[sWeaponKey];
         if aEntries then
             -- Check if entries already exist for this weapon
-            local nExisting = 0;
+            local bAlreadyExists = false;
             nodeMeleeList = DB.getChild(nodeChar, "meleeweapons");
             if nodeMeleeList then
                 for _, nodeMelee in pairs(DB.getChildList(nodeMeleeList)) do
                     if DB.getValue(nodeMelee, "name", ""):lower() == sWeaponKey then
-                        nExisting = nExisting + 1;
+                        bAlreadyExists = true;
+                        break;
                     end
                 end
             end
 
             -- Only add if no entries exist for this weapon
-            if nExisting == 0 then
+            if not bAlreadyExists then
                 local nodeList = DB.createChild(nodeChar, "meleeweapons");
                 for _, entry in ipairs(aEntries) do
                     local nodeWeapon = DB.createChild(nodeList);
                     DB.setValue(nodeWeapon, "name", "string", entry.name);
                     DB.setValue(nodeWeapon, "wq", "number", entry.wq);
-                    DB.setValue(nodeWeapon, "hft", "string", tostring(entry.hft));
+                    DB.setValue(nodeWeapon, "hft", "number", tonumber(entry.hft) or 0);
                     DB.setValue(nodeWeapon, "rch", "number", entry.lng);
                     DB.setValue(nodeWeapon, "atk", "number", nMeleeML);
                     DB.setValue(nodeWeapon, "def", "number", nMeleeML);
                     DB.setValue(nodeWeapon, "zd", "string", formatZD(entry));
                     DB.setValue(nodeWeapon, "imp", "string", formatImpact(entry));
-                    DB.setValue(nodeWeapon, "ta", "string", entry.ta or "");
+                    DB.setValue(nodeWeapon, "ta", "number", tonumber(entry.ta) or 0);
                     Debug.console("MeleeData: Added melee entry: " .. entry.name .. " (" .. (entry.asp or "?") .. ")");
                 end
             end

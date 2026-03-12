@@ -160,7 +160,7 @@
 	<string name="harn_imp">IMP</string>
 	<string name="harn_ta">TA</string>
 	<string name="harn_drw">DRW</string>
-	<string name="harn_drwhft">DRW/HFT</string>
+	<string name="harn_drwhft">D/H</string>
 	<string name="harn_br">BR</string>
 	<string name="harn_vm">VM</string>
 	<string name="harn_chg">CHG</string>
@@ -171,7 +171,7 @@
 	<string name="harn_body_location">BODY LOCATIONS</string>
 	<string name="harn_injuries">INJURIES</string>
 	<string name="harn_injury">INJURY</string>
-	<string name="harn_location">Location</string>
+	<string name="harn_location">LOC</string>
 	<string name="harn_hb">HB</string>
 	<string name="harn_inj_bld">BLD</string>
 	<string name="harn_inj_inf">INF</string>
@@ -196,8 +196,8 @@
 	<string name="harn_endsr">End SR:</string>
 
 	<string name="harn_stress">STRESS</string>
-	<string name="harn_auralshock">Aural Shock</string>
-	<string name="harn_shadow">Shadow</string>
+	<string name="harn_auralshock">AURAL SHOCK:</string>
+	<string name="harn_shadow">SHADOW:</string>
 
 	<!-- Gear -->
 	<string name="harn_encumbrance">ENCUMBRANCE</string>

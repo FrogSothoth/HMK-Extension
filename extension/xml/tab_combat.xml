@@ -33,7 +33,7 @@
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="leftanchor">
-				<anchored position="insidetopleft" offset="0,10" width="0" height="0" />
+				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
 				<disabled />
 			</genericcontrol>
 			<stringfield name="name">
@@ -51,14 +51,14 @@
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<stringfield name="hft">
+			<numberfield name="hft">
 				<anchored to="wq" width="25" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+			</numberfield>
 			<numberfield name="rch">
 				<anchored to="hft" width="25" height="20">
 					<top parent="leftanchor" />
@@ -95,16 +95,18 @@
 				<anchored to="zd" width="50" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<stringfield name="ta">
+			<numberfield name="ta">
 				<anchored to="imp" width="25" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+			</numberfield>
 		</sheetdata>
 	</windowclass>
 
@@ -127,18 +129,21 @@
 				<anchored to="name" width="25" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<stringfield name="drwhft">
-				<anchored to="wq" width="40" height="20">
+			<numberfield name="drwhft">
+				<anchored to="wq" width="30" height="20">
+					<center />
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+			</numberfield>
 			<numberfield name="br">
 				<anchored to="drwhft" width="30" height="20">
+					<center />
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
 				</anchored>
@@ -148,25 +153,28 @@
 				<anchored to="br" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
-			<stringfield name="atk">
+			<numberfield name="atk">
 				<anchored to="vm" width="30" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+			</numberfield>
 			<numberfield name="chg">
 				<anchored to="atk" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</numberfield>
 			<stringfield name="proj">
-				<anchored to="chg" width="120" height="20">
+				<anchored to="chg" width="80" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
 				</anchored>
@@ -176,6 +184,7 @@
 				<anchored to="proj" width="32" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
@@ -183,16 +192,18 @@
 				<anchored to="pbzd" width="55" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<stringfield name="ta">
+			<numberfield name="ta">
 				<anchored to="imp" width="22" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="3" />
+					<center />
 				</anchored>
 				<frame name="fielddark" offset="7,5,7,5" />
-			</stringfield>
+			</numberfield>
 		</sheetdata>
 	</windowclass>
 
@@ -242,38 +253,84 @@
 				<invisible />
 			</genericcontrol>
 			<stringfield name="zone_range">
-				<anchored to="leftanchor" width="20" height="20">
+				<anchored to="leftanchor" width="25" height="20">
 					<top />
 					<left offset="2" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
+				
+				<!-- ARMOUR / CLOTHING Groupbox (right of Fatigue, anchored to window right) -->
+			<frame_char name="armour_frame">
+				<anchored position="insidetopright" offset="60,10" height="170">
+					<top parent="lore_group_box" anchor="top" />
+					<right offset="-40" />
+				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="armour_frame" />
+				<static>ARMOUR/CLOTHING</static>
+				<font>harn_group</font>
+			</label_frametop>
+
+			<!-- Armour list headers -->
+			<label name="armour_name_header">
+				<anchored to="armour_frame" position="insidetopleft" offset="15,30" width="80" height="15" />
+				<static textres="harn_item" />
+				<font>sheetlabel</font>
+			</label>
+			<label name="armour_wt_header">
+				<anchored to="armour_name_header" position="insidetopleft" offset="90,0" width="45" height="15" />
+				<static textres="harn_wt" />
+				<font>sheetlabel</font>
+				<center />
+			</label>
+
+			<windowlist name="armourlist">
+				<anchored>
+					<top parent="armour_name_header" anchor="bottom" relation="relative" offset="2" />
+					<left parent="armour_frame" anchor="left" offset="10" />
+					<right parent="armour_frame" anchor="right" offset="-10" />
+					<bottom parent="armour_frame" anchor="bottom" offset="-15" />
+				</anchored>
+				<datasource>.armourlist</datasource>
+				<class>harn_armour_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
+			<scrollbar_list>
+				<anchored to="armourlist" />
+				<target>armourlist</target>
+			</scrollbar_list>
+
+			<button_iadd name="armour_iadd">
+				<anchored to="armourlist" position="aboveright" offset="10,20" width="15" height="15" />
+				<target>armourlist</target>
+			</button_iadd>
+
 				<readonly />
 				<center />
 			</stringfield>
 			<stringfield name="zone_name">
-				<anchored to="zone_range" width="45" height="20">
+				<anchored to="zone_range" width="55" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
 				<center />
 			</stringfield>
 			<stringfield name="loc_range">
-				<anchored to="zone_name" width="35" height="20">
+				<anchored to="zone_name" width="30" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
 				<center />
 			</stringfield>
 			<stringfield name="location">
-				<anchored to="loc_range" width="60" height="20">
+				<anchored to="loc_range" width="30" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
+				<center	/>
 				<readonly />
 			</stringfield>
 			<stringfield name="av_b">
@@ -389,21 +446,21 @@
 				</anchored>
 				<script>
 					local ICON_DATA = {
-						["Skull"]     = { shk = "shk5", bld = "bld1" },
-						["Face"]      = { shk = "shk4", bld = "bld2" },
-						["Neck"]      = { shk = "shk5", bld = "bld3", amp = "amp1" },
-						["Shoulder"]  = { shk = "shk3", bld = "bld2" },
-						["Upper Arm"] = { shk = "shk1", bld = "bld1", amp = "amp2" },
-						["Elbow"]     = { shk = "shk2", bld = "bld1", amp = "amp2" },
-						["Forearm"]   = { shk = "shk1", bld = "bld1", amp = "amp2" },
-						["Hand"]      = { shk = "shk2", amp = "amp3" },
-						["Thorax"]    = { shk = "shk4", bld = "bld2" },
-						["Abdomen"]   = { shk = "shk4", bld = "bld3" },
-						["Pelvis"]    = { shk = "shk4", bld = "bld2" },
-						["Thigh"]     = { shk = "shk3", bld = "bld2", amp = "amp1" },
-						["Knee"]      = { shk = "shk2", bld = "bld1", amp = "amp2" },
-						["Calf"]      = { shk = "shk1", bld = "bld1", amp = "amp2" },
-						["Foot"]      = { shk = "shk2", amp = "amp2" },
+						["SK"]     = { shk = "shk5", bld = "bld1" },
+						["FA"]      = { shk = "shk4", bld = "bld2" },
+						["NK"]      = { shk = "shk5", bld = "bld3", amp = "amp1" },
+						["SH"]  = { shk = "shk3", bld = "bld2" },
+						["UA"] = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["EL"]     = { shk = "shk2", bld = "bld1", amp = "amp2" },
+						["FO"]   = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["HA"]      = { shk = "shk2", amp = "amp3" },
+						["TX"]    = { shk = "shk4", bld = "bld2" },
+						["AB"]   = { shk = "shk4", bld = "bld3" },
+						["PV"]    = { shk = "shk4", bld = "bld2" },
+						["TH"]     = { shk = "shk3", bld = "bld2", amp = "amp1" },
+						["KN"]      = { shk = "shk2", bld = "bld1", amp = "amp2" },
+						["CA"]      = { shk = "shk1", bld = "bld1", amp = "amp2" },
+						["FO"]      = { shk = "shk2", amp = "amp2" },
 					};
 
 					function onInit()
@@ -762,9 +819,9 @@
 				-- Standard Initialization
 				if DB.getChildCount(nodeList) == 0 then
 					local locations = {
-						"Skull", "Face", "Neck", "Shoulder", "Upper Arm",
-						"Elbow", "Forearm", "Hand", "Thorax", "Abdomen",
-						"Pelvis", "Thigh", "Knee", "Calf", "Foot"
+						"SK", "FA", "NK", "SH", "UA",
+						"EL", "FO", "HA", "TX", "AB",
+						"PV", "TH", "KN", "CA", "FT"
 					};
 					for _, loc in ipairs(locations) do
 						local node = DB.createChild(nodeList);
@@ -805,7 +862,7 @@
 
 			<!-- SHOCK STATE Section - Top Left -->
 			<frame_char name="shock_frame">
-				<anchored position="insidetopleft" offset="60,0" width="140" height="140" />
+				<anchored position="insidetopleft" offset="60,10" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="shock_frame" />
@@ -926,7 +983,7 @@
 
 			<!-- STRESS Section - anchored to right edge, responsive -->
 			<frame_char name="stress_frame">
-				<anchored position="insidetopright" offset="0,0" height="140">
+				<anchored position="insidetopright" offset="60,10" height="140">
 					<left parent="shock_frame" anchor="right" offset="5" />
 				</anchored>
 			</frame_char>
@@ -1024,27 +1081,27 @@
 
 			<!-- Melee headers -->
 			<label name="melee_name_h">
-				<anchored to="melee_frame" position="insidetopleft" offset="15,25" width="80" height="15" />
-				<static>Weapon</static>
+				<anchored to="melee_frame" position="insidetopleft" offset="15,30" width="80" height="15" />
+				<static>WEAPON</static>
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_wq_h">
-				<anchored to="melee_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<anchored to="melee_name_h" position="righthigh" offset="10,0" width="28" height="15" />
 				<static textres="harn_wq" />
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_hft_h">
-				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="35" height="15" />
+				<anchored to="melee_wq_h" position="righthigh" offset="3,0" width="25" height="15" />
 				<static textres="harn_hft" />
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_rch_h">
-				<anchored to="melee_hft_h" position="righthigh" offset="-2,0" width="28" height="15" />
+				<anchored to="melee_hft_h" position="righthigh" offset="3,0" width="28" height="15" />
 				<static textres="harn_rch" />
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_atk_h">
-				<anchored to="melee_rch_h" position="righthigh" offset="4,0" width="32" height="15" />
+				<anchored to="melee_rch_h" position="righthigh" offset="7,0" width="32" height="15" />
 				<static textres="harn_atk" />
 				<font>harn_skill_header</font>
 			</label>
@@ -1064,9 +1121,9 @@
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_ta_h">
-				<anchored to="melee_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<anchored to="melee_imp_h" position="righthigh" offset="15,0" width="40" height="15" />
 				<static textres="harn_ta" />
-				<font>harn_label_18_bold</font>
+				<font>harn_skill_header</font>
 			</label>
 
 			<windowlist name="meleeweapons">
@@ -1083,7 +1140,7 @@
 			</windowlist>
 			<!-- Add button with explicit script -->
 			<button_iadd name="melee_iadd">
-				<anchored to="meleeweapons" position="aboveright" offset="0,8" />
+				<anchored to="meleeweapons" position="aboveright" offset="0,2" />
 				<target>meleeweapons</target>
 				<script>
 					function onButtonPress()
@@ -1100,69 +1157,70 @@
 			<!-- MISSILE WEAPONS - Below melee, full width, fixed height -->
 			<!-- y=265 = 120 (top row height) + 140 (melee height) + 5 (gap) -->
 			<frame_char name="missile_frame">
-				<anchored to="melee_frame" position="belowleft" offset="0,15" width="400" height="140">
+				<anchored to="melee_frame" position="belowleft" offset="0,15" width="510" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
 				<anchored to="missile_frame" />
 				<static textres="harn_missile_weapons" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<!-- Missile headers -->
 			<label name="missile_name_h">
-				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="110" height="15" />
-				<static>Weapon</static>
-				<font>sheetlabel</font>
+				<anchored to="missile_frame" position="insidetopleft" offset="8,30" width="110" height="15" />
+				<static>WEAPON</static>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_wq_h">
 				<anchored to="missile_name_h" position="righthigh" offset="4,0" width="25" height="15" />
 				<static textres="harn_wq" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_drwhft_h">
-				<anchored to="missile_wq_h" position="righthigh" offset="3,0" width="40" height="15" />
+				<anchored to="missile_wq_h" position="righthigh" offset="5,0" width="30" height="15" />
 				<static textres="harn_drwhft" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_br_h">
-				<anchored to="missile_drwhft_h" position="righthigh" offset="3,0" width="30" height="15" />
+				<anchored to="missile_drwhft_h" position="righthigh" offset="5,0" width="20" height="15" />
 				<static textres="harn_br" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_vm_h">
-				<anchored to="missile_br_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<anchored to="missile_br_h" position="righthigh" offset="10,0" width="22" height="15" />
 				<static textres="harn_vm" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_atk_h">
 				<anchored to="missile_vm_h" position="righthigh" offset="3,0" width="30" height="15" />
 				<static textres="harn_atk" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_chg_h">
-				<anchored to="missile_atk_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<anchored to="missile_atk_h" position="righthigh" offset="1,0" width="22" height="15" />
 				<static textres="harn_chg" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_proj_h">
-				<anchored to="missile_chg_h" position="righthigh" offset="3,0" width="120" height="15" />
+				<anchored to="missile_chg_h" position="righthigh" offset="5,0" width="40" height="15" />
 				<static textres="harn_proj" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_pbzd_h">
-				<anchored to="missile_proj_h" position="righthigh" offset="3,0" width="32" height="15" />
+				<anchored to="missile_proj_h" position="righthigh" offset="40,0" width="32" height="15" />
 				<static textres="harn_pbzd" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_imp_h">
-				<anchored to="missile_pbzd_h" position="righthigh" offset="3,0" width="55" height="15" />
+				<anchored to="missile_pbzd_h" position="righthigh" offset="5,0" width="55" height="15" />
 				<static textres="harn_imp" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_ta_h">
 				<anchored to="missile_imp_h" position="righthigh" offset="3,0" width="22" height="15" />
 				<static textres="harn_ta" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 
 			<windowlist name="missileweapons">
@@ -1206,25 +1264,25 @@
 			</label_frametop>
 
 			<label name="h_zr">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="20" height="15" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="25" height="15" />
 				<static>ZR</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_zone">
-				<anchored to="h_zr" position="righthigh" offset="1,0" width="45" height="15" />
-				<static>Zone</static>
+				<anchored to="h_zr" position="righthigh" offset="1,0" width="55" height="15" />
+				<static>ZONE</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_lr">
-				<anchored to="h_zone" position="righthigh" offset="1,0" width="35" height="15" />
+				<anchored to="h_zone" position="righthigh" offset="1,0" width="30" height="15" />
 				<static>LR</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="loc_h">
-				<anchored to="h_lr" position="righthigh" offset="1,0" width="60" height="15" />
+				<anchored to="h_lr" position="righthigh" offset="1,0" width="30" height="15" />
 				<static textres="harn_location" />
 				<font>sheetlabel</font>
 			</label>
@@ -1470,18 +1528,18 @@
 			</windowlist>
 
 			<label name="area_attack_label">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="10,405" width="70" height="20" />
-				<static>Area Attack</static>
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,405" width="80" height="20" />
+				<static>AREA ATTACK:</static>
 				<font>sheetlabel</font>
 			</label>
 			<numberfield name="area_attack_value">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="235,405" width="22" height="20" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="218,405" width="22" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
 				<readonly />
 			</numberfield>
 			<genericcontrol name="area_attack_shk_icon">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="298,405" width="20" height="20" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="281,405" width="20" height="20" />
 				<icon>shk6</icon>
 			</genericcontrol>
 		</sheetdata>
