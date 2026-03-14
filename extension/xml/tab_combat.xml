@@ -239,7 +239,7 @@
 			<genericcontrol name="armor_bg_e">
 				<anchored to="leftanchor" width="22" height="20">
 					<top />
-					<left offset="189" />
+					<left offset="168" />
 				</anchored>
 				<icon>rigid1</icon>
 				<invisible />
@@ -247,7 +247,7 @@
 			<genericcontrol name="armor_bg_p">
 				<anchored to="leftanchor" width="22" height="20">
 					<top />
-					<left offset="212" />
+					<left offset="191" />
 				</anchored>
 				<icon>rigid1</icon>
 				<invisible />
