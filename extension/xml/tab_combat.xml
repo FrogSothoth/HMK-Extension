@@ -541,12 +541,12 @@
 		</script>
 		<sheetdata>
 			<genericcontrol name="leftanchor">
-				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<anchored position="insidetopleft" offset="20,2" width="0" height="0" />
 				<disabled />
 			</genericcontrol>
 			<!-- Location (text: Skull, Face, etc.) -->
 			<stringfield name="location">
-				<anchored to="leftanchor" width="65" height="20">
+				<anchored to="leftanchor" width="23" height="20">
 					<top />
 					<left offset="2" />
 				</anchored>
@@ -559,7 +559,7 @@
 			</stringfield>
 			<!-- Side (L/R/-) -->
 			<stringfield name="side">
-				<anchored to="location" width="22" height="20">
+				<anchored to="location" width="15" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="2" />
 				</anchored>
@@ -570,38 +570,63 @@
 					end
 				</script>
 			</stringfield>
-			<!-- Severity (M/S/G) -->
+			<!-- Combined SLA (Sev, Lvl, Asp) -->
+			<stringfield name="sla">
+				<anchored to="side" width="28" height="20">
+					<top parent="leftanchor" />
+					<left anchor="right" offset="2" />
+				</anchored>
+				<frame name="fielddark" offset="7,5,7,5" />
+				<maxchars>3</maxchars>
+				<tooltip>Format: SV, LV, AS (e.g., M1B)</tooltip>
+				<script>
+					function onInit()
+						local sSev = window.severity.getValue();
+						local sLvl = window.level.getValue();
+						local sAsp = window.aspect.getValue();
+						if sSev ~= "" or sLvl ~= "" or sAsp ~= "" then
+							setValue(sSev .. sLvl .. sAsp);
+						end
+					end
+					function onLoseFocus()
+						local sVal = getValue();
+						if #sVal == 3 then
+							local sSev = sVal:sub(1,1):upper();
+							local sLvl = sVal:sub(2,2);
+							local sAsp = sVal:sub(3,3):upper();
+							
+							window.severity.setValue(sSev);
+							window.level.setValue(sLvl);
+							window.aspect.setValue(sAsp);
+							window.applyImpairment();
+						end
+					end
+				</script>
+			</stringfield>
 			<stringfield name="severity">
-				<anchored to="side" width="22" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="2" />
+				<anchored to="sla" width="0" height="0">
+					<top />
+					<left />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
+				<invisible />
 			</stringfield>
-			<!-- Level (1-5) -->
 			<stringfield name="level">
-				<anchored to="severity" width="22" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="2" />
+				<anchored to="sla" width="0" height="0">
+					<top />
+					<left />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<script>
-					function onLoseFocus()
-						window.applyImpairment();
-					end
-				</script>
+				<invisible />
 			</stringfield>
-			<!-- Aspect (B/E/P/F) -->
 			<stringfield name="aspect">
-				<anchored to="level" width="22" height="20">
-					<top parent="leftanchor" />
-					<left anchor="right" offset="2" />
+				<anchored to="sla" width="0" height="0">
+					<top />
+					<left />
 				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
+				<invisible />
 			</stringfield>
 			<!-- BLD checkbox -->
 			<buttoncontrol name="bleeding">
-				<anchored to="aspect" width="15" height="15">
+				<anchored to="sla" width="15" height="15">
 					<top parent="leftanchor" offset="2" />
 					<left anchor="right" offset="4" />
 				</anchored>
@@ -619,7 +644,7 @@
 			</buttoncontrol>
 			<!-- HR (1-6) -->
 			<numberfield name="injury_hr">
-				<anchored to="infected" width="22" height="20">
+				<anchored to="infected" width="15" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="2" />
 				</anchored>
@@ -634,7 +659,7 @@
 			</numberfield>
 			<!-- Heal (HR x HB) - readonly display -->
 			<numberfield name="heal">
-				<anchored to="injury_hr" width="28" height="20">
+				<anchored to="injury_hr" width="20" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="2" />
 				</anchored>
@@ -856,13 +881,188 @@
 
 		</script>
 		<sheetdata>
+			<!-- INJURIES GROUP BOX - Move to top left -->
+			<frame_char name="injuries_frame">
+				<anchored position="insidetopleft" offset="40,10" width="305" height="200">
+				</anchored>
+			</frame_char>
+			<label_frametop name="injuries_label">
+				<anchored to="injuries_frame" />
+				<static textres="harn_injuries" />
+				<font>harn_group</font>
+			</label_frametop>
+			<button_iadd name="injuries_iadd">
+				<anchored to="injuries_label" position="right" offset="-30" width="15" height="15" />
+				<target>activeinjuries</target>
+				<script>
+					function onButtonPress()
+						local list = window.activeinjuries;
+						if list then
+							list.createWindow();
+						else
+							Debug.console("ERROR: activeinjuries list not found");
+						end
+					end
+				</script>
+			</button_iadd>
+
+			<label name="h_hb">
+				<anchored to="injuries_frame" position="insidetopleft" offset="10,45" width="45" height="15" />
+				<static textres="harn_hb" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="healing_base">
+				<anchored to="h_hb" position="righthigh" offset="22,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<min>0</min>
+				<default>0</default>
+				<tooltip>Healing Base = Avg(END, WIL), rounded up if END > WIL</tooltip>
+			</numberfield>
+
+
+			<!-- Injury Zones - Grouped within injuries_frame -->
+			<label name="h_head_injury">
+				<anchored to="h_hb" position="belowleft" offset="0,20" width="45" height="15" />
+				<static textres="harn_head_injury" />
+				<font>harn_label_18_bold</font>
+			</label>			
+			<numberfield name="injury_head">
+				<anchored to="h_head_injury" position="righthigh" offset="22,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Head Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+
+			<label name="h_arms_injury">
+				<anchored to="h_head_injury" position="belowleft" offset="0,10" width="45" height="15" />
+				<static textres="harn_arms_injury" />
+				<font>harn_label_18_bold</font>
+			</label>			
+			<numberfield name="injury_arms_l">
+				<anchored to="h_arms_injury" position="righthigh" offset="10,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Left Arm Impairment</tooltip>
+			</numberfield>
+			<numberfield name="injury_arms_r">
+				<anchored to="injury_arms_l" position="righthigh" offset="5,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Right Arm Impairment</tooltip>
+			</numberfield>
+
+			<label name="h_torso_injury">
+				<anchored to="h_arms_injury" position="belowleft" offset="0,10" width="45" height="15" />
+				<static textres="harn_torso_injury" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="injury_torso">
+				<anchored to="h_torso_injury" position="righthigh" offset="22,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Torso Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+
+			<label name="h_legs_injury">
+				<anchored to="h_torso_injury" position="belowleft" offset="0,10" width="45" height="15" />
+				<static textres="harn_legs_injury" />
+				<font>harn_label_18_bold</font>
+			</label>			
+			<numberfield name="injury_legs_l">
+				<anchored to="h_legs_injury" position="righthigh" offset="10,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Left Leg Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+			<numberfield name="injury_legs_r">
+				<anchored to="injury_legs_l" position="righthigh" offset="5,0" width="20" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<tooltip>Right Leg Impairment</tooltip>
+				<script>
+					function onValueChanged()
+						local nodeChar = window.getDatabaseNode()
+						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+							HarnManager.calculateEffectiveMove(nodeChar)
+						end
+					end
+				</script>
+			</numberfield>
+
+			<!-- Active Injuries List - Grouped within injuries_frame -->
+			<label name="injuries_h_loc">
+				<anchored to="injuries_label" position="belowleft" offset="130,0" width="23" height="10" />
+				<static>LOC</static>
+				<font>att_text</font>
+			</label>
+			<label name="injuries_h_side">
+				<anchored to="injuries_h_loc" position="righthigh" offset="0,0" width="15" height="10" />
+				<static>L-R</static>
+				<font>att_text</font>
+			</label>
+			<label name="injuries_h_sla">
+				<anchored to="injuries_h_side" position="righthigh" offset="2,0" width="30" height="10" />
+				<static>INJ</static>
+				<font>att_text</font>
+				<center />
+			</label>
+			<label name="injuries_h_bld">
+				<anchored to="injuries_h_sla" position="righthigh" offset="5,0" width="20" height="10" />
+				<static>BL</static>
+				<font>att_text</font>
+			</label>
+			<label name="injuries_h_inf">
+				<anchored to="injuries_h_bld" position="righthigh" offset="4,0" width="10" height="10" />
+				<static>I</static>
+				<font>att_text</font>
+			</label>
+			<label name="injuries_h_hr">
+				<anchored to="injuries_h_inf" position="righthigh" offset="2,0" width="15" height="10" />
+				<static textres="harn_inj_hr" />
+				<font>att_text</font>
+			</label>
+			<label name="injuries_h_heal">
+				<anchored to="injuries_h_hr" position="righthigh" offset="2,0" width="25" height="10" />
+				<static textres="harn_inj_heal" />
+				<font>att_text</font>
+			</label>
+			<windowlist name="activeinjuries">
+				<anchored to="injuries_frame">
+					<top offset="42" />
+					<left offset="108" />
+					<right offset="-5" />
+					<bottom offset="-5" />
+				</anchored>
+				<datasource>.activeinjuries</datasource>
+				<class>harn_injury_entry</class>
+				<allowcreate />
+				<allowdelete />
+			</windowlist>
 			<!-- ============================================ -->
 			<!-- TOP ROW: Movement, Shock, Fatigue, Stress    -->
 			<!-- ============================================ -->
 
 			<!-- SHOCK STATE Section - Top Left -->
 			<frame_char name="shock_frame">
-				<anchored position="insidetopleft" offset="60,10" width="140" height="140" />
+				<anchored position="insidetopright" offset="40,225" width="160" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="shock_frame" />
@@ -885,11 +1085,6 @@
 			</numberfield>
 
 			<!-- BLD column header -->
-			<label name="shock_bld_label">
-				<anchored to="shock_frame" position="insidetopleft" offset="90,25" width="25" height="15" />
-				<static>BLD</static>
-				<font>att_text</font>
-			</label>
 
 			<buttoncontrol name="shock_none_btn">
 				<anchored to="shock_frame" position="insidetopleft" offset="15,40" width="15" height="15" />
@@ -902,6 +1097,12 @@
 			<label name="shock_none_label">
 				<anchored to="shock_none_btn" position="righthigh" offset="5,-2" width="60" height="20" />
 				<static>[NONE]</static>
+			</label>
+
+			<label name="shock_bld_label">
+				<anchored to="shock_none_label" position="righthigh" offset="-2,-8" width="25" height="15" />
+				<static>BLD</static>
+				<font>att_text</font>
 			</label>
 
 			<buttoncontrol name="shock_stn_btn">
@@ -981,23 +1182,24 @@
 				<state icon="button_checkon" />
 			</buttoncontrol>
 
-			<!-- STRESS Section - anchored to right edge, responsive -->
+			<!-- STRESS Section - Move to right of Injuries -->
 			<frame_char name="stress_frame">
-				<anchored position="insidetopright" offset="60,10" height="140">
-					<left parent="shock_frame" anchor="right" offset="5" />
+				<anchored position="insidetopright" offset="40,10" width="240" height="200">
 				</anchored>
 			</frame_char>
 			<label_frametop>
 				<anchored to="stress_frame" />
 				<static textres="harn_stress" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<label name="psyche_label">
-				<anchored to="stress_frame" position="insidetopleft" offset="10,25" width="45" height="20" />
+				<anchored to="stress_frame" position="insidetopleft" offset="10,65" width="55" height="20" />
 				<static textres="harn_psyche" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<button_iadd name="psyche_iadd">
-				<anchored to="psyche_label" position="righthigh" offset="5,0" />
+				<anchored to="psyche_label" position="righthigh" offset="5,0" width="15" height="15"/>
 				<target>psyche_list</target>
 				<script>
 					function onButtonPress()
@@ -1008,11 +1210,12 @@
 
 			<!-- RIGHT COLUMN: Aural Shock and Shadow -->
 			<label name="auralshock_label">
-				<anchored to="stress_frame" position="insidetopright" offset="10,25" width="65" height="20" />
+				<anchored to="stress_frame" position="insidetopleft" offset="10,35" width="65" height="20" />
 				<static textres="harn_auralshock" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="auralshock">
-				<anchored to="auralshock_label" position="left" offset="5,0" width="35" height="20" />
+				<anchored to="auralshock_label" position="right" offset="5,0" width="25" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<min>0</min>
 				<max>6</max>
@@ -1029,11 +1232,12 @@
 			</numberfield>
 
 			<label name="shadow_label">
-				<anchored to="auralshock_label" position="below" offset="0,5" width="65" height="20" />
+				<anchored to="auralshock" position="right" offset="15,0" width="65" height="20" />
 				<static textres="harn_shadow" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="shadow">
-				<anchored to="shadow_label" position="left" offset="5,0" width="35" height="20" />
+				<anchored to="shadow_label" position="right" offset="5,0" width="25" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<min>0</min>
 				<script>
@@ -1068,9 +1272,9 @@
 			<!-- BOTTOM AREA: Weapons then Body Location    -->
 			<!-- ============================================ -->
 
-			<!-- MELEE WEAPONS - Full width -->
+			<!-- MELEE WEAPONS - Now anchored below Injuries -->
 			<frame_char name="melee_frame">
-				<anchored to="shock_frame" position="belowleft" offset="0,15" width="400" height="140">
+				<anchored to="injuries_frame" position="belowleft" offset="0,15" width="400" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
@@ -1254,13 +1458,14 @@
 			<!-- BODY LOCATION - Below missile weapons, full width, fixed height -->
 			<!-- y=410 = 120 (top row) + 140 (melee) + 5 (gap) + 140 (missile) + 5 (gap) -->
 			<!-- height=450 = 42 (header) + 15 rows * 24px each + 50px extra space -->
+			<!-- BODY LOCATION GROUP BOX -->
 			<frame_char name="bodyloc_frame">
-				<anchored to="missile_frame" position="belowleft" offset="0,15" height="450">
-				</anchored>
+				<anchored to="missile_frame" position="belowleft" offset="0,15" width="350" height="450" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="bodyloc_frame" />
 				<static textres="harn_body_location" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<label name="h_zr">
@@ -1316,211 +1521,14 @@
 				<font>sheetlabel</font>
 				<center />
 			</label>
-			<label name="h_hb">
-				<anchored to="h_shk" position="righthigh" offset="5,0" width="20" height="15" />
-				<static textres="harn_hb" />
-				<font>sheetlabel</font>
-			</label>
-			<numberfield name="healing_base">
-				<anchored to="h_hb" position="righthigh" offset="2,0" width="28" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<min>0</min>
-				<default>0</default>
-				<tooltip>Healing Base = Avg(END, WIL), rounded up if END > WIL</tooltip>
-			</numberfield>
-			<button_text name="recalc_injuries">
-				<anchored to="bodyloc_frame" position="insidetopright" offset="115,22" width="60" height="20" />
-				<state>
-					<label>Recalc</label>
-				</state>
-				<script>
-					function onButtonPress()
-						local nodeChar = window.getDatabaseNode();
-						if nodeChar and HarnManager and HarnManager.recalculateImpairments then
-							HarnManager.recalculateImpairments(nodeChar);
-						end
-					end
-				</script>
-			</button_text>
 
-			<!-- Injury Zone Frames - 4 vertical frames aligned with body location groups -->
-			<!-- Each row is ~22px. List starts at y=42 from bodyloc_frame top -->
-			<!-- 8px vertical gap between frames to account for frame graphic borders -->
-			<!-- Frame 1: Head (Skull-Neck) - rows 1-3, single field centered -->
-			<frame_char name="injury_head_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,42" width="100" height="66" />
-			</frame_char>
-			<numberfield name="injury_head">
-				<anchored to="injury_head_frame" width="28" height="20">
-					<top offset="23" />
-					<left offset="36" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Head Impairment</tooltip>
-				<script>
-					function onValueChanged()
-						local nodeChar = window.getDatabaseNode()
-						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
-							HarnManager.calculateEffectiveMove(nodeChar)
-						end
-					end
-				</script>
-			</numberfield>
-			<!-- Frame 2: Arms (Shoulder-Hand) - rows 4-8, two side-by-side fields -->
-			<frame_char name="injury_arms_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,116" width="100" height="110" />
-			</frame_char>
-			<numberfield name="injury_arms_l">
-				<anchored to="injury_arms_frame" width="28" height="20">
-					<top offset="45" />
-					<left offset="18" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Left Arm Impairment</tooltip>
-			</numberfield>
-			<numberfield name="injury_arms_r">
-				<anchored to="injury_arms_frame" width="28" height="20">
-					<top offset="45" />
-					<left offset="54" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Right Arm Impairment</tooltip>
-			</numberfield>
-			<!-- Frame 3: Torso (Thorax-Pelvis) - rows 9-11, single field centered -->
-			<frame_char name="injury_torso_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,234" width="100" height="66" />
-			</frame_char>
-			<numberfield name="injury_torso">
-				<anchored to="injury_torso_frame" width="28" height="20">
-					<top offset="23" />
-					<left offset="36" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Torso Impairment</tooltip>
-				<script>
-					function onValueChanged()
-						local nodeChar = window.getDatabaseNode()
-						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
-							HarnManager.calculateEffectiveMove(nodeChar)
-						end
-					end
-				</script>
-			</numberfield>
-			<!-- Frame 4: Legs (Thigh-Foot) - rows 12-15, two side-by-side fields -->
-			<frame_char name="injury_legs_frame">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="360,308" width="100" height="88" />
-			</frame_char>
-			<numberfield name="injury_legs_l">
-				<anchored to="injury_legs_frame" width="28" height="20">
-					<top offset="34" />
-					<left offset="18" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Left Leg Impairment</tooltip>
-				<script>
-					function onValueChanged()
-						local nodeChar = window.getDatabaseNode()
-						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
-							HarnManager.calculateEffectiveMove(nodeChar)
-						end
-					end
-				</script>
-			</numberfield>
-			<numberfield name="injury_legs_r">
-				<anchored to="injury_legs_frame" width="28" height="20">
-					<top offset="34" />
-					<left offset="54" />
-				</anchored>
-				<frame name="fielddark" offset="7,5,7,5" />
-				<tooltip>Right Leg Impairment</tooltip>
-				<script>
-					function onValueChanged()
-						local nodeChar = window.getDatabaseNode()
-						if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
-							HarnManager.calculateEffectiveMove(nodeChar)
-						end
-					end
-				</script>
-			</numberfield>
-
-			<!-- Active Injuries List - to the right of injury zone frames -->
-			<label name="injuries_h_loc">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="470,25" width="65" height="15" />
-				<static>Location</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_side">
-				<anchored to="injuries_h_loc" position="righthigh" offset="2,0" width="22" height="15" />
-				<static>Side</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_sev">
-				<anchored to="injuries_h_side" position="righthigh" offset="2,0" width="22" height="15" />
-				<static>Sev</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_lvl">
-				<anchored to="injuries_h_sev" position="righthigh" offset="2,0" width="22" height="15" />
-				<static>Lvl</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_asp">
-				<anchored to="injuries_h_lvl" position="righthigh" offset="2,0" width="22" height="15" />
-				<static>Asp</static>
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_bld">
-				<anchored to="injuries_h_asp" position="righthigh" offset="2,0" width="22" height="15" />
-				<static textres="harn_inj_bld" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_inf">
-				<anchored to="injuries_h_bld" position="righthigh" offset="2,0" width="22" height="15" />
-				<static textres="harn_inj_inf" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_hr">
-				<anchored to="injuries_h_inf" position="righthigh" offset="2,0" width="22" height="15" />
-				<static textres="harn_inj_hr" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="injuries_h_heal">
-				<anchored to="injuries_h_hr" position="righthigh" offset="2,0" width="28" height="15" />
-				<static textres="harn_inj_heal" />
-				<font>sheetlabel</font>
-			</label>
-			<windowlist name="activeinjuries">
-				<anchored to="bodyloc_frame">
-					<top offset="42" />
-					<left offset="468" />
-					<right offset="-5" />
-					<bottom offset="-5" />
-				</anchored>
-				<datasource>.activeinjuries</datasource>
-				<class>harn_injury_entry</class>
-				<allowcreate />
-				<allowdelete />
-			</windowlist>
-			<button_iadd name="injuries_iadd">
-				<anchored to="activeinjuries" position="aboveright" offset="0,8" />
-				<target>activeinjuries</target>
-				<script>
-					function onButtonPress()
-						local list = window.activeinjuries;
-						if list then
-							list.createWindow();
-						else
-							Debug.console("ERROR: activeinjuries list not found");
-						end
-					end
-				</script>
-			</button_iadd>
 
 			<windowlist name="bodylocations">
-				<anchored to="bodyloc_frame" width="460">
+				<anchored to="bodyloc_frame">
 					<top offset="42" />
 					<left offset="3" />
-					<bottom offset="-30" />
+					<right offset="-3" />
+					<bottom offset="-55" />
 				</anchored>
 				<datasource>.bodylocations</datasource>
 				<class>harn_bodyloc_entry</class>

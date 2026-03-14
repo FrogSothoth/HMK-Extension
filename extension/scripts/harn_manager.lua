@@ -603,8 +603,8 @@ local LOCATION_TO_ZONE = {
 function getInjuryZone(sLocation, sSide)
 	if not sLocation then return nil end
 	
-	-- Make lookup case-insensitive by capitalizing first letter
-	local sNormalized = sLocation:sub(1,1):upper() .. sLocation:sub(2):lower()
+	-- Support abbreviations directly (e.g., "HA", "TX")
+	local sNormalized = sLocation:upper()
 	local sBaseZone = LOCATION_TO_ZONE[sNormalized]
 	if not sBaseZone then return nil end
 

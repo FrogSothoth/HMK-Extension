@@ -96,10 +96,10 @@
 
 	<!-- Main tab - Traits -->
 	<string name="harn_traits">TRAITS</string>
-	<string name="harn_morality">Morality</string>
-	<string name="harn_psyche">Psyche</string>
-	<string name="harn_blessing">Blessing</string>
-	<string name="harn_doctrine">Doctrine</string>
+	<string name="harn_morality">MORALITY</string>
+	<string name="harn_psyche">PSYCHE</string>
+	<string name="harn_blessing">BLESSING</string>
+	<string name="harn_doctrine">DOCTRINE</string>
 
 	<!-- Main tab - Fate -->
 	<string name="harn_fate">FATE/GRACE/PIETY</string>
@@ -173,10 +173,14 @@
 	<string name="harn_injury">INJURY</string>
 	<string name="harn_location">LOC</string>
 	<string name="harn_hb">HB</string>
+	<string name="harn_head_injury">HEAD:</string>
+	<string name="harn_torso_injury">TORSO:</string>
+	<string name="harn_arms_injury">ARMS:</string>
+	<string name="harn_legs_injury">LEGS:</string>
 	<string name="harn_inj_bld">BLD</string>
 	<string name="harn_inj_inf">INF</string>
 	<string name="harn_inj_hr">HR</string>
-	<string name="harn_inj_heal">Heal</string>
+	<string name="harn_inj_heal">ROLL</string>
 	<string name="harn_m1">M1</string>
 	<string name="harn_s2">S2</string>
 	<string name="harn_s3">S3</string>
@@ -196,7 +200,7 @@
 	<string name="harn_endsr">End SR:</string>
 
 	<string name="harn_stress">STRESS</string>
-	<string name="harn_auralshock">AURAL SHOCK:</string>
+	<string name="harn_auralshock">AUR SHK:</string>
 	<string name="harn_shadow">SHADOW:</string>
 
 	<!-- Gear -->
