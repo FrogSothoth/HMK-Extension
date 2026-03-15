@@ -265,15 +265,31 @@
 			<anchor_content_charsheet_header_left />
 			<anchor_content_charsheet_header_right />
 
-			<!-- Portrait -->
-			<picture_charsheet_v2 name="portrait" />
+			<!-- NPC Token Background -->
+			<genericcontrol name="portrait_background">
+				<anchored width="50" height="50">
+					<top parent="leftanchor" offset="0" />
+					<left parent="leftanchor" offset="0" />
+				</anchored>
+				<frame name="groupbox" />
+			</genericcontrol>
+
+			<!-- NPC Token/Portrait -->
+			<tokenfield name="picture">
+				<anchored width="44" height="44">
+					<top parent="portrait_background" offset="3" />
+					<left parent="portrait_background" offset="3" />
+				</anchored>
+				<drawmode>fit</drawmode>
+				<script file="scripts/portrait_charsheet.lua" />
+			</tokenfield>
 
 			<!-- NPC Name -->
 			<string_labeled name="name">
 				<anchored to="rightanchor" height="30">
 					<top offset="5" />
 					<right relation="current" offset="-5" />
-					<left parent="leftanchor" relation="current" offset="5" />
+					<left parent="leftanchor" offset="60" />
 				</anchored>
 				<labelres>harn_npc_name</labelres>
 				<font>charsheet_header</font>

@@ -894,16 +894,6 @@
 			<button_iadd name="injuries_iadd">
 				<anchored to="injuries_label" position="right" offset="-30" width="15" height="15" />
 				<target>activeinjuries</target>
-				<script>
-					function onButtonPress()
-						local list = window.activeinjuries;
-						if list then
-							list.createWindow();
-						else
-							Debug.console("ERROR: activeinjuries list not found");
-						end
-					end
-				</script>
 			</button_iadd>
 
 			<label name="h_hb">
@@ -1201,11 +1191,6 @@
 			<button_iadd name="psyche_iadd">
 				<anchored to="psyche_label" position="righthigh" offset="5,0" width="15" height="15"/>
 				<target>psyche_list</target>
-				<script>
-					function onButtonPress()
-						window.psyche_list.createWindow();
-					end
-				</script>
 			</button_iadd>
 
 			<!-- RIGHT COLUMN: Aural Shock and Shadow -->
@@ -1257,9 +1242,9 @@
 
 			<windowlist name="psyche_list">
 				<anchored to="stress_frame">
-					<top offset="50" />
+					<top offset="85" />
 					<left offset="10" />
-					<right offset="-120" />
+					<right offset="-5" />
 					<bottom offset="-5" />
 				</anchored>
 				<datasource>.psyche_stress_list</datasource>
@@ -1346,16 +1331,6 @@
 			<button_iadd name="melee_iadd">
 				<anchored to="meleeweapons" position="aboveright" offset="0,2" />
 				<target>meleeweapons</target>
-				<script>
-					function onButtonPress()
-						local list = window.meleeweapons;
-						if list then
-							list.createWindow();
-						else
-							Debug.console("ERROR: meleeweapons list not found");
-						end
-					end
-				</script>
 			</button_iadd>
 
 			<!-- MISSILE WEAPONS - Below melee, full width, fixed height -->
@@ -1443,16 +1418,6 @@
 			<button_iadd name="missile_iadd">
 				<anchored to="missileweapons" position="aboveright" offset="0,8" />
 				<target>missileweapons</target>
-				<script>
-					function onButtonPress()
-						local list = window.missileweapons;
-						if list then
-							list.createWindow();
-						else
-							Debug.console("ERROR: missileweapons list not found");
-						end
-					end
-				</script>
 			</button_iadd>
 
 			<!-- BODY LOCATION - Below missile weapons, full width, fixed height -->
