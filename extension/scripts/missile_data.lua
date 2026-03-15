@@ -345,7 +345,7 @@ end
 
 -- Format impact string from component values
 -- Returns formatted string like "d12+2P", "d8P", "d10-2B", or ""
-function formatImpact(nImpD, nImpV, sAsp)
+function formatImpact(nImpD, nImpV, sAsp, nStrImp)
     if not nImpD or nImpD == 0 then
         return "";
     end
@@ -363,6 +363,15 @@ function formatImpact(nImpD, nImpV, sAsp)
     -- nImpV == 0 or nil: omit modifier
 
     sResult = sResult .. sAsp;
+
+    if nStrImp and nStrImp ~= 0 then
+        if nStrImp > 0 then
+            sResult = sResult .. "+" .. nStrImp;
+        else
+            sResult = sResult .. nStrImp;
+        end
+    end
+
     return sResult;
 end
 
@@ -489,9 +498,13 @@ function syncMissileWeapons(nodeChar, nodeExclude)
             DB.setValue(nodeEntry, "atk", "number", formatATK(nodeChar, tWeapon));
 
             if tWeapon.proj == "self" then
+                local nStrImp = nil;
+                if tWeapon.skill == "Throwing" then
+                    nStrImp = HarnManager.calculateStrImpact(nodeChar) - 1;
+                end
                 DB.setValue(nodeEntry, "vm", "number", tWeapon.vm);
                 DB.setValue(nodeEntry, "proj", "string", "self");
-                DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp));
+                DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp, nStrImp));
                 DB.setValue(nodeEntry, "ta", "number", tonumber(tWeapon.ta) or 0);
             elseif tWeapon.proj == "stone" then
                 local nStrImp = HarnManager.calculateStrImpact(nodeChar);
@@ -500,8 +513,7 @@ function syncMissileWeapons(nodeChar, nodeExclude)
                 DB.setValue(nodeEntry, "imp", "string", formatImpact(tWeapon.impd, nStrImp, tWeapon.asp));
                 DB.setValue(nodeEntry, "ta", "number", tonumber(tWeapon.ta) or 0);
             elseif tAmmo then
-                local nVM = (tWeapon.vm or 0) + (tAmmo.vm or 0);
-                DB.setValue(nodeEntry, "vm", "number", nVM);
+                DB.setValue(nodeEntry, "vm", "number", (tWeapon.vm or 0) + (tAmmo.vm or 0));
                 DB.setValue(nodeEntry, "proj", "string", tAmmo.name);
                 DB.setValue(nodeEntry, "imp", "string", formatImpact(tAmmo.impd, tWeapon.impv, tWeapon.asp));
                 DB.setValue(nodeEntry, "ta", "number", tonumber(tAmmo.ta) or 0);
@@ -525,6 +537,42 @@ function updateMissileATK(nodeChar)
         local tWeapon = lookupMissileWeapon(sMissileName);
         if tWeapon then
             DB.setValue(nodeMissile, "atk", "string", formatATK(nodeChar, tWeapon));
+        end
+    end
+end
+
+-- Update Impact on all missile weapon entries with current STR modifier
+function updateMissileImpact(nodeChar)
+    if not nodeChar then return; end
+
+    local nodeMissileList = DB.getChild(nodeChar, "missileweapons");
+    if not nodeMissileList then return; end
+
+    local nStrImpThrowing = HarnManager.calculateStrImpact(nodeChar) - 1;
+    local nStrImpSling = HarnManager.calculateStrImpact(nodeChar);
+    
+    Debug.console("MissileData: Updating Impact with STR throw=" .. nStrImpThrowing .. " sling=" .. nStrImpSling);
+
+    for _, nodeMissile in pairs(DB.getChildList(nodeMissileList)) do
+        local sMissileName = DB.getValue(nodeMissile, "name", "");
+        local tWeapon = lookupMissileWeapon(sMissileName);
+        if tWeapon then
+            if tWeapon.proj == "self" then
+                if tWeapon.skill == "Throwing" then
+                    DB.setValue(nodeMissile, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp, nStrImpThrowing));
+                else
+                    DB.setValue(nodeMissile, "imp", "string", formatImpact(tWeapon.impd, tWeapon.impv, tWeapon.asp));
+                end
+            elseif tWeapon.proj == "stone" then
+                 DB.setValue(nodeMissile, "imp", "string", formatImpact(tWeapon.impd, nStrImpSling, tWeapon.asp));
+            else
+                 -- For arrows and bolts, impact is ammo impd + weapon impv. STR does not apply.
+                local sProj = DB.getValue(nodeMissile, "proj", "");
+                local tAmmo = lookupAmmo(sProj);
+                if tAmmo then
+                    DB.setValue(nodeMissile, "imp", "string", formatImpact(tAmmo.impd, tWeapon.impv, tWeapon.asp));
+                end
+            end
         end
     end
 end

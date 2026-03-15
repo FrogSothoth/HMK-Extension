@@ -69,27 +69,6 @@
 				<nodrag />
 				</numberfield>
 
-			<!-- AGL Box -->
-			<genericcontrol name="agl_frame">
-				<anchored position="insidetopleft" offset="130,80" width="45" height="56" />
-				<icon>agl_icon</icon>
-				<tooltip text="Agility" />
-			</genericcontrol>
-
-			<numberfield name="agl_score">
-				<anchored to="agl_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<hideonzero />
-			</numberfield>
-
-			<numberfield name="agl_ml">
-				<anchored to="agl_frame" position="insidetopright" offset="1,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<readonly />
-				<hideonzero />
-				<nodrag />
-			</numberfield>
-
 			<!-- DEX Box -->
 			<genericcontrol name="dex_frame">
 				<anchored position="insidetopleft" offset="60,80" width="45" height="56" />
@@ -111,6 +90,26 @@
 				<nodrag />
 				</numberfield>
 
+			<!-- AGL Box -->
+			<genericcontrol name="agl_frame">
+				<anchored position="insidetopleft" offset="130,80" width="45" height="56" />
+				<icon>agl_icon</icon>
+				<tooltip text="Agility" />
+			</genericcontrol>
+
+			<numberfield name="agl_score">
+				<anchored to="agl_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="agl_ml">
+				<anchored to="agl_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+			</numberfield>
 
 			<!-- PER Box -->
 			<genericcontrol name="per_frame">
@@ -166,27 +165,6 @@
 				<center />
 			</label>
 
-			<!-- WIL Box -->
-			<genericcontrol name="wil_frame">
-				<anchored position="insidetopright" offset="60,35" width="45" height="56" />
-				<icon>wil_icon</icon>
-				<tooltip text="Willpower" />
-			</genericcontrol>
-
-			<numberfield name="wil_score">
-				<anchored to="wil_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<hideonzero />
-			</numberfield>
-
-			<numberfield name="wil_ml">
-				<anchored to="wil_frame" position="insidetopright" offset="1,24" width="20" height="20" />
-				<font>sheetnumber</font>
-				<readonly />
-				<hideonzero />
-				<nodrag />
-				</numberfield>
-
 			<!-- AUR Box -->
 			<genericcontrol name="aur_frame">
 				<anchored position="insidetopright" offset="130,35" width="45" height="56" />
@@ -202,6 +180,27 @@
 
 			<numberfield name="aur_ml">
 				<anchored to="aur_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<readonly />
+				<hideonzero />
+				<nodrag />
+				</numberfield>
+
+			<!-- WIL Box -->
+			<genericcontrol name="wil_frame">
+				<anchored position="insidetopright" offset="60,35" width="45" height="56" />
+				<icon>wil_icon</icon>
+				<tooltip text="Willpower" />
+			</genericcontrol>
+
+			<numberfield name="wil_score">
+				<anchored to="wil_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
+			</numberfield>
+
+			<numberfield name="wil_ml">
+				<anchored to="wil_frame" position="insidetopright" offset="1,24" width="20" height="20" />
 				<font>sheetnumber</font>
 				<readonly />
 				<hideonzero />

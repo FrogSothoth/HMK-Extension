@@ -92,7 +92,7 @@
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
 			<stringfield name="imp">
-				<anchored to="zd" width="50" height="20">
+				<anchored to="zd" width="55" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="4" />
 					<center />
@@ -1320,12 +1320,12 @@
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_imp_h">
-				<anchored to="melee_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<anchored to="melee_zd_h" position="righthigh" offset="8,0" width="30" height="15" />
 				<static textres="harn_imp" />
 				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_ta_h">
-				<anchored to="melee_imp_h" position="righthigh" offset="15,0" width="40" height="15" />
+				<anchored to="melee_imp_h" position="righthigh" offset="20,0" width="40" height="15" />
 				<static textres="harn_ta" />
 				<font>harn_skill_header</font>
 			</label>

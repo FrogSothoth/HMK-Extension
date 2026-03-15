@@ -254,7 +254,6 @@
 			</label>
 			<numberfield name="move_half">
 				<anchored to="half_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
 				<readonly />
 			</numberfield>
 
@@ -265,7 +264,16 @@
 			</label>
 			<numberfield name="move_double">
 				<anchored to="double_label" position="righthigh" offset="5,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<readonly />
+			</numberfield>
+
+			<label name="evasion_label">
+				<anchored to="double_label" position="below" offset="0,6" width="65" height="20" />
+				<static>EVA:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_evasion">
+				<anchored to="evasion_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 

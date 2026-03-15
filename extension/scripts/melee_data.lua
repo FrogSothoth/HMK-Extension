@@ -245,8 +245,9 @@ function formatZD(entry)
 end
 
 -- Format Impact string: "d8+4E", "d6-2B", "d6B", etc.
+-- Accepts optional nStrImp to append after base impact but before aspect
 -- Returns "" for entries with no impact data
-function formatImpact(entry)
+function formatImpact(entry, nStrImp)
     if not entry.impd or not entry.asp or entry.asp == "" then
         return "";
     end
@@ -264,6 +265,15 @@ function formatImpact(entry)
     -- impv == 0 or nil: omit modifier entirely
 
     sResult = sResult .. entry.asp;
+
+    if nStrImp and nStrImp ~= 0 then
+        if nStrImp > 0 then
+            sResult = sResult .. "+" .. nStrImp;
+        else
+            sResult = sResult .. nStrImp;
+        end
+    end
+
     return sResult;
 end
 
@@ -361,6 +371,7 @@ function syncMeleeWeapons(nodeChar, nodeExclude)
 
     -- Step 3: Add missing entries for weapons in possessions
     local nMeleeML = getMeleeML(nodeChar);
+    local nStrImp = HarnManager.calculateStrImpact(nodeChar);
     for sWeaponKey, _ in pairs(tPossessionWeapons) do
         local aEntries = aMeleeWeaponData[sWeaponKey];
         if aEntries then
@@ -388,7 +399,7 @@ function syncMeleeWeapons(nodeChar, nodeExclude)
                     DB.setValue(nodeWeapon, "atk", "number", nMeleeML);
                     DB.setValue(nodeWeapon, "def", "number", nMeleeML);
                     DB.setValue(nodeWeapon, "zd", "string", formatZD(entry));
-                    DB.setValue(nodeWeapon, "imp", "string", formatImpact(entry));
+                    DB.setValue(nodeWeapon, "imp", "string", formatImpact(entry, nStrImp));
                     DB.setValue(nodeWeapon, "ta", "number", tonumber(entry.ta) or 0);
                     Debug.console("MeleeData: Added melee entry: " .. entry.name .. " (" .. (entry.asp or "?") .. ")");
                 end
@@ -410,6 +421,35 @@ function updateMeleeATKDEF(nodeChar)
     for _, nodeMelee in pairs(DB.getChildList(nodeMeleeList)) do
         DB.setValue(nodeMelee, "atk", "number", nMeleeML);
         DB.setValue(nodeMelee, "def", "number", nMeleeML);
+    end
+end
+
+-- Update Impact on all melee weapon entries with current STR modifier
+function updateMeleeImpact(nodeChar)
+    if not nodeChar then return; end
+
+    local nStrImp = HarnManager.calculateStrImpact(nodeChar);
+    Debug.console("MeleeData: Updating Impact with STR mod = " .. nStrImp);
+
+    local nodeMeleeList = DB.getChild(nodeChar, "meleeweapons");
+    if not nodeMeleeList then return; end
+
+    for _, nodeMelee in pairs(DB.getChildList(nodeMeleeList)) do
+        local sName = DB.getValue(nodeMelee, "name", ""):lower();
+        local aEntries = aMeleeWeaponData[sName];
+        if aEntries then
+            -- We need to find the correct entry for this specific attack form.
+            -- Using aspect is usually enough to differentiate attack forms of the same weapon.
+            local sCurrentImp = DB.getValue(nodeMelee, "imp", "");
+            local sPatternAspect = sCurrentImp:match("[PEB]");
+
+            for _, entry in ipairs(aEntries) do
+                if entry.asp == sPatternAspect then
+                    DB.setValue(nodeMelee, "imp", "string", formatImpact(entry, nStrImp));
+                    break;
+                end
+            end
+        end
     end
 end
 

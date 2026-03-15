@@ -649,3 +649,34 @@ function isValidAlchemy(sName)
 	if not _alchemyByName then return false; end
 	return _alchemyByName[sName] ~= nil;
 end
+
+-- CONVOCATION ADJACENCY DATA
+-- Maps Primary Convocation -> { Related Convocation = Degree Modifier }
+-- Degree Modifiers: 0=Primary, 1=Secondary, 3=Tertiary, 4=Diametric
+local _CONVOCATION_ADJACENCY = {
+	["FYVRIA"]  = { ["FYVRIA"]=0, ["JMORVI"]=1, ["ODIVSHE"]=1, ["PELEAHN"]=3, ["SAVORYA"]=3, ["LYAHVI"]=4 },
+	["JMORVI"]  = { ["JMORVI"]=0, ["FYVRIA"]=1, ["PELEAHN"]=1, ["LYAHVI"]=3,  ["ODIVSHE"]=3, ["SAVORYA"]=4 },
+	["PELEAHN"] = { ["PELEAHN"]=0,["JMORVI"]=1, ["LYAHVI"]=1,  ["FYVRIA"]=3,  ["SAVORYA"]=3, ["ODIVSHE"]=4 },
+	["LYAHVI"]  = { ["LYAHVI"]=0, ["PELEAHN"]=1,["SAVORYA"]=1, ["JMORVI"]=3,  ["ODIVSHE"]=3, ["FYVRIA"]=4 },
+	["SAVORYA"] = { ["SAVORYA"]=0,["LYAHVI"]=1, ["ODIVSHE"]=1, ["FYVRIA"]=3,  ["PELEAHN"]=3, ["JMORVI"]=4 },
+	["ODIVSHE"] = { ["ODIVSHE"]=0,["FYVRIA"]=1, ["SAVORYA"]=1, ["JMORVI"]=3,  ["LYAHVI"]=3,  ["PELEAHN"]=4 }
+}
+
+-- Returns the Degree Modifier for a spell based on character's Primary Convocation
+-- 0=Primary, 1=Secondary, 2=Neutral, 3=Tertiary, 4=Diametric
+-- Neutral spells always return 2. If Primary is undefined, defaults to 4.
+function getConvocationAdjacencyModifier(sPrimary, sSpellConv)
+	local sUpperSpell = string.upper(sSpellConv or "")
+	if sUpperSpell == "NEUTRAL" then return 2 end
+	
+	local sUpperPrimary = string.upper(sPrimary or "")
+	if _CONVOCATION_ADJACENCY[sUpperPrimary] then
+		local modifier = _CONVOCATION_ADJACENCY[sUpperPrimary][sUpperSpell]
+		if modifier then
+			return modifier
+		end
+	end
+	
+	-- Fallback if not found
+	return 4
+end

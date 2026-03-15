@@ -161,6 +161,17 @@
 						if sName == "" then return; end
 
 						Debug.console("Skill name entered: " .. sName);
+						
+						local nodeCharSkill = window.getDatabaseNode();
+						if not nodeCharSkill then return; end
+						
+						-- Only pull and overwrite from base DB if this skill doesn't have an attribute defined yet.
+						-- This prevents overwriting user-modified SMs just because the name field lost focus.
+						local sCurrentAtt1 = DB.getValue(nodeCharSkill, "att1", "");
+						if sCurrentAtt1 ~= "" then
+							window.updateVisibility();
+							return; 
+						end
 
 						-- Look up skill data from database
 						local nodeSkillsRef = DB.findNode("harnmaster.skills");
@@ -174,44 +185,40 @@
 									Debug.console("Found skill data: att1=" .. sAtt1 .. ", att2=" .. sAtt2 .. ", sm=" .. tostring(nSM));
 
 									-- Update att1, att2, sm fields in character's skill entry
-									local nodeCharSkill = window.getDatabaseNode();
-									if nodeCharSkill then
-										Debug.console("Setting database values for: " .. nodeCharSkill.getPath());
-										DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
-										DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
-										DB.setValue(nodeCharSkill, "sm", "number", nSM);
+									Debug.console("Setting database values for: " .. nodeCharSkill.getPath());
+									DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
+									DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
+									DB.setValue(nodeCharSkill, "sm", "number", nSM);
 
-										-- Calculate SB from character attributes
-										-- Navigate to character node (skill -> skilllist -> character)
-										local nodeChar = nodeCharSkill.getParent().getParent();
-										if nodeChar then
-											-- Get attribute scores (field names are lowercase + "_score")
-											local sAtt1Field = string.lower(sAtt1) .. "_score";
-											local sAtt2Field = string.lower(sAtt2) .. "_score";
-											local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
-											local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+									-- Calculate SB from character attributes
+									-- Navigate to character node (skill -> skilllist -> character)
+									local nodeChar = nodeCharSkill.getParent().getParent();
+									if nodeChar then
+										-- Get attribute scores (field names are lowercase + "_score")
+										local sAtt1Field = string.lower(sAtt1) .. "_score";
+										local sAtt2Field = string.lower(sAtt2) .. "_score";
+										local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+										local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
 
-											Debug.console("Attribute values: " .. sAtt1 .. "=" .. tostring(nAtt1Value) .. ", " .. sAtt2 .. "=" .. tostring(nAtt2Value));
+										Debug.console("Attribute values: " .. sAtt1 .. "=" .. tostring(nAtt1Value) .. ", " .. sAtt2 .. "=" .. tostring(nAtt2Value));
 
-											-- Calculate SB: average, round up if att1 > att2, else round down
-											local nSB = 0;
-											if nAtt1Value > 0 or nAtt2Value > 0 then
-												local nAvg = (nAtt1Value + nAtt2Value) / 2;
-												if nAtt1Value > nAtt2Value then
-													nSB = math.ceil(nAvg);
-												else
-													nSB = math.floor(nAvg);
-												end
+										-- Calculate SB: average, round up if att1 > att2, else round down
+										local nSB = 0;
+										if nAtt1Value > 0 or nAtt2Value > 0 then
+											local nAvg = (nAtt1Value + nAtt2Value) / 2;
+											if nAtt1Value > nAtt2Value then
+												nSB = math.ceil(nAvg);
+											else
+												nSB = math.floor(nAvg);
 											end
-
-											Debug.console("Calculated SB: " .. tostring(nSB));
-											DB.setValue(nodeCharSkill, "sb", "number", nSB);
-										else
-											Debug.console("ERROR: Could not get character node");
 										end
+
+										Debug.console("Calculated SB: " .. tostring(nSB));
+										DB.setValue(nodeCharSkill, "sb", "number", nSB);
 									else
-										Debug.console("ERROR: Could not get database node");
+										Debug.console("ERROR: Could not get character node");
 									end
+									window.updateVisibility();
 									return;
 								end
 							end

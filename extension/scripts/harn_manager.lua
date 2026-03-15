@@ -340,27 +340,39 @@ function calculateMove(nodeChar)
 	return nMove
 end
 
--- Update attribute ML based on score (ML = score * 5)
-function updateAttributeML(nodeChar, sFieldName)
-	if not nodeChar or not sFieldName then return end
-	
-	-- Check if the updated field is an attribute score
-	local sAttr = sFieldName:match("^([%a]+)_score$")
-	if not sAttr then return end
-	
-	local nScore = DB.getValue(nodeChar, sFieldName, 0)
+-- Recalculate Attribute MLs and trigger related updates
+function updateAttributeML(nodeChar, sAttribute)
+	if not nodeChar or not sAttribute then return end
+
+	local sBase = string.match(sAttribute, "^(.*)_score$")
+	if not sBase then return end
+
+	local nScore = DB.getValue(nodeChar, sAttribute, 0)
 	local nML = nScore * 5
-	
-	local sMLField = sAttr .. "_ml"
+	local sMLField = sBase .. "_ml"
+
+	-- Only SetValue if the node already exists or we specifically want to create it
+	-- (All ML fields should exist in charsheet node by default)
 	DB.setValue(nodeChar, sMLField, "number", nML)
-	
-	-- Also trigger related calculations
-	if sAttr == "aur" then
+
+	-- Handle specific attribute downstream effects
+	if sBase == "aur" then
 		calculateFate(nodeChar)
-	elseif sAttr == "agl" or sAttr == "str" then
+	elseif sBase == "str" or sBase == "agl" then
 		calculateMove(nodeChar)
-	elseif sAttr == "end" or sAttr == "wil" then
+	end
+	if sBase == "end" or sBase == "wil" or sBase == "str" or sBase == "agl" or sBase == "aur" or sBase == "dex" then
 		calculateHealingBase(nodeChar)
+	end
+
+	-- Trigger weapons update if STR changes
+	if sBase == "str" then
+		if MeleeData and MeleeData.updateMeleeImpact then
+			MeleeData.updateMeleeImpact(nodeChar)
+		end
+		if MissileData and MissileData.updateMissileImpact then
+			MissileData.updateMissileImpact(nodeChar)
+		end
 	end
 	
 	-- Update recalculate all SB whenever an attribute changes
@@ -502,12 +514,12 @@ end
 function calculateDoctrineBonus(nodeChar, sSkillName)
 	if not nodeChar or not sSkillName or sSkillName == "" then return 0 end
 
-	local nBlessing = tonumber(DB.getValue(nodeChar, "blessing", "")) or 0
+	local nBlessing = DB.getValue(nodeChar, "blessing_bonus", 0)
 	if nBlessing == 0 then return 0 end
 
 	local sSkillLower = string.lower(sSkillName)
 
-	for i = 1, 5 do
+	for i = 1, 6 do
 		local sDoctrine = DB.getValue(nodeChar, "doctrine" .. i, "")
 		if sDoctrine ~= "" and string.lower(sDoctrine) == sSkillLower then
 			return nBlessing
@@ -571,6 +583,7 @@ function calculateEffectiveMove(nodeChar)
 	-- Half Move = Effective Move / 2, rounded down to nearest multiple of 5
 	DB.setValue(nodeChar, "move_half", "number", math.floor((nEffective / 2) / 5) * 5)
 	DB.setValue(nodeChar, "move_double", "number", nEffective * 2)
+	DB.setValue(nodeChar, "move_evasion", "number", math.floor(nEffective / 10)*5)
 
 	return nEffective
 end

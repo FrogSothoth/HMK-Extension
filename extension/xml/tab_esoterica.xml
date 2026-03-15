@@ -100,12 +100,26 @@
 					sb.setVisible(false);
 					att1.setVisible(false);
 					att2.setVisible(false);
+					
+					-- Show Primary radio button for all convocations
+					is_primary.setVisible(true);
+					
+					-- Only show the "PRIMARY" text label on FYVRIA
+					if sUpper == "FYVRIA" then
+						primary_label.setVisible(true);
+					else
+						primary_label.setVisible(false);
+					end
 				else
 					name.setFont("sheettext");
 					sm.setVisible(true);
 					sb.setVisible(true);
 					att1.setVisible(true);
 					att2.setVisible(true);
+					
+					-- Hide radio buttons for non-convocational skills
+					is_primary.setVisible(false);
+					primary_label.setVisible(false);
 				end
 			end
 
@@ -207,6 +221,14 @@
 							-- fall through to look up Pvarism's own att1/att2/sm from the skills db
 						end
 
+						local nodeCharSkill = window.getDatabaseNode();
+						if not nodeCharSkill then return; end
+						
+						-- Only pull and overwrite from base DB if this skill doesn't have an attribute defined yet.
+						-- This prevents overwriting user-modified SMs just because the name field lost focus.
+						local sCurrentAtt1 = DB.getValue(nodeCharSkill, "att1", "");
+						if sCurrentAtt1 ~= "" then return; end
+
 						-- Look up skill data from database (Esoterica group only)
 						local nodeSkillsRef = DB.findNode("harnmaster.skills");
 						if nodeSkillsRef then
@@ -220,31 +242,28 @@
 									Debug.console("Found esoterica skill: att1=" .. sAtt1 .. ", att2=" .. sAtt2 .. ", sm=" .. tostring(nSM));
 
 									-- Update fields in character's skill entry
-									local nodeCharSkill = window.getDatabaseNode();
-									if nodeCharSkill then
-										DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
-										DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
-										DB.setValue(nodeCharSkill, "sm", "number", nSM);
+									DB.setValue(nodeCharSkill, "att1", "string", sAtt1);
+									DB.setValue(nodeCharSkill, "att2", "string", sAtt2);
+									DB.setValue(nodeCharSkill, "sm", "number", nSM);
 
-										-- Calculate SB from character attributes
-										local nodeChar = nodeCharSkill.getParent().getParent();
-										if nodeChar then
-											local sAtt1Field = string.lower(sAtt1) .. "_score";
-											local sAtt2Field = string.lower(sAtt2) .. "_score";
-											local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
-											local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
+									-- Calculate SB from character attributes
+									local nodeChar = nodeCharSkill.getParent().getParent();
+									if nodeChar then
+										local sAtt1Field = string.lower(sAtt1) .. "_score";
+										local sAtt2Field = string.lower(sAtt2) .. "_score";
+										local nAtt1Value = DB.getValue(nodeChar, sAtt1Field, 0);
+										local nAtt2Value = DB.getValue(nodeChar, sAtt2Field, 0);
 
-											local nSB = 0;
-											if nAtt1Value > 0 or nAtt2Value > 0 then
-												local nAvg = (nAtt1Value + nAtt2Value) / 2;
-												if nAtt1Value > nAtt2Value then
-													nSB = math.ceil(nAvg);
-												else
-													nSB = math.floor(nAvg);
-												end
+										local nSB = 0;
+										if nAtt1Value > 0 or nAtt2Value > 0 then
+											local nAvg = (nAtt1Value + nAtt2Value) / 2;
+											if nAtt1Value > nAtt2Value then
+												nSB = math.ceil(nAvg);
+											else
+												nSB = math.floor(nAvg);
 											end
-											DB.setValue(nodeCharSkill, "sb", "number", nSB);
 										end
+										DB.setValue(nodeCharSkill, "sb", "number", nSB);
 									end
 									return;
 								end
@@ -289,6 +308,37 @@
 				<center />
 				<source>ml</source>
 			</numberfield>
+
+			<label name="primary_label">
+				<anchored to="name" position="insidetopleft" offset="95,0" width="55" height="20" />
+				<font>att_text</font>
+				<static>PRIMARY</static>
+				<center />
+				<invisible />
+			</label>
+
+			<button_checkbox name="is_primary">
+				<anchored to="name" position="insidetopleft" offset="150,0" width="20" height="20" />
+				<invisible />
+				<script>
+					function onValueChanged()
+						if getValue() == 1 then
+							local nodeThis = window.getDatabaseNode();
+							local nodeList = nodeThis.getParent();
+							if nodeList then
+								for _, nodeOther in pairs(DB.getChildren(nodeList)) do
+									if nodeOther ~= nodeThis then
+										local sName = string.upper(DB.getValue(nodeOther, "name", ""));
+										if window.isConvocationSkill(sName) then
+											DB.setValue(nodeOther, "is_primary", "number", 0);
+										end
+									end
+								end
+							end
+						end
+					end
+				</script>
+			</button_checkbox>
 
 			<buttoncontrol name="btn_recalc">
 				<anchored to="ml" position="righthigh" offset="5,2" width="15" height="15" />
@@ -358,6 +408,9 @@
 		<script>
 			function setCustomEditMode(bEdit)
 				btn_delete.setVisible(bEdit);
+				if btn_recalc then
+					btn_recalc.setVisible(bEdit);
+				end
 			end
 		</script>
 		<sheetdata>
@@ -419,8 +472,52 @@
 				<source>ml</source>
 			</numberfield>
 
+			<buttoncontrol name="btn_recalc">
+				<anchored to="ml" position="righthigh" offset="5,2" width="15" height="15" />
+				<icon normal="button_calc" pressed="button_calc_down" />
+				<invisible />
+				<script>
+					function onButtonPress()
+						local nodeSpell = window.getDatabaseNode()
+						if not nodeSpell then return end
+						
+						local sSpellConv = DB.getValue(nodeSpell, "conv", "")
+						local nCmp = DB.getValue(nodeSpell, "cmp", 0)
+						
+						local nodeChar = nodeSpell.getParent().getParent()
+						if not nodeChar then return end
+						
+						local nodeEsoList = DB.getChild(nodeChar, "esotericalist")
+						if not nodeEsoList then return end
+						
+						-- Find primary convocation and the specific spell's convocation ML
+						local sPrimary = ""
+						local nSpecificConvML = 0
+						
+						for _, nodeEso in pairs(DB.getChildren(nodeEsoList)) do
+							local nIsPrimary = DB.getValue(nodeEso, "is_primary", 0)
+							if nIsPrimary == 1 then
+								sPrimary = DB.getValue(nodeEso, "name", "")
+							end
+							
+							-- If this esoterica entry matches the spell's convocation, grab its ML
+							if string.upper(DB.getValue(nodeEso, "name", "")) == string.upper(sSpellConv) then
+								nSpecificConvML = DB.getValue(nodeEso, "ml", 0)
+							end
+						end
+						
+						-- Get degree modifier
+						local nDegree = SkillsData.getConvocationAdjacencyModifier(sPrimary, sSpellConv)
+						
+						-- Formula: SpecificConvocationML - (2 * (DegreeModifier + SpellCMP))
+						local nNewML = nSpecificConvML - (2 * (nDegree + nCmp))
+						DB.setValue(nodeSpell, "ml", "number", nNewML)
+					end
+				</script>
+			</buttoncontrol>
+
 			<buttoncontrol name="btn_delete">
-				<anchored to="ml" position="righthigh" offset="5,0" width="15" height="15" />
+				<anchored to="btn_recalc" position="righthigh" offset="5,0" width="15" height="15" />
 				<icon normal="button_delete" pressed="button_delete_down" />
 				<invisible />
 				<script>

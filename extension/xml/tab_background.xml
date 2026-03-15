@@ -447,27 +447,12 @@
 				<static>BONUS:</static>
 				<font>harn_label_18_bold</font>
 			</label>
-			<stringfield name="blessing_bonus">
+			<numberfield name="blessing_bonus">
 				<anchored to="bonus_label" position="right" offset="5,0" width="30" height="20" />
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
-				<script>
-					function onValueChanged()
-						local sVal = getValue();
-						if sVal ~= "" then
-							local nVal = tonumber(sVal);
-							if not nVal then
-								setValue("");
-							elseif nVal &lt; 1 then
-								setValue("1");
-							elseif nVal &gt; 20 then
-								setValue("20");
-							end
-						end
-					end
-				</script>
-			</stringfield>
+			</numberfield>
 
 			<!-- DOCTRINES -->
 			<label name="doctrines_label">

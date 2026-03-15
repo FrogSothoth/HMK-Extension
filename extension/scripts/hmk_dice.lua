@@ -288,22 +288,39 @@ function processEMLQuery(sCommand, sParams)
 	-- Get penalty breakdown for display
 	local nFatigue = 0;
 	local nEnc = 0;
+	local nShadow = 0;
+	local nDoctrineBonus = 0;
 	if HarnManager and HarnManager.calculateFatiguePenalty then
 		nFatigue = HarnManager.calculateFatiguePenalty(nodeChar);
 	end
 	if HarnManager and HarnManager.isAGLSkill and HarnManager.isAGLSkill(sDisplayName) then
 		nEnc = DB.getValue(nodeChar, "enc_total", 0);
 	end
+	if HarnManager and HarnManager.calculateShadowPenalty then
+		nShadow = HarnManager.calculateShadowPenalty(nodeChar, sDisplayName);
+	end
+	if HarnManager and HarnManager.calculateDoctrineBonus then
+		nDoctrineBonus = HarnManager.calculateDoctrineBonus(nodeChar, sDisplayName);
+	end
 
 	-- Build result message
 	local sResult = "[EML] " .. sFoundName .. " - " .. sDisplayName .. ": ML " .. nML;
-	if nFatigue > 0 or nEnc > 0 or nZoneImpairment > 0 then
-		sResult = sResult .. " - " .. (nFatigue + nEnc + nZoneImpairment) .. " (";
+	local nTotalPenalty = nFatigue + nEnc + nShadow + nZoneImpairment;
+	if nTotalPenalty > 0 or nDoctrineBonus > 0 then
+		sResult = sResult .. " ";
 		local tParts = {};
-		if nFatigue > 0 then table.insert(tParts, "Fatigue " .. nFatigue); end
-		if nEnc > 0 then table.insert(tParts, "ENC " .. nEnc); end
-		if nZoneImpairment > 0 then table.insert(tParts, "Zone " .. nZoneImpairment); end
-		sResult = sResult .. table.concat(tParts, ", ") .. ")";
+		if nTotalPenalty > 0 then
+			sResult = sResult .. "- " .. nTotalPenalty .. " (";
+			if nFatigue > 0 then table.insert(tParts, "Fatigue " .. nFatigue); end
+			if nEnc > 0 then table.insert(tParts, "ENC " .. nEnc); end
+			if nShadow > 0 then table.insert(tParts, "Shadow " .. nShadow); end
+			if nZoneImpairment > 0 then table.insert(tParts, "Zone " .. nZoneImpairment); end
+			sResult = sResult .. table.concat(tParts, ", ") .. ")";
+		end
+		if nDoctrineBonus > 0 then
+			if nTotalPenalty > 0 then sResult = sResult .. " "; end
+			sResult = sResult .. "+ " .. nDoctrineBonus .. " (Blessing)";
+		end
 	end
 	sResult = sResult .. " = EML " .. nEML;
 
