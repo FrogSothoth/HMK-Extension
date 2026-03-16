@@ -114,9 +114,8 @@
 
 			<!-- ATT1 (readonly) -->
 			<stringfield name="att1">
-				<anchored position="insidetopleft" offset="110,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored position="insidetopleft" offset="110,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att1</source>
@@ -124,9 +123,8 @@
 
 			<!-- ATT2 (readonly) -->
 			<stringfield name="att2">
-				<anchored position="insidetopleft" offset="150,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<font>sheettext</font>
+				<anchored position="insidetopleft" offset="133,0" width="20" height="20" />
+				<font>att_text</font>
 				<center />
 				<readonly />
 				<source>att2</source>
@@ -134,8 +132,7 @@
 
 			<!-- SB (readonly, auto-calculated) -->
 			<numberfield name="sb">
-				<anchored position="insidetopleft" offset="190,0" width="30" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored position="insidetopleft" offset="150,0" width="25" height="20" />
 				<font>sheettext</font>
 				<center />
 				<readonly />
@@ -144,7 +141,7 @@
 
 			<!-- ML (editable) -->
 			<numberfield name="ml">
-				<anchored position="insidetopleft" offset="225,0" width="35" height="20" />
+				<anchored position="insidetopleft" offset="185,0" width="35" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<font>sheettext</font>
 				<center />
@@ -183,6 +180,17 @@
 					-- Watch for STR changes (affects Str Mod and Total ENC)
 					sStrScorePath = DB.getPath(nodeChar, "str_score");
 					DB.addHandler(sStrScorePath, "onUpdate", onStrScoreChanged);
+
+					-- Watch for Fatigue changes
+					DB.addHandler(DB.getPath(nodeChar, "winded"), "onUpdate", onMoveRelatedChanged);
+					DB.addHandler(DB.getPath(nodeChar, "weary"), "onUpdate", onMoveRelatedChanged);
+					DB.addHandler(DB.getPath(nodeChar, "weak"), "onUpdate", onMoveRelatedChanged);
+
+					-- Watch for Injury changes
+					DB.addHandler(DB.getPath(nodeChar, "imp_head"), "onUpdate", onMoveRelatedChanged);
+					DB.addHandler(DB.getPath(nodeChar, "imp_torso"), "onUpdate", onMoveRelatedChanged);
+					DB.addHandler(DB.getPath(nodeChar, "imp_leg_l"), "onUpdate", onMoveRelatedChanged);
+					DB.addHandler(DB.getPath(nodeChar, "imp_leg_r"), "onUpdate", onMoveRelatedChanged);
 				end
 			end
 
@@ -198,6 +206,17 @@
 					if sStrScorePath then
 						DB.removeHandler(sStrScorePath, "onUpdate", onStrScoreChanged);
 					end
+
+					-- Remove Fatigue handlers
+					DB.removeHandler(DB.getPath(nodeChar, "winded"), "onUpdate", onMoveRelatedChanged);
+					DB.removeHandler(DB.getPath(nodeChar, "weary"), "onUpdate", onMoveRelatedChanged);
+					DB.removeHandler(DB.getPath(nodeChar, "weak"), "onUpdate", onMoveRelatedChanged);
+
+					-- Remove Injury handlers
+					DB.removeHandler(DB.getPath(nodeChar, "imp_head"), "onUpdate", onMoveRelatedChanged);
+					DB.removeHandler(DB.getPath(nodeChar, "imp_torso"), "onUpdate", onMoveRelatedChanged);
+					DB.removeHandler(DB.getPath(nodeChar, "imp_leg_l"), "onUpdate", onMoveRelatedChanged);
+					DB.removeHandler(DB.getPath(nodeChar, "imp_leg_r"), "onUpdate", onMoveRelatedChanged);
 				end
 			end
 
@@ -221,6 +240,13 @@
 				if nodeChar and ArmorManager then
 					-- Str Mod logic is inside calculateGear
 					ArmorManager.calculateGear(nodeChar);
+				end
+			end
+
+			function onMoveRelatedChanged(nodeField)
+				local nodeChar = getDatabaseNode();
+				if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+					HarnManager.calculateEffectiveMove(nodeChar);
 				end
 			end
 		</script>
@@ -335,40 +361,28 @@
 			end
 		</script>
 		<sheetdata>
-			<!-- PHYSICAL ATTRIBUTES -->
-			<frame_char name="physical_frame">
-				<anchored position="insidetopleft" offset="0,0" width="240" height="220" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="physical_frame" />
-				<static textres="harn_attr_physical" />
-			</label_frametop>
-
-			<!-- Physical header row -->
-			<label name="phys_score_header">
-				<anchored to="physical_frame" position="insidetopleft" offset="140,30" width="40" height="20" />
-				<static textres="harn_score" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="phys_ml_header">
-				<anchored to="phys_score_header" position="righthigh" offset="5,0" width="30" height="20" />
-				<static textres="harn_ml" />
-				<font>sheetlabel</font>
+			<!-- PHYSICAL GROUP BOX -->
+			<genericcontrol name="physical_frame">
+				<anchored position="insidetopleft" offset="50,5" width="135" height="185" />
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="physical_label">
+				<anchored to="physical_frame" position="insidetop" offset="0,10" width="100" height="20" />
+				<static>PHYSICAL</static>
+				<font>harn_group</font>
+				<center />
 			</label>
 
-			<!-- STR -->
-			<label name="str_label">
-				<anchored to="physical_frame" position="insidetopleft" offset="15,55" width="70" height="20" />
-				<static textres="harn_attr_str" />
-			</label>
-			<label name="str_abbr">
-				<anchored to="str_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_str_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- STR Box -->
+			<genericcontrol name="str_frame">
+				<anchored position="insidetopleft" offset="60,35" width="45" height="56" />
+				<icon>str_icon</icon>
+				<tooltip text="Strength" />
+			</genericcontrol>
 			<numberfield name="str_score">
-				<anchored to="str_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="str_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>str_score</source>
 				<script>
 					function onValueChanged()
@@ -379,24 +393,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="str_ml">
-				<anchored to="str_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="str_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- END -->
-			<label name="end_label">
-				<anchored to="str_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_end" />
-			</label>
-			<label name="end_abbr">
-				<anchored to="end_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_end_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- END Box -->
+			<genericcontrol name="end_frame">
+				<anchored position="insidetopleft" offset="130,35" width="45" height="56" />
+				<icon>end_icon</icon>
+				<tooltip text="Endurance" />
+			</genericcontrol>
 			<numberfield name="end_score">
-				<anchored to="end_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="end_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>end_score</source>
 				<script>
 					function onValueChanged()
@@ -407,24 +420,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="end_ml">
-				<anchored to="end_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="end_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- DEX -->
-			<label name="dex_label">
-				<anchored to="end_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_dex" />
-			</label>
-			<label name="dex_abbr">
-				<anchored to="dex_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_dex_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- DEX Box -->
+			<genericcontrol name="dex_frame">
+				<anchored position="insidetopleft" offset="60,80" width="45" height="56" />
+				<icon>dex_icon</icon>
+				<tooltip text="Dexterity" />
+			</genericcontrol>
 			<numberfield name="dex_score">
-				<anchored to="dex_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="dex_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>dex_score</source>
 				<script>
 					function onValueChanged()
@@ -435,24 +447,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="dex_ml">
-				<anchored to="dex_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="dex_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- AGL -->
-			<label name="agl_label">
-				<anchored to="dex_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_agl" />
-			</label>
-			<label name="agl_abbr">
-				<anchored to="agl_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_agl_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- AGL Box -->
+			<genericcontrol name="agl_frame">
+				<anchored position="insidetopleft" offset="130,80" width="45" height="56" />
+				<icon>agl_icon</icon>
+				<tooltip text="Agility" />
+			</genericcontrol>
 			<numberfield name="agl_score">
-				<anchored to="agl_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="agl_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>agl_score</source>
 				<script>
 					function onValueChanged()
@@ -463,24 +474,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="agl_ml">
-				<anchored to="agl_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="agl_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- PER -->
-			<label name="per_label">
-				<anchored to="agl_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_per" />
-			</label>
-			<label name="per_abbr">
-				<anchored to="per_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_per_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- PER Box -->
+			<genericcontrol name="per_frame">
+				<anchored position="insidetopleft" offset="60,125" width="45" height="56" />
+				<icon>per_icon</icon>
+				<tooltip text="Perception" />
+			</genericcontrol>
 			<numberfield name="per_score">
-				<anchored to="per_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="per_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>per_score</source>
 				<script>
 					function onValueChanged()
@@ -491,24 +501,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="per_ml">
-				<anchored to="per_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="per_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- CML -->
-			<label name="cml_label">
-				<anchored to="per_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_cml" />
-			</label>
-			<label name="cml_abbr">
-				<anchored to="cml_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_cml_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- CML Box -->
+			<genericcontrol name="cml_frame">
+				<anchored position="insidetopleft" offset="130,125" width="45" height="56" />
+				<icon>cml_icon</icon>
+				<tooltip text="Comeliness" />
+			</genericcontrol>
 			<numberfield name="cml_score">
-				<anchored to="cml_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="cml_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>cml_score</source>
 				<script>
 					function onValueChanged()
@@ -519,61 +528,47 @@
 				</script>
 			</numberfield>
 			<numberfield name="cml_ml">
-				<anchored to="cml_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="cml_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- Aberrance (NPC trait) - aligned with physical attributes above -->
+			<!-- Aberrance (NPC trait) - below physical group box -->
 			<label name="abe_label">
-				<anchored to="cml_label" position="below" offset="0,20" width="70" height="20" />
-				<static textres="harn_npc_aberrance" />
+				<anchored to="physical_frame" position="below" offset="0,10" width="45" height="20" />
+				<static>ABERRANCE:</static>
+				<font>harn_label_18_bold</font>
 			</label>
-			<label name="abe_abbr">
-				<anchored to="cml_abbr" position="below" offset="0,20" width="35" height="20" />
-				<static textres="harn_npc_aberrance_abbr" />
-				<font>sheetlabel</font>
-			</label>
-			<stringfield name="aberrance">
-				<anchored to="cml_score" position="below" offset="0,20" width="40" height="20" />
+			<numberfield name="aberrance">
+				<anchored to="abe_label" position="right" offset="-25,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
-			</stringfield>
+			</numberfield>
 
-			<!-- MENTAL ATTRIBUTES -->
-			<frame_char name="mental_frame">
-				<anchored position="insidetopleft" offset="250,0" width="240" height="220" />
-			</frame_char>
-			<label_frametop name="mental_title">
-				<anchored to="mental_frame" />
-				<static textres="harn_attr_mental" />
-			</label_frametop>
-
-			<!-- Mental header row -->
-			<label name="ment_score_header">
-				<anchored to="mental_frame" position="insidetopleft" offset="140,30" width="40" height="20" />
-				<static textres="harn_score" />
-				<font>sheetlabel</font>
-			</label>
-			<label name="ment_ml_header">
-				<anchored to="ment_score_header" position="righthigh" offset="5,0" width="30" height="20" />
-				<static textres="harn_ml" />
-				<font>sheetlabel</font>
+			<!-- MENTAL GROUP BOX -->
+			<genericcontrol name="mental_frame">
+				<anchored to="physical_frame" position="right" offset="75,0" width="135" height="185" />
+				<frame name="groupbox" />
+			</genericcontrol>
+			<label name="mental_label">
+				<anchored to="mental_frame" position="insidetop" offset="10,10" width="100" height="20" />
+				<static>MENTAL</static>
+				<font>harn_group</font>
+				<center />
 			</label>
 
-			<!-- AUR -->
-			<label name="aur_label">
-				<anchored to="mental_frame" position="insidetopleft" offset="15,55" width="70" height="20" />
-				<static textres="harn_attr_aur" />
-			</label>
-			<label name="aur_abbr">
-				<anchored to="aur_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_aur_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- AUR Box -->
+			<genericcontrol name="aur_frame">
+				<anchored to="mental_frame" position="insidetopleft" offset="10,30" width="45" height="56" />
+				<icon>aur_icon</icon>
+				<tooltip text="Aura" />
+			</genericcontrol>
 			<numberfield name="aur_score">
-				<anchored to="aur_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="aur_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>aur_score</source>
 				<script>
 					function onValueChanged()
@@ -584,24 +579,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="aur_ml">
-				<anchored to="aur_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="aur_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- WIL -->
-			<label name="wil_label">
-				<anchored to="aur_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_wil" />
-			</label>
-			<label name="wil_abbr">
-				<anchored to="wil_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_wil_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- WIL Box -->
+			<genericcontrol name="wil_frame">
+				<anchored to="aur_frame" position="right" offset="25,0" width="45" height="56" />
+				<icon>wil_icon</icon>
+				<tooltip text="Willpower" />
+			</genericcontrol>
 			<numberfield name="wil_score">
-				<anchored to="wil_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="wil_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>wil_score</source>
 				<script>
 					function onValueChanged()
@@ -612,24 +606,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="wil_ml">
-				<anchored to="wil_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="wil_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- REA -->
-			<label name="rea_label">
-				<anchored to="wil_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_rea" />
-			</label>
-			<label name="rea_abbr">
-				<anchored to="rea_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_rea_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- REA Box -->
+			<genericcontrol name="rea_frame">
+				<anchored to="aur_frame" position="below" offset="0,-10" width="45" height="56" />
+				<icon>rea_icon</icon>
+				<tooltip text="Ready" />
+			</genericcontrol>
 			<numberfield name="rea_score">
-				<anchored to="rea_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="rea_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>rea_score</source>
 				<script>
 					function onValueChanged()
@@ -640,24 +633,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="rea_ml">
-				<anchored to="rea_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="rea_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- CRE -->
-			<label name="cre_label">
-				<anchored to="rea_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_cre" />
-			</label>
-			<label name="cre_abbr">
-				<anchored to="cre_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_cre_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- CRE Box -->
+			<genericcontrol name="cre_frame">
+				<anchored to="rea_frame" position="right" offset="25,0" width="45" height="56" />
+				<icon>cre_icon</icon>
+				<tooltip text="Creativity" />
+			</genericcontrol>
 			<numberfield name="cre_score">
-				<anchored to="cre_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="cre_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>cre_score</source>
 				<script>
 					function onValueChanged()
@@ -668,24 +660,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="cre_ml">
-				<anchored to="cre_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="cre_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- EMP -->
-			<label name="emp_label">
-				<anchored to="cre_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_emp" />
-			</label>
-			<label name="emp_abbr">
-				<anchored to="emp_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_emp_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- EMP Box -->
+			<genericcontrol name="emp_frame">
+				<anchored to="rea_frame" position="below" offset="0,-10" width="45" height="56" />
+				<icon>emp_icon</icon>
+				<tooltip text="Empathy" />
+			</genericcontrol>
 			<numberfield name="emp_score">
-				<anchored to="emp_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="emp_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>emp_score</source>
 				<script>
 					function onValueChanged()
@@ -696,24 +687,23 @@
 				</script>
 			</numberfield>
 			<numberfield name="emp_ml">
-				<anchored to="emp_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="emp_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
-			<!-- ELO -->
-			<label name="elo_label">
-				<anchored to="emp_label" position="below" offset="0,5" width="70" height="20" />
-				<static textres="harn_attr_elo" />
-			</label>
-			<label name="elo_abbr">
-				<anchored to="elo_label" position="righthigh" offset="5,0" width="35" height="20" />
-				<static textres="harn_attr_elo_abbr" />
-				<font>sheetlabel</font>
-			</label>
+			<!-- ELO Box -->
+			<genericcontrol name="elo_frame">
+				<anchored to="emp_frame" position="right" offset="25,0" width="45" height="56" />
+				<icon>elo_icon</icon>
+				<tooltip text="Eloquence" />
+			</genericcontrol>
 			<numberfield name="elo_score">
-				<anchored to="elo_abbr" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="elo_frame" position="insidetopleft" offset="2,24" width="20" height="20" />
+				<font>sheetnumber</font>
+				<hideonzero />
 				<source>elo_score</source>
 				<script>
 					function onValueChanged()
@@ -724,18 +714,21 @@
 				</script>
 			</numberfield>
 			<numberfield name="elo_ml">
-				<anchored to="elo_score" position="righthigh" offset="5,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="elo_frame" position="insidetopright" offset="1,24" width="20" height="20" />
+				<font>sheetnumber</font>
 				<readonly />
+				<hideonzero />
+				<nodrag />
 			</numberfield>
 
 			<!-- Morality - aligned with mental attributes above -->
 			<label name="morality_label">
-				<anchored to="elo_label" position="below" offset="0,20" width="70" height="20" />
-				<static textres="harn_morality" />
+				<anchored to="mental_frame" position="below" offset="30,10" width="55" height="20" />
+				<static>MORALITY:</static>
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="morality">
-				<anchored to="elo_score" position="below" offset="0,20" width="40" height="20" />
+				<anchored to="morality_label" position="right" offset="-100,0" width="25" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<min>0</min>
 				<script>
@@ -747,8 +740,7 @@
 				</script>
 			</numberfield>
 			<stringfield name="morality_display">
-				<anchored to="morality" position="righthigh" offset="2,0" width="75" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="morality" position="righthigh" offset="4,0" width="75" height="20" />
 				<readonly />
 				<script>
 					function onInit()
@@ -779,40 +771,43 @@
 			</stringfield>
 
 			<!-- SKILLS Section -->
+			<genericcontrol name="skills_frame">
+				<anchored position="insidetopleft" offset="50,230" width="250" height="200" />
+				<frame name="groupbox" />
+			</genericcontrol>
 			<label name="skills_title">
-				<anchored to="abe_label" position="below" offset="0,25" width="490" height="20" />
+				<anchored to="skills_frame" position="insidetop" offset="0,8" width="100" height="20" />
 				<static textres="harn_skills" />
-				<font>sheetlabel</font>
+				<font>harn_group</font>
 				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
 
 			<!-- Skills column headers -->
 			<label name="skills_h_skill">
-				<anchored to="skills_title" position="below" offset="5,5" width="100" height="15" />
-				<static>Skill</static>
+				<anchored to="skills_frame" position="insidetopleft" offset="15,35" width="50" height="15" />
+				<static>SKILL</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="skills_h_att1">
-				<anchored to="skills_h_skill" position="righthigh" offset="25,0" width="35" height="15" />
-				<static>ATT1</static>
+				<anchored to="skills_h_skill" position="righthigh" offset="15,0" width="25" height="15" />
+				<!-- static>ATT1</static>
 				<font>sheetlabel</font>
-				<center />
+				<center / -->
 			</label>
 			<label name="skills_h_att2">
-				<anchored to="skills_h_att1" position="righthigh" offset="5,0" width="35" height="15" />
-				<static>ATT2</static>
+				<anchored to="skills_h_att1" position="righthigh" offset="5,0" width="25" height="15" />
+				<!-- static>ATT2</static>
 				<font>sheetlabel</font>
-				<center />
+				<center / -->
 			</label>
 			<label name="skills_h_sb">
-				<anchored to="skills_h_att2" position="righthigh" offset="5,0" width="30" height="15" />
+				<anchored to="skills_h_att2" position="righthigh" offset="30,0" width="25" height="15" />
 				<static>SB</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="skills_h_ml">
-				<anchored to="skills_h_sb" position="righthigh" offset="5,0" width="35" height="15" />
+				<anchored to="skills_h_sb" position="righthigh" offset="15,0" width="30" height="15" />
 				<static>ML</static>
 				<font>sheetlabel</font>
 				<center />
@@ -821,8 +816,8 @@
 			<!-- Skills windowlist -->
 			<windowlist name="skills">
 				<anchored to="skills_h_skill" position="below" offset="0,2">
-					<left parent="" offset="5" />
-					<right parent="" offset="-5" />
+					<left parent="skills_frame" offset="10" />
+					<right parent="skills_frame" offset="-5" />
 				</anchored>
 				<datasource>.skills</datasource>
 				<class>harn_npc_skill_entry</class>
@@ -833,7 +828,7 @@
 			</windowlist>
 
 			<button_iadd name="skills_iadd">
-				<anchored to="skills" position="aboveright" offset="5,8" />
+				<anchored to="skills" position="aboveright" offset="25,25" width="15" height="15" />
 				<target>skills</target>
 			</button_iadd>
 		</sheetdata>
@@ -1356,6 +1351,9 @@
 				if MissileData and MissileData.updateMissileATK then
 					MissileData.updateMissileATK(nodeChar);
 				end
+				if HarnManager and HarnManager.calculateEffectiveMove then
+					HarnManager.calculateEffectiveMove(nodeChar);
+				end
 			end
 
 			function updateShockUI()
@@ -1367,13 +1365,6 @@
 				shock_kia_btn.setValue(nState == 4 and 1 or 0);
 			end
 
-			function updateMoveCalculations()
-				local nEff = move_effective.getValue();
-				-- Half Move = sum / 2, rounded down to nearest multiple of 5
-				move_half.setValue(math.floor((nEff / 2) / 5) * 5);
-				-- Double Move = sum * 2
-				move_double.setValue(nEff * 2);
-			end
 
 			-- Edit mode state for body locations
 			local bEditMode = false;
@@ -1407,61 +1398,9 @@
 			end
 		</script>
 		<sheetdata>
-			<!-- MOVEMENT Section -->
-			<frame_char name="movement_frame">
-				<anchored position="insidetopleft" offset="0,0" width="140" height="140" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="movement_frame" />
-				<static textres="harn_movement" />
-			</label_frametop>
-
-			<label name="move_label">
-				<anchored to="movement_frame" position="insidetopleft" offset="10,28" width="60" height="20" />
-				<static textres="harn_move" />
-			</label>
-			<numberfield name="move">
-				<anchored to="move_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="effective_label">
-				<anchored to="move_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_effective" />
-			</label>
-			<numberfield name="move_effective">
-				<anchored to="effective_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<script>
-					function onValueChanged()
-						window.updateMoveCalculations();
-					end
-				</script>
-			</numberfield>
-
-			<label name="half_label">
-				<anchored to="effective_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_half" />
-			</label>
-			<numberfield name="move_half">
-				<anchored to="half_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
-			</numberfield>
-
-			<label name="double_label">
-				<anchored to="half_label" position="below" offset="0,3" width="60" height="20" />
-				<static textres="harn_double" />
-			</label>
-			<numberfield name="move_double">
-				<anchored to="double_label" position="righthigh" offset="5,0" width="40" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-				<readonly />
-			</numberfield>
-
 			<!-- SHOCK STATE Section -->
 			<frame_char name="shock_frame">
-				<anchored to="movement_frame" position="righthigh" offset="5,0" width="140" height="140" />
+				<anchored position="insidetopleft" offset="0,0" width="140" height="140" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="shock_frame" />
@@ -1577,50 +1516,7 @@
 				<state icon="button_checkon" />
 			</buttoncontrol>
 
-			<!-- FATIGUE Section -->
-			<frame_char name="fatigue_frame">
-				<anchored to="shock_frame" position="righthigh" offset="5,0" width="140" height="140" />
-			</frame_char>
-			<label_frametop>
-				<anchored to="fatigue_frame" />
-				<static textres="harn_fatigue" />
-			</label_frametop>
 
-			<label name="winded_label">
-				<anchored to="fatigue_frame" position="insidetopleft" offset="10,28" width="50" height="20" />
-				<static textres="harn_winded" />
-			</label>
-			<numberfield name="winded">
-				<anchored to="winded_label" position="righthigh" offset="3,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="weary_label">
-				<anchored to="winded_label" position="below" offset="0,3" width="50" height="20" />
-				<static textres="harn_weary" />
-			</label>
-			<numberfield name="weary">
-				<anchored to="weary_label" position="righthigh" offset="3,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="weak_label">
-				<anchored to="weary_label" position="below" offset="0,3" width="50" height="20" />
-				<static textres="harn_weak" />
-			</label>
-			<numberfield name="weak">
-				<anchored to="weak_label" position="righthigh" offset="3,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
-
-			<label name="pf_label">
-				<anchored to="weak_label" position="below" offset="0,3" width="50" height="20" />
-				<static textres="harn_pf" />
-			</label>
-			<numberfield name="pf">
-				<anchored to="pf_label" position="righthigh" offset="3,0" width="35" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
-			</numberfield>
 
 			<!-- MELEE WEAPONS -->
 			<frame_char name="melee_frame">
@@ -2133,7 +2029,7 @@
 		<sheetdata>
 			<!-- ENCUMBRANCE Section -->
 			<frame_char name="enc_frame">
-				<anchored position="insidetopleft" offset="0,0" width="280" height="180" />
+				<anchored position="insidetopleft" offset="0,10" width="140" height="170" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="enc_frame" />
@@ -2141,55 +2037,170 @@
 			</label_frametop>
 
 			<label name="armour_enc_label">
-				<anchored to="enc_frame" position="insidetopleft" offset="15,35" width="80" height="20" />
+				<anchored to="enc_frame" position="insidetopleft" offset="15,35" width="60" height="20" />
 				<static textres="harn_armour" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="armour_enc">
-				<anchored to="armour_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="armour_enc_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
 			<label name="gear_enc_label">
-				<anchored to="armour_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<anchored to="armour_enc_label" position="below" offset="0,5" width="60" height="20" />
 				<static textres="harn_gear" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="gear_enc">
-				<anchored to="gear_enc_label" position="righthigh" offset="5,0" width="50" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="gear_enc_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
 			<label name="strmod_label">
-				<anchored to="gear_enc_label" position="below" offset="0,5" width="80" height="20" />
+				<anchored to="gear_enc_label" position="below" offset="0,5" width="60" height="20" />
 				<static textres="harn_strmod" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="strmod">
-				<anchored to="strmod_label" position="righthigh" offset="5,0" width="50" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="strmod_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
 			<label name="enc_label">
-				<anchored to="strmod_label" position="below" offset="0,5" width="80" height="20" />
+				<anchored to="strmod_label" position="below" offset="0,5" width="60" height="20" />
 				<static textres="harn_enc" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<numberfield name="enc_total">
-				<anchored to="enc_label" position="righthigh" offset="5,0" width="50" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="enc_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 			</numberfield>
 
 			<label name="bulk_label">
-				<anchored to="enc_label" position="below" offset="0,5" width="80" height="20" />
+				<anchored to="enc_label" position="below" offset="0,5" width="60" height="20" />
 				<static textres="harn_bulk" />
+				<font>harn_label_18_bold</font>
 			</label>
 			<stringfield name="bulk_str">
-				<anchored to="bulk_label" position="righthigh" offset="5,0" width="50" height="20" />
-				<frame name="fielddark" offset="7,5,7,5" />
+				<anchored to="bulk_label" position="righthigh" offset="5,0" width="30" height="20" />
 				<readonly />
 				<center />
 			</stringfield>
+
+			<!-- FATIGUE Section (to right of Encumbrance, matching character sheet) -->
+			<frame_char name="fatigue_frame">
+				<anchored to="enc_frame" position="righthigh" offset="10,0" width="125" height="170" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="fatigue_frame" />
+				<static textres="harn_fatigue" />
+				<font>harn_group</font>
+			</label_frametop>
+
+			<label name="winded_label">
+				<anchored to="fatigue_frame" position="insidetopleft" offset="10,40" width="70" height="20" />
+				<static textres="harn_winded" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="winded">
+				<anchored to="winded_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weary_label">
+				<anchored to="winded_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_weary" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="weary">
+				<anchored to="weary_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="weak_label">
+				<anchored to="weary_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_weak" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="weak">
+				<anchored to="weak_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="pf_label">
+				<anchored to="weak_label" position="below" offset="0,3" width="70" height="20" />
+				<static textres="harn_pf" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="pf">
+				<anchored to="pf_label" position="righthigh" offset="3,0" width="25" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<!-- MOVEMENT Section (to right of Fatigue, matching character sheet) -->
+			<frame_char name="movement_frame">
+				<anchored to="fatigue_frame" position="righthigh" offset="10,0" width="125" height="170" />
+			</frame_char>
+			<label_frametop>
+				<anchored to="movement_frame" />
+				<static textres="harn_movement" />
+				<font>harn_group</font>
+			</label_frametop>
+
+			<label name="move_label">
+				<anchored to="movement_frame" position="insidetopleft" offset="10,40" width="65" height="20" />
+				<static textres="harn_move" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move">
+				<anchored to="move_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+			</numberfield>
+
+			<label name="effective_label">
+				<anchored to="move_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_effective" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_effective">
+				<anchored to="effective_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<frame name="fielddark" offset="7,5,7,5" />
+				<script>
+					function onValueChanged()
+						window.updateMoveCalculations();
+					end
+				</script>
+			</numberfield>
+
+			<label name="half_label">
+				<anchored to="effective_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_half" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_half">
+				<anchored to="half_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<readonly />
+			</numberfield>
+
+			<label name="double_label">
+				<anchored to="half_label" position="below" offset="0,3" width="65" height="20" />
+				<static textres="harn_double" />
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_double">
+				<anchored to="double_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<readonly />
+			</numberfield>
+
+			<label name="evasion_label">
+				<anchored to="double_label" position="below" offset="0,3" width="65" height="20" />
+				<static>EVA:</static>
+				<font>harn_label_18_bold</font>
+			</label>
+			<numberfield name="move_evasion">
+				<anchored to="evasion_label" position="righthigh" offset="5,0" width="30" height="20" />
+				<readonly />
+			</numberfield>
 
 			<!-- POSSESSIONS Section -->
 			<anchor_column name="columnanchor">

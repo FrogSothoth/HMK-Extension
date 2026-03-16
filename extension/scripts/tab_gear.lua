@@ -31,6 +31,14 @@ function onDataUpdate()
     end
 end
 
+function updateMoveCalculations()
+	local nEff = move_effective.getValue();
+	-- Half Move = sum / 2, rounded down to nearest multiple of 5
+	move_half.setValue(math.floor((nEff / 2) / 5) * 5);
+	-- Double Move = sum * 2
+	move_double.setValue(nEff * 2);
+end
+
 function onDrop(x, y, draginfo)
 	if draginfo.isType("shortcut") then
 		local class, datasource = draginfo.getShortcutData();

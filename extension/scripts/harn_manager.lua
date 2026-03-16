@@ -529,6 +529,28 @@ function calculateDoctrineBonus(nodeChar, sSkillName)
 	return 0
 end
 
+-- Helper to find a skill ML by name (handles both PC and NPC sheets)
+function getSkillML(nodeChar, sSkillName)
+	if not nodeChar or not sSkillName or sSkillName == "" then return 0 end
+	
+	local sSkillLower = string.lower(sSkillName)
+	local tSkillLists = { "socialskills", "loreskills", "physicalskills", "natureskills", "craftskills", "combatskills", "esotericaskills", "skills" }
+	
+	for _, sListName in ipairs(tSkillLists) do
+		local nodeList = nodeChar.getChild(sListName)
+		if nodeList then
+			for _, nodeSkill in pairs(nodeList.getChildren()) do
+				local sName = DB.getValue(nodeSkill, "name", "")
+				if string.lower(sName) == sSkillLower then
+					return DB.getValue(nodeSkill, "ml", 0)
+				end
+			end
+		end
+	end
+	
+	return 0
+end
+
 -- Calculate EML (Effective Mastery Level) for a skill
 -- EML = ML - Fatigue - (ENC if AGL-based skill) - Zone Impairments - Shadow Penalty + Doctrine Bonus
 -- Used for skill tests (not displayed on character sheet)
@@ -567,11 +589,12 @@ function calculateEffectiveMove(nodeChar)
 	local nFatigue = calculateFatiguePenalty(nodeChar)
 	local nEnc = DB.getValue(nodeChar, "enc_total", 0)
 	
-	-- Add zone injury impairments (Head, Torso, and Legs all affect Move)
-	local nHead = DB.getValue(nodeChar, "injury_head", 0)
-	local nTorso = DB.getValue(nodeChar, "injury_torso", 0)
-	local nLegL = DB.getValue(nodeChar, "injury_legs_l", 0)
-	local nLegR = DB.getValue(nodeChar, "injury_legs_r", 0)
+	-- Add zone injury impairments.
+	-- Character sheets use injury_xxx, NPC sheets use imp_xxx. Sum both.
+	local nHead = DB.getValue(nodeChar, "injury_head", 0) + DB.getValue(nodeChar, "imp_head", 0)
+	local nTorso = DB.getValue(nodeChar, "injury_torso", 0) + DB.getValue(nodeChar, "imp_torso", 0)
+	local nLegL = DB.getValue(nodeChar, "injury_legs_l", 0) + DB.getValue(nodeChar, "imp_leg_l", 0)
+	local nLegR = DB.getValue(nodeChar, "injury_legs_r", 0) + DB.getValue(nodeChar, "imp_leg_r", 0)
 
 	-- Add Shadow penalty (Move is in the -10 list)
 	local nShadowPenalty = calculateShadowPenalty(nodeChar, "Move")
@@ -583,7 +606,10 @@ function calculateEffectiveMove(nodeChar)
 	-- Half Move = Effective Move / 2, rounded down to nearest multiple of 5
 	DB.setValue(nodeChar, "move_half", "number", math.floor((nEffective / 2) / 5) * 5)
 	DB.setValue(nodeChar, "move_double", "number", nEffective * 2)
-	DB.setValue(nodeChar, "move_evasion", "number", math.floor(nEffective / 10)*5)
+
+	-- Corrected Evasion: floor(Dodge/10)*5
+	local nDodgeML = getSkillML(nodeChar, "Dodge")
+	DB.setValue(nodeChar, "move_evasion", "number", math.floor(nDodgeML / 10)*5)
 
 	return nEffective
 end

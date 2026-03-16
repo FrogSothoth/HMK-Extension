@@ -24,6 +24,7 @@
 			local FATIGUE_FIELDS = { "winded", "weary", "weak" };
 			local INJURY_ZONE_FIELDS = { "injury_head", "injury_torso", "injury_legs_l", "injury_legs_r" };
 			local sMeleeMLHandlerPath = nil;
+			local sDodgeMLHandlerPath = nil;
 			local sPossessionDeletePath = nil;
 			local sArmourDeletePath = nil;
 			local sHealingBaseHandlerPath = nil;
@@ -103,6 +104,10 @@
 								sMeleeMLHandlerPath = DB.getPath(nodeSkill, "ml");
 								DB.addHandler(sMeleeMLHandlerPath, "onUpdate", onMeleeMLChanged);
 								Debug.console("  Added Melee ML handler at: " .. sMeleeMLHandlerPath);
+							elseif sSkillName == "Dodge" then
+								sDodgeMLHandlerPath = DB.getPath(nodeSkill, "ml");
+								DB.addHandler(sDodgeMLHandlerPath, "onUpdate", onDodgeMLChanged);
+								Debug.console("  Added Dodge ML handler at: " .. sDodgeMLHandlerPath);
 							end
 							-- Set up missile skill ML handlers
 							for _, sMissileSkill in ipairs(MISSILE_SKILLS) do
@@ -141,6 +146,9 @@
 					-- Remove Melee ML handler
 					if sMeleeMLHandlerPath then
 						DB.removeHandler(sMeleeMLHandlerPath, "onUpdate", onMeleeMLChanged);
+					end
+					if sDodgeMLHandlerPath then
+						DB.removeHandler(sDodgeMLHandlerPath, "onUpdate", onDodgeMLChanged);
 					end
 					-- Remove missile skill ML handlers
 					for _, sPath in ipairs(aMissileSkillHandlerPaths) do
@@ -205,6 +213,14 @@
 				local nodeChar = getDatabaseNode();
 				if nodeChar and MeleeData and MeleeData.updateMeleeATKDEF then
 					MeleeData.updateMeleeATKDEF(nodeChar);
+				end
+			end
+
+			function onDodgeMLChanged(nodeField)
+				Debug.console("onDodgeMLChanged fired");
+				local nodeChar = getDatabaseNode();
+				if nodeChar and HarnManager and HarnManager.calculateEffectiveMove then
+					HarnManager.calculateEffectiveMove(nodeChar);
 				end
 			end
 
