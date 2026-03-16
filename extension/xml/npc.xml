@@ -153,7 +153,7 @@
 	<windowclass name="npc">
 		<frame>charsheet</frame>
 		<sizelimits>
-			<minimum width="500" height="450" />
+			<minimum width="675" height="450" />
 			<dynamic />
 		</sizelimits>
 		<minimize>minimized_npc</minimize>
@@ -951,11 +951,11 @@
 		</script>
 		<sheetdata>
 			<genericcontrol name="leftanchor">
-				<anchored position="insidetopleft" offset="0,2" width="0" height="0" />
+				<anchored position="insidetopleft" offset="5,2" width="0" height="0" />
 				<disabled />
 			</genericcontrol>
 			<stringfield name="zone_range">
-				<anchored to="leftanchor" width="20" height="20">
+				<anchored to="leftanchor" width="25" height="20">
 					<top />
 					<left offset="2" />
 				</anchored>
@@ -963,7 +963,7 @@
 				<center />
 			</stringfield>
 			<stringfield name="zone_name">
-				<anchored to="zone_range" width="45" height="20">
+				<anchored to="zone_range" width="55" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
@@ -979,7 +979,7 @@
 				<center />
 			</stringfield>
 			<stringfield name="location">
-				<anchored to="loc_range" width="60" height="20">
+				<anchored to="loc_range" width="30" height="20">
 					<top parent="leftanchor" />
 					<left anchor="right" offset="1" />
 				</anchored>
@@ -1081,7 +1081,7 @@
 			<buttoncontrol name="icon_bld">
 				<anchored to="bg_f" width="20" height="20">
 					<top parent="leftanchor" />
-					<left anchor="right" offset="30" />
+					<left anchor="right" offset="10" />
 				</anchored>
 				<state />
 				<state icon="bld1" />
@@ -1589,7 +1589,7 @@
 				<allowdelete />
 			</windowlist>
 			<button_iadd name="melee_iadd">
-				<anchored to="meleeweapons" position="aboveright" offset="0,8" />
+				<anchored to="meleeweapons" position="aboveright" offset="0,8" width="15" height="15" />
 				<target>meleeweapons</target>
 				<script>
 					function onButtonPress()
@@ -1696,16 +1696,17 @@
 
 			<!-- BODY LOCATIONS Section (left side) -->
 			<frame_char name="bodyloc_frame">
-				<anchored position="insidetopleft" offset="0,435" width="460" height="400" />
+				<anchored position="insidetopleft" offset="0,435" width="400" height="400" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="bodyloc_frame" />
 				<static textres="harn_body_location" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<!-- Edit mode toggle button - checkbox to toggle edit mode for icon cycling -->
 			<buttoncontrol name="edit_mode_btn">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="380,5" width="20" height="20" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="275,12" width="20" height="20" />
 				<state icon="button_checkoff" />
 				<state icon="button_checkon" />
 				<tooltip>Toggle Edit Mode (enable icon cycling and row deletion)</tooltip>
@@ -1723,67 +1724,67 @@
 
 			<!-- Body Location Headers -->
 			<label name="h_zr">
-				<anchored to="bodyloc_frame" position="insidetopleft" offset="5,25" width="20" height="15" />
+				<anchored to="bodyloc_frame" position="insidetopleft" offset="15,30" width="15" height="15" />
 				<static>ZR</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="h_zn">
-				<anchored to="h_zr" position="righthigh" offset="5,0" width="45" height="15" />
-				<static>Zone</static>
-				<font>sheetlabel</font>
+				<anchored to="h_zr" position="righthigh" offset="15,0" width="35" height="15" />
+				<static>ZONE</static>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="h_lr">
-				<anchored to="h_zn" position="righthigh" offset="5,0" width="35" height="15" />
+				<anchored to="h_zn" position="righthigh" offset="10,0" width="35" height="15" />
 				<static>LR</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="h_loc">
-				<anchored to="h_lr" position="righthigh" offset="5,0" width="60" height="15" />
-				<static>Location</static>
-				<font>sheetlabel</font>
+				<anchored to="h_lr" position="righthigh" offset="5,0" width="25" height="15" />
+				<static>LOC</static>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="h_b">
-				<anchored to="h_loc" position="righthigh" offset="5,0" width="22" height="15" />
+				<anchored to="h_loc" position="righthigh" offset="10,0" width="10" height="15" />
 				<static>B</static>
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 				<center />
 			</label>
 			<label name="h_e">
-				<anchored to="h_b" position="righthigh" offset="5,0" width="22" height="15" />
+				<anchored to="h_b" position="righthigh" offset="14,0" width="10" height="15" />
 				<static>E</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_p">
-				<anchored to="h_e" position="righthigh" offset="5,0" width="22" height="15" />
+				<anchored to="h_e" position="righthigh" offset="13,0" width="10" height="15" />
 				<static>P</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_f">
-				<anchored to="h_p" position="righthigh" offset="5,0" width="22" height="15" />
+				<anchored to="h_p" position="righthigh" offset="14,0" width="10" height="15" />
 				<static>F</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<!-- Icon column headers -->
 			<label name="h_bld_icon">
-				<anchored to="h_f" position="righthigh" offset="25,0" width="22" height="15" />
+				<anchored to="h_f" position="righthigh" offset="10,0" width="25" height="15" />
 				<static>BLD</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_shk_icon">
-				<anchored to="h_bld_icon" position="righthigh" offset="2,0" width="22" height="15" />
+				<anchored to="h_bld_icon" position="righthigh" offset="2,0" width="25" height="15" />
 				<static>SHK</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="h_amp_icon">
-				<anchored to="h_shk_icon" position="righthigh" offset="2,0" width="22" height="15" />
+				<anchored to="h_shk_icon" position="righthigh" offset="2,0" width="30" height="15" />
 				<static>AMP</static>
 				<font>sheetlabel</font>
 				<center />
@@ -1803,7 +1804,7 @@
 				<allowdelete />
 			</windowlist>
 			<button_iadd name="bodyloc_iadd">
-				<anchored to="bodylocations" position="aboveright" offset="0,8" />
+				<anchored to="bodylocations" position="aboveright" offset="30,15" width="15" height="15" />
 				<target>bodylocations</target>
 				<script>
 					function onButtonPress()
@@ -2029,7 +2030,7 @@
 		<sheetdata>
 			<!-- ENCUMBRANCE Section -->
 			<frame_char name="enc_frame">
-				<anchored position="insidetopleft" offset="0,10" width="140" height="170" />
+				<anchored position="insidetopleft" offset="40,10" width="140" height="170" />
 			</frame_char>
 			<label_frametop>
 				<anchored to="enc_frame" />
@@ -2207,95 +2208,93 @@
 				<anchored position="insidetopleft" offset="0,185" width="0" height="0" />
 			</anchor_column>
 
-			<label name="poss_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
-					<left offset="10" />
-					<right offset="-10" />
+			<frame_char name="possessions_frame">
+				<anchored width="350">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="40" />
+					<bottom offset="-20" />
 				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="possessions_frame" />
 				<static textres="harn_possessions" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
+				<font>harn_group</font>
+			</label_frametop>
 
 			<!-- Possessions list headers -->
 			<label name="poss_name_header">
-				<anchored height="15">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-					<width>135</width>
-				</anchored>
-				<static>Item</static>
+				<anchored to="possessions_frame" position="insidetopleft" offset="15,30" width="135" height="15" />
+				<static textres="harn_item" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="poss_loc_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="120" height="15" />
-				<static>Location</static>
+				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="65" height="15" />
+				<static textres="harn_location" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="poss_wt_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="263,0" width="35" height="15" />
-				<static>Wt</static>
+				<anchored to="poss_name_header" position="insidetopleft" offset="208,0" width="35" height="15" />
+				<static textres="harn_wt" />
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="poss_qty_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="302,0" width="35" height="15" />
-				<static>Qty</static>
+				<anchored to="poss_name_header" position="insidetopleft" offset="245,0" width="35" height="15" />
+				<static textres="harn_qty" />
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="poss_total_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="341,0" width="45" height="15" />
-				<static>Total</static>
+				<anchored to="poss_name_header" position="insidetopleft" offset="285,0" width="40" height="15" />
+				<static textres="harn_total" />
 				<font>sheetlabel</font>
 				<center />
 			</label>
 
 			<windowlist name="possessions">
-				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
+				<anchored to="possessions_frame">
+					<top offset="50" />
 					<left offset="10" />
 					<right offset="-10" />
+					<bottom offset="-15" />
 				</anchored>
 				<datasource>.possessions</datasource>
 				<class>harn_possession_entry</class>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+			<scrollbar_list>
+				<anchored to="possessions" />
+				<target>possessions</target>
+			</scrollbar_list>
 			
 			<button_iadd name="poss_iadd">
-				<anchored to="possessions" position="aboveright" offset="5,8" />
+				<anchored to="possessions" position="aboveright" offset="5,20" width="15" height="15" />
 				<target>possessions</target>
 			</button_iadd>
 
-			<!-- ARMOUR / CLOTHING Section -->
-			<label name="armour_title">
-				<anchored height="20">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
-					<left offset="10" />
-					<right offset="-10" />
+			<!-- ARMOUR / CLOTHING Groupbox (right of Possessions) -->
+			<frame_char name="armour_frame">
+				<anchored width="210">
+					<top parent="possessions_frame" anchor="top" />
+					<bottom parent="possessions_frame" anchor="bottom" />
+					<right offset="-35" />
 				</anchored>
+			</frame_char>
+			<label_frametop>
+				<anchored to="armour_frame" />
 				<static textres="harn_armour_clothing" />
-				<font>sheetlabel</font>
-				<center />
-				<frame name="headersimple" offset="10,3,10,3" />
-			</label>
+				<font>harn_group</font>
+			</label_frametop>
 
 			<!-- Armour list headers -->
 			<label name="armour_name_header">
-				<anchored height="15">
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="15" />
-					<width>200</width>
-				</anchored>
+				<anchored to="armour_frame" position="insidetopleft" offset="15,30" width="130" height="15" />
 				<static textres="harn_item" />
 				<font>sheetlabel</font>
 			</label>
 			<label name="armour_wt_header">
-				<anchored to="armour_name_header" position="insidetopleft" offset="205,0" width="45" height="15" />
+				<anchored to="armour_name_header" position="insidetopleft" offset="140,0" width="35" height="15" />
 				<static textres="harn_wt" />
 				<font>sheetlabel</font>
 				<center />
@@ -2303,19 +2302,23 @@
 
 			<windowlist name="armourlist">
 				<anchored>
-					<top parent="columnanchor" anchor="bottom" relation="relative" offset="2" />
-					<left offset="10" />
-					<right offset="-10" />
+					<top parent="armour_name_header" anchor="bottom" relation="relative" offset="2" />
+					<left parent="armour_frame" anchor="left" offset="10" />
+					<right parent="armour_frame" anchor="right" offset="-10" />
+					<bottom parent="armour_frame" anchor="bottom" offset="-15" />
 				</anchored>
 				<datasource>.armourlist</datasource>
 				<class>harn_armour_entry</class>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
-			
+			<scrollbar_list>
+				<anchored to="armourlist" />
+				<target>armourlist</target>
+			</scrollbar_list>
+
 			<button_iadd name="armour_iadd">
-				<anchored to="armourlist" position="aboveright" offset="5,8" />
+				<anchored to="armourlist" position="aboveright" offset="10,20" width="15" height="15" />
 				<target>armourlist</target>
 			</button_iadd>
 		</sheetdata>

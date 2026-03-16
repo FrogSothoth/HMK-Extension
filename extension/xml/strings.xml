@@ -205,11 +205,16 @@
 
 	<!-- Gear -->
 	<string name="harn_encumbrance">ENCUMBRANCE</string>
-	<string name="harn_armour">Armour</string>
-	<string name="harn_gear">Gear</string>
-	<string name="harn_strmod">Str Mod</string>
-	<string name="harn_enc">Enc</string>
-	<string name="harn_bulk">Bulk</string>
+	<string name="harn_armour">ARMOUR:</string>
+	<string name="harn_gear">GEAR:</string>
+	<string name="harn_strmod">STR MOD:</string>
+	<string name="harn_enc">ENC:</string>
+	<string name="harn_bulk">BULK:</string>
+	<string name="harn_item">ITEM</string>
+	<string name="harn_loc">LOC</string>
+	<string name="harn_wt">WT</string>
+	<string name="harn_qty">QTY</string>
+	<string name="harn_tot">TOT</string>
 
 	<string name="harn_armour_clothing">ARMOUR / CLOTHING</string>
 	<string name="harn_possessions">POSSESSIONS</string>

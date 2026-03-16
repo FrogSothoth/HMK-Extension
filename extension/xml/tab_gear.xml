@@ -300,29 +300,29 @@
 			<!-- Possessions list headers -->
 			<label name="poss_name_header">
 				<anchored to="possessions_frame" position="insidetopleft" offset="15,30" width="135" height="15" />
-				<static>Item</static>
+				<static>ITEM</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="poss_loc_header">
 				<anchored to="poss_name_header" position="insidetopleft" offset="139,0" width="65" height="15" />
-				<static>Location</static>
+				<static>LOC</static>
 				<font>sheetlabel</font>
 			</label>
 			<label name="poss_wt_header">
 				<anchored to="poss_name_header" position="insidetopleft" offset="208,0" width="35" height="15" />
-				<static>Wt</static>
+				<static>WT</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="poss_qty_header">
 				<anchored to="poss_name_header" position="insidetopleft" offset="245,0" width="35" height="15" />
-				<static>Qty</static>
+				<static>QTY</static>
 				<font>sheetlabel</font>
 				<center />
 			</label>
 			<label name="poss_total_header">
-				<anchored to="poss_name_header" position="insidetopleft" offset="285,0" width="35" height="15" />
-				<static>Total</static>
+				<anchored to="poss_name_header" position="insidetopleft" offset="285,0" width="40" height="15" />
+				<static textres="harn_total" />
 				<font>sheetlabel</font>
 				<center />
 			</label>
@@ -370,7 +370,7 @@
 				<font>sheetlabel</font>
 			</label>
 			<label name="armour_wt_header">
-				<anchored to="armour_name_header" position="insidetopleft" offset="90,0" width="45" height="15" />
+				<anchored to="armour_name_header" position="insidetopleft" offset="135,0" width="45" height="15" />
 				<static textres="harn_wt" />
 				<font>sheetlabel</font>
 				<center />
