@@ -818,14 +818,19 @@
 				<anchored to="skills_h_skill" position="below" offset="0,2">
 					<left parent="skills_frame" offset="10" />
 					<right parent="skills_frame" offset="-5" />
+					<bottom parent="skills_frame" offset="-10" />
 				</anchored>
 				<datasource>.skills</datasource>
 				<class>harn_npc_skill_entry</class>
 				<sortby><field>name</field></sortby>
-				<noscroll />
 				<allowcreate />
 				<allowdelete />
 			</windowlist>
+
+			<scrollbar_list>
+				<anchored to="skills" />
+				<target>skills</target>
+			</scrollbar_list>
 
 			<button_iadd name="skills_iadd">
 				<anchored to="skills" position="aboveright" offset="25,25" width="15" height="15" />
@@ -1405,6 +1410,7 @@
 			<label_frametop>
 				<anchored to="shock_frame" />
 				<static textres="harn_shockstate" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<numberfield name="shock_state">
@@ -1422,9 +1428,9 @@
 			</numberfield>
 
 			<label name="shock_bld_label">
-				<anchored to="shock_frame" position="insidetopleft" offset="90,25" width="25" height="15" />
+				<anchored to="shock_frame" position="insidetopleft" offset="90,40" width="25" height="15" />
 				<static>BLD</static>
-				<font>sheetlabel</font>
+				<font>att_label</font>
 			</label>
 
 			<buttoncontrol name="shock_none_btn">
@@ -1520,60 +1526,60 @@
 
 			<!-- MELEE WEAPONS -->
 			<frame_char name="melee_frame">
-				<anchored position="insidetopleft" offset="0,145" height="140">
-					<right offset="0" />
+				<anchored position="insidetopleft" offset="0,145" width="400" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
 				<anchored to="melee_frame" />
 				<static textres="harn_melee_weapons" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<!-- Melee headers -->
 			<label name="melee_name_h">
-				<anchored to="melee_frame" position="insidetopleft" offset="8,25" width="80" height="15" />
-				<static>Weapon</static>
-				<font>sheetlabel</font>
+				<anchored to="melee_frame" position="insidetopleft" offset="15,28" width="80" height="15" />
+				<static>WEAPON</static>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_wq_h">
-				<anchored to="melee_name_h" position="righthigh" offset="5,0" width="28" height="15" />
+				<anchored to="melee_name_h" position="righthigh" offset="10,0" width="28" height="15" />
 				<static textres="harn_wq" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_hft_h">
-				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="35" height="15" />
+				<anchored to="melee_wq_h" position="righthigh" offset="4,0" width="30" height="15" />
 				<static textres="harn_hft" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_rch_h">
-				<anchored to="melee_hft_h" position="righthigh" offset="4,0" width="28" height="15" />
+				<anchored to="melee_hft_h" position="righthigh" offset="-3,0" width="28" height="15" />
 				<static textres="harn_rch" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_atk_h">
 				<anchored to="melee_rch_h" position="righthigh" offset="4,0" width="32" height="15" />
 				<static textres="harn_atk" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_def_h">
 				<anchored to="melee_atk_h" position="righthigh" offset="4,0" width="32" height="15" />
 				<static textres="harn_def" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_zd_h">
 				<anchored to="melee_def_h" position="righthigh" offset="4,0" width="30" height="15" />
 				<static textres="harn_zd" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_imp_h">
-				<anchored to="melee_zd_h" position="righthigh" offset="4,0" width="30" height="15" />
+				<anchored to="melee_zd_h" position="righthigh" offset="12,0" width="30" height="15" />
 				<static textres="harn_imp" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="melee_ta_h">
-				<anchored to="melee_imp_h" position="righthigh" offset="4,0" width="40" height="15" />
+				<anchored to="melee_imp_h" position="righthigh" offset="15,0" width="40" height="15" />
 				<static textres="harn_ta" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 
 			<windowlist name="meleeweapons">
@@ -1587,9 +1593,12 @@
 				<class>harn_melee_entry</class>
 				<allowcreate />
 				<allowdelete />
-			</windowlist>
+			<scrollbar_list>
+				<anchored to="meleeweapons" />
+				<target>meleeweapons</target>
+			</scrollbar_list>			</windowlist>
 			<button_iadd name="melee_iadd">
-				<anchored to="meleeweapons" position="aboveright" offset="0,8" width="15" height="15" />
+				<anchored to="meleeweapons" position="aboveright" offset="20,15" width="15" height="15" />
 				<target>meleeweapons</target>
 				<script>
 					function onButtonPress()
@@ -1603,70 +1612,70 @@
 
 			<!-- MISSILE WEAPONS -->
 			<frame_char name="missile_frame">
-				<anchored position="insidetopleft" offset="0,290" height="140">
-					<right offset="0" />
+				<anchored position="insidetopleft" offset="0,290" width="515" height="140">
 				</anchored>
 			</frame_char>
 			<label_frametop>
 				<anchored to="missile_frame" />
 				<static textres="harn_missile_weapons" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<!-- Missile headers -->
 			<label name="missile_name_h">
-				<anchored to="missile_frame" position="insidetopleft" offset="8,25" width="110" height="15" />
-				<static>Weapon</static>
-				<font>sheetlabel</font>
+				<anchored to="missile_frame" position="insidetopleft" offset="15,27" width="70" height="15" />
+				<static>WEAPON</static>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_wq_h">
-				<anchored to="missile_name_h" position="righthigh" offset="4,0" width="25" height="15" />
+				<anchored to="missile_name_h" position="righthigh" offset="35,0" width="25" height="15" />
 				<static textres="harn_wq" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_drwhft_h">
-				<anchored to="missile_wq_h" position="righthigh" offset="3,0" width="40" height="15" />
+				<anchored to="missile_wq_h" position="righthigh" offset="7,0" width="35" height="15" />
 				<static textres="harn_drwhft" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_br_h">
 				<anchored to="missile_drwhft_h" position="righthigh" offset="3,0" width="30" height="15" />
 				<static textres="harn_br" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_vm_h">
-				<anchored to="missile_br_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<anchored to="missile_br_h" position="righthigh" offset="-3,0" width="22" height="15" />
 				<static textres="harn_vm" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_atk_h">
-				<anchored to="missile_vm_h" position="righthigh" offset="3,0" width="30" height="15" />
+				<anchored to="missile_vm_h" position="righthigh" offset="6,0" width="30" height="15" />
 				<static textres="harn_atk" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_chg_h">
-				<anchored to="missile_atk_h" position="righthigh" offset="3,0" width="22" height="15" />
+				<anchored to="missile_atk_h" position="righthigh" offset="-4,0" width="27" height="15" />
 				<static textres="harn_chg" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_proj_h">
-				<anchored to="missile_chg_h" position="righthigh" offset="3,0" width="120" height="15" />
+				<anchored to="missile_chg_h" position="righthigh" offset="3,0" width="75" height="15" />
 				<static textres="harn_proj" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_pbzd_h">
 				<anchored to="missile_proj_h" position="righthigh" offset="3,0" width="32" height="15" />
 				<static textres="harn_pbzd" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_imp_h">
-				<anchored to="missile_pbzd_h" position="righthigh" offset="3,0" width="55" height="15" />
+				<anchored to="missile_pbzd_h" position="righthigh" offset="10,0" width="55" height="15" />
 				<static textres="harn_imp" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 			<label name="missile_ta_h">
 				<anchored to="missile_imp_h" position="righthigh" offset="3,0" width="22" height="15" />
 				<static textres="harn_ta" />
-				<font>sheetlabel</font>
+				<font>harn_skill_header</font>
 			</label>
 
 			<windowlist name="missileweapons">
@@ -1682,7 +1691,7 @@
 				<allowdelete />
 			</windowlist>
 			<button_iadd name="missile_iadd">
-				<anchored to="missileweapons" position="aboveright" offset="0,8" />
+				<anchored to="missileweapons" position="aboveright" offset="20,15" width="15" height="15"/>
 				<target>missileweapons</target>
 				<script>
 					function onButtonPress()
@@ -2035,6 +2044,7 @@
 			<label_frametop>
 				<anchored to="enc_frame" />
 				<static textres="harn_encumbrance" />
+				<font>harn_group</font>
 			</label_frametop>
 
 			<label name="armour_enc_label">
