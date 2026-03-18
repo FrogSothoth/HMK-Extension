@@ -235,6 +235,23 @@ function lookupWeapon(sName)
     return aMeleeWeaponData[sLower];
 end
 
+-- Check if a weapon name belongs to the UNARMED group
+function isUnarmed(sName)
+    if not sName then return false; end
+    local sLower = sName:lower();
+    local tUnarmed = {
+        ["bite"] = true,
+        ["grab"] = true,
+        ["headbutt"] = true,
+        ["kick"] = true,
+        ["limb block"] = true,
+        ["press"] = true,
+        ["punch"] = true,
+        ["trip"] = true,
+    };
+    return tUnarmed[sLower] or false;
+end
+
 -- Format Zone Dice string: "d6", "d8", etc.
 -- Returns "" for nil/0 values
 function formatZD(entry)
@@ -357,7 +374,8 @@ function syncMeleeWeapons(nodeChar, nodeExclude)
             -- If this entry matches a standard weapon name...
             if aMeleeWeaponData[sLowerMeleeName] then
                 -- ...but that weapon is no longer in possessions, mark for deletion
-                if not tPossessionWeapons[sLowerMeleeName] then
+                -- EXCEPTION: UNARMED weapons are never auto-removed, only manually.
+                if not tPossessionWeapons[sLowerMeleeName] and not isUnarmed(sLowerMeleeName) then
                     table.insert(aToDelete, nodeMelee);
                 end
             end
