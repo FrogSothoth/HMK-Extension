@@ -94,15 +94,18 @@
 					local nodeCombatList = DB.getChild(nodeChar, "combatskills");
 					if nodeCombatList then
 						for _, nodeSkill in pairs(DB.getChildren(nodeCombatList)) do
-							if DB.getValue(nodeSkill, "name", "") == sTargetParentName then
+							local sSkillName = DB.getValue(nodeSkill, "name", "");
+							if string.upper(sSkillName) == string.upper(sTargetParentName) then
 								-- Found the parent, set up a handler on its SM
 								sParentNodePath = nodeSkill.getPath();
 								DB.addHandler(sParentNodePath .. ".sm", "onUpdate", onParentSMUpdate);
 								onParentSMUpdate(); -- Initial sync
+								Debug.console("linkDynamicSM: Linked " .. sUpperName .. " to " .. sSkillName .. " (" .. sParentNodePath .. ")");
 								return;
 							end
 						end
 					end
+					Debug.console("linkDynamicSM: Could not find parent " .. sTargetParentName .. " for " .. sUpperName);
 				end
 			end
 			
