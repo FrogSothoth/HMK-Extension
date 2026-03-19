@@ -211,6 +211,14 @@
 
 				local nodeChar = getDatabaseNode();
 				if nodeChar then
+					-- Migration: convert numeric aberrance to string to avoid type mismatch
+					local vAbe = nodeChar.getChild("aberrance");
+					if vAbe and vAbe.getType() == "number" then
+						local nVal = vAbe.getValue();
+						vAbe.delete();
+						DB.setValue(nodeChar, "aberrance", "string", tostring(nVal));
+					end
+
 					-- Watch for possession deletions
 					sPossessionDeletePath = DB.getPath(nodeChar, "possessions") .. ".*";
 					DB.addHandler(sPossessionDeletePath, "onDelete", onPossessionDeleted);
@@ -583,11 +591,21 @@
 				<static>ABERRANCE:</static>
 				<font>harn_label_18_bold</font>
 			</label>
-			<numberfield name="aberrance">
+			<stringfield name="aberrance">
 				<anchored to="abe_label" position="right" offset="-25,0" width="20" height="20" />
 				<frame name="fielddark" offset="7,5,7,5" />
 				<center />
-			</numberfield>
+				<script>
+					<![CDATA[
+					function onChar(code)
+						if code >= 48 and code <= 57 then
+							return false; -- Allow numbers
+						end
+						return true; -- Suppress other characters
+					end
+					]]>
+				</script>
+			</stringfield>
 
 			<!-- MENTAL GROUP BOX -->
 			<genericcontrol name="mental_frame">
@@ -1846,17 +1864,18 @@
 				<anchored to="melee_frame">
 					<top offset="42" />
 					<left offset="3" />
-					<right offset="-3" />
+					<right offset="-10" />
 					<bottom offset="-5" />
 				</anchored>
 				<datasource>.meleeweapons</datasource>
 				<class>harn_melee_entry</class>
 				<allowcreate />
 				<allowdelete />
+			</windowlist>
 			<scrollbar_list>
 				<anchored to="meleeweapons" />
 				<target>meleeweapons</target>
-			</scrollbar_list>			</windowlist>
+			</scrollbar_list>			
 			<button_iadd name="melee_iadd">
 				<anchored to="meleeweapons" position="aboveright" offset="20,15" width="15" height="15" />
 				<target>meleeweapons</target>
