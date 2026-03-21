@@ -477,7 +477,7 @@
 				<font>sheettext</font>
 				<frame name="fielddark" offset="7,5,7,5" />
 			</stringfield>
-			<label name="inches_label">
+			<label name="pounds_label">
 				<anchored to="weight_label" position="right" offset="50,0" width="45" height="20" />
 				<static>pounds</static>
 				<font>sheettext</font>

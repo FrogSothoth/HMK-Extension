@@ -70,7 +70,7 @@ function onInit()
 	table.insert(_skills, {name="Perfumery", group="Lore", att1="PER", att2="REA", sm=0});
 	table.insert(_skills, {name="Physician", group="Lore", att1="REA", att2="PER", sm=1});
 	table.insert(_skills, {name="Ritual", group="Lore", att1="WIL", att2="REA", sm=0});
-	table.insert(_skills, {name="Script", group="Lore", att1="REA", att2="CRE", sm=0});
+	table.insert(_skills, {name="Script", group="Lore", att1="REA", att2="PER", sm=0});
 	table.insert(_skills, {name="Shipwright", group="Lore", att1="REA", att2="CRE", sm=0});
 
 	-- PHYSICAL Skills

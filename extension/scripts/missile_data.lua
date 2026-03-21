@@ -536,7 +536,7 @@ function updateMissileATK(nodeChar)
         local sMissileName = DB.getValue(nodeMissile, "name", "");
         local tWeapon = lookupMissileWeapon(sMissileName);
         if tWeapon then
-            DB.setValue(nodeMissile, "atk", "string", formatATK(nodeChar, tWeapon));
+            DB.setValue(nodeMissile, "atk", "number", formatATK(nodeChar, tWeapon));
         end
     end
 end

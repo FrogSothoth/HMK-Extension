@@ -28,7 +28,7 @@ local aEquipmentData = {
     ["Quiver, 24"] = { type = "Container", weight = 3, price = 12 },
     ["Rations, Iron"] = { type = "Equipment", weight = 3, price = 3 },
     ["Rations, Standard"] = { type = "Equipment", weight = 3, price = 2 },
-    ["Rope, Hemp, 1/2\", 50'"] = { type = "Equipment", weight = 12, price = 96 },
+    ["Rope, Hemp, 1\", 50'"] = { type = "Equipment", weight = 12, price = 96 },
     ["Rope, Hemp, 1/2\", 50'"] = { type = "Equipment", weight = 4, price = 48 },
     ["Rope, Silk, 1/2\", 50'"] = { type = "Equipment", weight = 4, price = 1440 },
     ["Sack, Canvas (50)"] = { type = "Container", weight = 1, price = 24 },

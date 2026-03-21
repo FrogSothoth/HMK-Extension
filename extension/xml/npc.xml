@@ -304,12 +304,40 @@
 			<windowmenubar_charsheet name="menubar" />
 
 			<anchor_content_charsheet_tabbed_top />
-			<anchor_content_charsheet_bottom />
+
+			<genericcontrol name="bottomanchor">
+				<anchored height="0">
+					<bottom offset="-60" />
+					<left />
+					<right />
+				</anchored>
+			</genericcontrol>
 
 			<!-- NPC name and portrait header -->
 			<sub_content_top name="overview">
+				<anchored height="80">
+					<top offset="30" />
+					<left offset="60" />
+					<right offset="-60" />
+				</anchored>
 				<class>harn_npc_overview</class>
 			</sub_content_top>
+
+			<subwindow name="main">
+				<anchored>
+					<top parent="overview" anchor="bottom" offset="10" />
+					<left offset="20" />
+					<right offset="-20" />
+					<bottom parent="bottomanchor" />
+				</anchored>
+				<class>harn_npc_tab_main</class>
+				<activate />
+				<fastinit />
+			</subwindow>
+			<scrollbar_list>
+				<anchored to="main" />
+				<target>main</target>
+			</scrollbar_list>
 
 			<resize_charsheet />
 		</sheetdata>
@@ -334,7 +362,7 @@
 
 	<!-- NPC header/overview (name + portrait) -->
 	<windowclass name="harn_npc_overview">
-		<frame>groupbox</frame>
+		<frame>charheading</frame>
 		<margins control="0,0,0,15" />
 		<sheetdata>
 			<anchor_content_charsheet_header_top />
@@ -368,7 +396,7 @@
 					<left parent="leftanchor" offset="60" />
 				</anchored>
 				<labelres>harn_npc_name</labelres>
-				<font>charsheet_header</font>
+				<font>harn_header_extrabold</font>
 			</string_labeled>
 		</sheetdata>
 	</windowclass>
